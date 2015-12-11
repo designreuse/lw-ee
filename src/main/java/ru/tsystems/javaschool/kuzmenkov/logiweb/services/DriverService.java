@@ -1,0 +1,92 @@
+package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
+
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
+
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Business logic related to drivers.
+ * @author Nikolay Kuzmenkov.
+ */
+public interface DriverService {
+
+    /**
+     * Add new driver.
+     *
+     * @param newDriver
+     * @return same Driver
+     * @throws LogiwebValidationException if driver don't have all required fields or have not unique personal number.
+     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     */
+    Driver addNewDriver(Driver newDriver) throws LogiwebServiceException, LogiwebValidationException;
+
+    /**
+     * Calculate working hours for driver for this month.
+     *
+     * Shift records that are started in previous month are trimmed.
+     * (Date of start is set to first day of the this month and 00:00 hours)
+     *
+     * Records that don't have ending date (meaning that driver is currently on shift)
+     * are also counted. End time for them is current time.
+     *
+     * @param driver
+     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
+     */
+    Integer calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException;
+
+    /**
+     * Assign driver to truck.
+     *
+     * @param driverId
+     * @param truckId
+     * @throws LogiwebValidationException if truck or diver not exist, or if truck already havefull driver count assigned.
+     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
+     */
+    void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebServiceException, LogiwebValidationException;
+
+    /**
+     * @param editedDriver
+     * @throws LogiwebServiceException
+     */
+    void editDriver(Driver editedDriver) throws LogiwebServiceException;
+
+    /**
+     * Find drivers.
+     *
+     * @return empty list if nothing found.
+     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     */
+    List<Driver> findAllDrivers() throws LogiwebServiceException;
+
+    /**
+     * Find driver by id.
+     *
+     * @param driverId
+     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     */
+    Driver findDriverById(Integer driverId) throws LogiwebServiceException;
+
+    /**
+     * Find shift records that are started or ended in this month. Records are
+     * not trimmed. (Meaning that if record is started in previous month then it
+     * will be show 'as is').
+     *
+     * @param driver
+     * @return shift records or empty set
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
+    List<DriverShift> findDriverShiftRecordsForThisMonth(Driver driver) throws LogiwebServiceException;
+
+    void deleteDriver(Driver deletedDriver) throws LogiwebServiceException, LogiwebValidationException;
+
+    Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Double maxWorkingHours) throws LogiwebServiceException;
+
+    void startShiftForDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException;
+}
