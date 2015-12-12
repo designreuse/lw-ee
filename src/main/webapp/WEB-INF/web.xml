@@ -5,220 +5,34 @@
          version="3.1"
          xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <display-name>Archetype Created Web Application</display-name>
+
+  <display-name>Spring Web Application</display-name>
+
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml</param-value>
+        <param-value>/WEB-INF/applicationContext.xml, /WEB-INF/spring-security.xml</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <servlet>
-        <servlet-name>AuthServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.AuthServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AuthServlet</servlet-name>
-        <url-pattern>/login</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.LogoutServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/Logout</url-pattern>
-    </servlet-mapping>
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-    <servlet>
-        <servlet-name>AddDriverServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.AddDriverServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AddDriverServlet</servlet-name>
-        <url-pattern>/private/manager/AddDriver</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-    <servlet-name>AddTruckServlet</servlet-name>
-    <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.AddTruckServlet</servlet-class>
-</servlet>
-    <servlet-mapping>
-        <servlet-name>AddTruckServlet</servlet-name>
-        <url-pattern>/private/manager/AddTruck</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>TruckListServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.TruckListServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>TruckListServlet</servlet-name>
-        <url-pattern>/private/manager/TruckList</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>EditOrderServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.EditOrderServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>EditOrderServlet</servlet-name>
-        <url-pattern>/private/manager/EditOrder</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>OrderListServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.OrderListServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>OrderListServlet</servlet-name>
-        <url-pattern>/private/manager/OrderList</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>FreightListServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.FreightListServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FreightListServlet</servlet-name>
-        <url-pattern>/private/manager/FreightList</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DriverListServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.DriverListServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DriverListServlet</servlet-name>
-        <url-pattern>/private/manager/DriverList</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>ShowSingleDriverServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.ShowSingleDriverServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ShowSingleDriverServlet</servlet-name>
-        <url-pattern>/private/manager/ShowDriver</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>AssignTruckServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.AssignTruckToOrderServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AssignTruckServlet</servlet-name>
-        <url-pattern>/private/manager/AssignTruck</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>AssignDriverServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.AssignDriverToTruck</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AssignDriverServlet</servlet-name>
-        <url-pattern>/private/manager/AssignDriver</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DeleteDriverServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.DeleteDriverServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DeleteDriverServlet</servlet-name>
-        <url-pattern>/private/manager/DeleteDriver</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DeleteTruckServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.DeleteTruckServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DeleteTruckServlet</servlet-name>
-        <url-pattern>/private/manager/DeleteTruck</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>AddFreightServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.AddFreightServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AddFreightServlet</servlet-name>
-        <url-pattern>/private/manager/AddFreight</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>AddOrderServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.AddOrderServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AddOrderServlet</servlet-name>
-        <url-pattern>/private/manager/AddOrder</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>ManagerServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.ManagerServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ManagerServlet</servlet-name>
-        <url-pattern>/private/manager</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DeleteDriversAndTruckFromOrderServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.DeleteDriversAndTruckFromOrderServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DeleteDriversAndTruckFromOrderServlet</servlet-name>
-        <url-pattern>/private/manager/RemoveDriversAndTruckFromOrder</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>ChangeOrderStatusServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.ChangeOrderStatusServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ChangeOrderStatusServlet</servlet-name>
-        <url-pattern>/private/manager/ChangeOrderStatus</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DriverServlet</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.DriverServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DriverServlet</servlet-name>
-        <url-pattern>/private/driver/DriverPage</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>StartShift</servlet-name>
-        <servlet-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.StartShiftForDriverServlet</servlet-class>
-    </servlet>
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>StartShift</servlet-name>
-        <url-pattern>/private/driver/StartShift</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>*.form</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
-
-    <!--<filter>
-        <filter-name>LoginFilter</filter-name>
-        <filter-class>ru.tsystems.javaschool.kuzmenkov.logiweb.servlets.filters.LoginFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/private/*</url-pattern>
-    </filter-mapping>-->
 
 </web-app>
