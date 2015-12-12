@@ -57,7 +57,7 @@ public class LogiwebAppResources {
     }
 
     private DriverDAO getDriverDAO() {
-        return new DriverDAOImpl(Driver.class, getEntityManager());
+        return new DriverDAOImpl();
     }
 
     private DriverShiftDAO getDriverShiftDAO() {
@@ -65,7 +65,7 @@ public class LogiwebAppResources {
     }
 
     public DriverService getDriverService() {
-        return new DriverServiceImpl(getDriverDAO(), getDriverShiftDAO(), getTruckDAO(), getEntityManager());
+        return new DriverServiceImpl(getDriverShiftDAO(), getTruckDAO(), getEntityManager());
     }
 
     private TruckDAO getTruckDAO() {
@@ -97,7 +97,7 @@ public class LogiwebAppResources {
     }
 
     private UserDAO getUserDAO() {
-        return new UserDAOImpl(User.class, getEntityManager());
+        return new UserDAOImpl();
     }
 
     public UserService getUserService() {

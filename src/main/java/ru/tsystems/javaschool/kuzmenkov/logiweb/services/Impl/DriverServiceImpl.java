@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverDAO;
@@ -32,12 +33,12 @@ public class DriverServiceImpl implements DriverService {
     private static final Logger LOGGER = Logger.getLogger(DriverServiceImpl.class);
 
     private EntityManager entityManager;
+    @Autowired
     private DriverDAO driverDAO;
     private TruckDAO truckDAO;
     private DriverShiftDAO driverShiftDAO;
 
-    public DriverServiceImpl(DriverDAO driverDAO, DriverShiftDAO driverShiftDAO, TruckDAO truckDAO, EntityManager entityManager) {
-        this.driverDAO = driverDAO;
+    public DriverServiceImpl(DriverShiftDAO driverShiftDAO, TruckDAO truckDAO, EntityManager entityManager) {
         this.driverShiftDAO = driverShiftDAO;
         this.entityManager = entityManager;
         this.truckDAO = truckDAO;
@@ -113,6 +114,18 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    /**
+     * Calculate working hours for driver for this month.
+     *
+     * Shift records that are started in previous month are trimmed.
+     * (Date of start is set to first day of the this month and 00:00 hours)
+     *
+     * Records that don't have ending date (meaning that driver is currently on shift)
+     * are also counted. End time for them is current time.
+     *
+     * @param driverId
+     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
+     */
     @Override
     @Transactional
     public Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException {
@@ -147,25 +160,22 @@ public class DriverServiceImpl implements DriverService {
 
     }
 
+    /**
+     * Find drivers.
+     *
+     * @return empty list if nothing found.
+     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     */
     @Override
+    @Transactional
     public List<Driver> findAllDrivers() throws LogiwebServiceException {
-        List<Driver> allDriversResult;
-
         try {
-            entityManager.getTransaction().begin();
-            allDriversResult = driverDAO.findAll();
-            entityManager.getTransaction().commit();
+            return driverDAO.findAll();
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in DriverServiceImpl - findAllDrivers().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return allDriversResult;
     }
 
     @Override

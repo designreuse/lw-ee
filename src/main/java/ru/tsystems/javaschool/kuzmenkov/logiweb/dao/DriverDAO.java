@@ -7,7 +7,9 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import java.util.List;
 
 /**
- * Created by Nikolay on 13.11.2015.
+ * Interface for basic operations for Driver entity.
+ *
+ * @author Nikolay Kuzmenkov.
  */
 public interface DriverDAO extends AbstractDAO<Driver> {
 

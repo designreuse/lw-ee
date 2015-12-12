@@ -30,8 +30,18 @@ public interface AbstractDAO<T> {
      */
     T findById(Integer entityId) throws LogiwebDAOException;
 
+    /**
+     * Update persistent object.
+     *
+     * @param changeableEntity persistent object.
+     */
     void update(T changeableEntity) throws LogiwebDAOException;
 
+    /**
+     * Delete persistent object from database.
+     *
+     * @param deletedEntity persistent object.
+     */
     void delete(T deletedEntity) throws LogiwebDAOException;
 
     /**

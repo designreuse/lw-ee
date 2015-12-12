@@ -10,7 +10,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.CitiesUtil;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Nikolay Kuzmenkov.

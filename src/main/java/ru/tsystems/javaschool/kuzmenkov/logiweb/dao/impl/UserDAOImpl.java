@@ -1,21 +1,23 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.dao.impl;
 
+import org.springframework.stereotype.Repository;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.UserDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
 /**
  * Created by Nikolay on 22.11.2015.
  */
+@Repository
 public class UserDAOImpl extends AbstractDAOImpl<User> implements UserDAO {
 
-    public UserDAOImpl(Class<User> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
-    }
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public User getUserByEmailAndPassword(String email, String password) throws LogiwebDAOException {

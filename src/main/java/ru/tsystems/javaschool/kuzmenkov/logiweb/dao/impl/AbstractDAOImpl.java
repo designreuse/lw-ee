@@ -5,6 +5,8 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.AbstractDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +20,13 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
     private static final Logger LOGGER = Logger.getLogger(AbstractDAOImpl.class);
 
     private Class<T> entityClass;
+    @PersistenceContext
     private EntityManager entityManager;
 
-    public AbstractDAOImpl(Class<T> entityClass, EntityManager entityManager) {
-        this.entityClass = entityClass;
-        this.entityManager = entityManager;
+    @SuppressWarnings("unchecked")
+    public AbstractDAOImpl() {
+        entityClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments()[0];
     }
 
     protected final EntityManager getEntityManager() {
@@ -43,31 +47,41 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
     @Override
     public T create(T newEntity) throws LogiwebDAOException {
         try {
-            getEntityManager().persist(newEntity);
+            entityManager.persist(newEntity);
+
+            return newEntity;
 
         } catch (Exception e) {
             LOGGER.warn("Exception in AbstractDAOImpl - create().", e);
             throw new LogiwebDAOException(e);
         }
 
-        return newEntity;
+
     }
 
+    /**
+     * Find persistent object by entity ID (primary key).
+     *
+     * @param entityId
+     * @return persistent object or null if not found.
+     * @throws LogiwebDAOException if failed to find entity by ID.
+     */
     @Override
     public T findById(Integer entityId) throws LogiwebDAOException {
-        T entityResult;
-
         try {
-            entityResult = getEntityManager().find(getEntityClass(), entityId);
+             return entityManager.find(getEntityClass(), entityId);
 
         } catch (Exception e) {
             LOGGER.warn("Exception in AbstractDAOImpl - findById().", e);
             throw new LogiwebDAOException(e);
         }
-
-        return entityResult;
     }
 
+    /**
+     * Update persistent object.
+     *
+     * @param changeableEntity persistent object.
+     */
     @Override
     public void update(T changeableEntity) throws LogiwebDAOException {
         if (changeableEntity == null) {
@@ -75,7 +89,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
         }
 
         try {
-            getEntityManager().merge(changeableEntity);
+            entityManager.merge(changeableEntity);
 
         } catch (Exception e) {
             System.out.println("Exception in AbstractDAOImpl.");
@@ -83,10 +97,15 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
         }
     }
 
+    /**
+     * Delete persistent object from database.
+     *
+     * @param deletedEntity persistent object.
+     */
     @Override
     public void delete(T deletedEntity) throws LogiwebDAOException {
         try {
-            getEntityManager().remove(deletedEntity);
+            entityManager.remove(deletedEntity);
 
         } catch (Exception e) {
             LOGGER.warn("Exception in AbstractDAOImpl - delete().", e);
@@ -102,17 +121,16 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
      */
     @Override
     public List<T> findAll() throws LogiwebDAOException {
-        List<T> allEntitiesResult;
-
         try {
-            allEntitiesResult = getEntityManager().createQuery("SELECT t FROM "
-                    + getEntityClass().getSimpleName() + " t").getResultList();
+            @SuppressWarnings("unchecked")
+            List<T> allEntitiesResult = entityManager.createQuery("SELECT t FROM "
+                    + entityClass.getSimpleName() + " t").getResultList();
+
+            return allEntitiesResult;
 
         } catch (Exception e) {
             LOGGER.warn("Exception in AbstractDAOImpl - findAll().", e);
             throw new LogiwebDAOException(e);
         }
-
-        return new ArrayList<T>(allEntitiesResult);
     }
 }
