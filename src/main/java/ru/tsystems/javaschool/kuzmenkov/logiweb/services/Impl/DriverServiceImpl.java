@@ -1,6 +1,8 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverShiftDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
@@ -20,8 +22,11 @@ import javax.persistence.EntityManager;
 import java.util.*;
 
 /**
- * Created by Nikolay on 13.11.2015.
+ * Data manipulation and business logic related to drivers.
+ *
+ * @author Nikolay Kuzmenkov.
  */
+@Service
 public class DriverServiceImpl implements DriverService {
 
     private static final Logger LOGGER = Logger.getLogger(DriverServiceImpl.class);
@@ -109,11 +114,12 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Integer calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException {
+    @Transactional
+    public Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException {
         Integer workingHoursResult;
 
         try {
-            List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDriver(driver);
+            List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDriver(driverId);
             Map<Driver, Integer> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
 
             //if driver don't have any records yet

@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Business logic related to drivers.
+ * Data manipulation and business logic related to drivers.
+ *
  * @author Nikolay Kuzmenkov.
  */
 public interface DriverService {
@@ -34,10 +35,10 @@ public interface DriverService {
      * Records that don't have ending date (meaning that driver is currently on shift)
      * are also counted. End time for them is current time.
      *
-     * @param driver
+     * @param driverId
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
      */
-    Integer calculateWorkingHoursForDriver(Driver driver) throws LogiwebServiceException;
+    Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException;
 
     /**
      * Assign driver to truck.

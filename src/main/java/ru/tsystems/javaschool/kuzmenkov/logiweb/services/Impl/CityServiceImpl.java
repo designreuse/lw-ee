@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.CityDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
@@ -13,6 +14,7 @@ import java.util.List;
 /**
  * Created by Nikolay on 26.11.2015.
  */
+@Service
 public class CityServiceImpl implements CityService {
 
     private static final Logger LOGGGER = Logger.getLogger(TruckServiceImpl.class);

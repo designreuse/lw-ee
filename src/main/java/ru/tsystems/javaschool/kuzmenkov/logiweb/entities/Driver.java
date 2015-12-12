@@ -30,6 +30,9 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverStatus driverStatus;
 
+    @Column(name = "working_hours_for_this_mounth")
+    private Integer workingHoursThisMonth;
+
     @OneToMany(mappedBy = "driverForThisShiftFK")
     private List<DriverShift> driverShiftRecords;
 
@@ -87,6 +90,14 @@ public class Driver {
 
     public void setDriverStatus(DriverStatus driverStatus) {
         this.driverStatus = driverStatus;
+    }
+
+    public Integer getWorkingHoursThisMonth() {
+        return workingHoursThisMonth;
+    }
+
+    public void setWorkingHoursThisMonth(Integer workingHoursThisMonth) {
+        this.workingHoursThisMonth = workingHoursThisMonth;
     }
 
     public List<DriverShift> getDriverShiftRecords() {
