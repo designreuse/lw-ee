@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc">
+
+
+       <bean id="viewResolver"
+             class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+              <property name="prefix">
+                     <value>/WEB-INF/pages/</value>
+              </property>
+              <property name="suffix">
+                     <value>.jsp</value>
+              </property>
+       </bean>
+
+       <bean id="validator"
+             class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+       <context:component-scan base-package="ru.tsystems.javaschool.kuzmenkov.logiweb.controllers" />
+       <mvc:resources location="/css/" mapping="/css/**" />
+       <mvc:resources location="/js/" mapping="/js/**" />
+       <mvc:resources location="/fonts/" mapping="/fonts/**" />
+       <mvc:annotation-driven validator="validator"/>
+
+</beans>
