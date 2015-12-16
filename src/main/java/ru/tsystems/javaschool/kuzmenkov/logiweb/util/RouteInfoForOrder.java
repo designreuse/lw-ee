@@ -86,7 +86,7 @@ public class RouteInfoForOrder {
         }
 
         for(Freight freight : freights) {
-            originWayPoints.add(new WayPoint(WayPointStatus.PICKUP, freight.getCityFromFK(), freight));
+            originWayPoints.add(new WayPoint(WayPointStatus.PICK_UP, freight.getCityFromFK(), freight));
             destinationWayPoints.add(new WayPoint(WayPointStatus.DELIVER, freight.getCityToFK(), freight));
         }
 

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
- * Created by Nikolay on 14.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 @Entity
 @Table(name = "cities")
@@ -12,7 +12,7 @@ public class City {
 
     @Id
     @GeneratedValue
-    @Column(name = "city_id", unique = true)
+    @Column(name = "city_id", nullable = false, unique = true)
     private Integer cityId;
 
     @Column(name = "city_name", nullable = false)
@@ -31,7 +31,6 @@ public class City {
     private List<Freight> citiesTo;
 
     public City() {
-
     }
 
     public Integer getCityId() {

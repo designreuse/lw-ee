@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author Nikolay Kuzmenkov.
  */
-@Repository
+@Repository("driverDAO")
 public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO {
 
     private static final Logger LOGGER = Logger.getLogger(DriverDAOImpl.class);
@@ -27,25 +27,24 @@ public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO 
 
     @Override
     public Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException{
-        Driver queryResult = null;
-
         try {
-
+            Driver queryResult = null;
             Query query = entityManager.createQuery("SELECT dr FROM Driver dr " +
                     "WHERE dr.personalNumber = :driverPersonalNumber", Driver.class);
             query.setParameter("driverPersonalNumber", driverPersonalNumber);
+            @SuppressWarnings("unchecked")
             List<Driver> resultList = query.getResultList();
 
             if (!resultList.isEmpty()) {
                 queryResult = resultList.get(0);
             }
 
+            return queryResult;
+
         } catch (Exception e) {
             LOGGER.warn("Exception in DriverDAOImpl - findDriverByPersonalNumber().", e);
             throw new LogiwebDAOException(e);
         }
-
-        return queryResult;
     }
 
     @Override

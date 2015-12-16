@@ -1,12 +1,16 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
 /**
- * Created by Nikolay on 22.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 public interface UserService {
 
-    User getUserByEmailAndPassword(String email, String password) throws LogiwebServiceException;
+    Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, LogiwebValidationException;
+
+    User findUserById(Integer userId) throws LogiwebServiceException;
 }

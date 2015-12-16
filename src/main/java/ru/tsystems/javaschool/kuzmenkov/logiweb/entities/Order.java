@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
- * Created by Nikolay on 14.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 @Entity
 @Table(name = "orders")
@@ -14,11 +14,11 @@ public class Order {
 
     @Id
     @GeneratedValue
-    @Column(name = "order_id", unique = true)
+    @Column(name = "order_id", nullable = false, unique = true)
     private Integer orderId;
 
+    @Column(name = "order_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_status")
     private OrderStatus orderStatus;
 
     @OneToOne(mappedBy = "orderForThisTruck")
@@ -28,7 +28,6 @@ public class Order {
     private List<Freight> orderLines;
 
     public Order() {
-        
     }
 
     public Integer getOrderId() {

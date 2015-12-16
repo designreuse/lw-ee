@@ -1,9 +1,11 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status;
 
 /**
- * Created by Nikolay on 14.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 public enum FreightStatus {
 
-    PREPARED, SHIPPED, DELIVERED
+    WAITING_FOR_PICK_UP,
+    PICKED_UP,
+    DELIVERED;
 }

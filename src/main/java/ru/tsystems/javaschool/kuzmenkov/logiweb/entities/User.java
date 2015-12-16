@@ -5,7 +5,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import javax.persistence.*;
 
 /**
- * Created by Nikolay on 14.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 @Entity
 @Table(name = "users")
@@ -13,24 +13,23 @@ public class User {
 
     @Id
     @GeneratedValue
-    @Column(name = "user_id", unique = true)
+    @Column(name = "user_id", nullable = false, unique = true)
     private Integer userId;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String userEmail;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String userPassword;
 
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
     private Role userRole;
 
     @OneToOne(mappedBy = "logiwebDriverAccount")
     private Driver attachedDriver;
 
     public User() {
-
     }
 
     public Integer getUserId() {

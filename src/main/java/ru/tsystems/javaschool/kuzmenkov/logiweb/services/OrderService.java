@@ -9,7 +9,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
 import java.util.List;
 
 /**
- * Created by Nikolay on 20.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 public interface OrderService {
 

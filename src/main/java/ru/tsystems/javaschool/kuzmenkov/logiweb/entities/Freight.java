@@ -5,7 +5,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.FreightStatus;
 import javax.persistence.*;
 
 /**
- * Created by Nikolay on 14.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 @Entity
 @Table(name = "freights")
@@ -13,33 +13,32 @@ public class Freight {
 
     @Id
     @GeneratedValue
-    @Column(name = "freight_id", unique = true)
+    @Column(name = "freight_id", nullable = false, unique = true)
     private Integer freightId;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "weight")
+    @Column(name = "weight", nullable = false)
     private Float weight;
 
+    @Column(name = "freight_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "freight_status")
     private FreightStatus freightStatus;
 
     @ManyToOne
-    @JoinColumn(name = "city_from")
+    @JoinColumn(name = "city_from", nullable = false)
     private City cityFromFK;
 
     @ManyToOne
-    @JoinColumn(name = "city_to")
+    @JoinColumn(name = "city_to", nullable = false)
     private City cityToFK;
 
     @ManyToOne
-    @JoinColumn(name = "order_FK")
+    @JoinColumn(name = "order_FK", nullable = false)
     private Order orderForThisFreightFK;
 
     public Freight() {
-
     }
 
     public Integer getFreightId() {

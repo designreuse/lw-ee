@@ -4,22 +4,23 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverShiftDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 
 /**
@@ -27,54 +28,68 @@ import java.util.*;
  *
  * @author Nikolay Kuzmenkov.
  */
-@Service
+@Service("driverService")
 public class DriverServiceImpl implements DriverService {
 
     private static final Logger LOGGER = Logger.getLogger(DriverServiceImpl.class);
 
+    @PersistenceContext
     private EntityManager entityManager;
     @Autowired
+    UserService userService;
+    @Autowired
     private DriverDAO driverDAO;
+    @Autowired
     private TruckDAO truckDAO;
+    @Autowired
     private DriverShiftDAO driverShiftDAO;
 
-    public DriverServiceImpl(DriverShiftDAO driverShiftDAO, TruckDAO truckDAO, EntityManager entityManager) {
-        this.driverShiftDAO = driverShiftDAO;
-        this.entityManager = entityManager;
-        this.truckDAO = truckDAO;
-    }
-
     @Override
-    public Driver addNewDriver(Driver newDriver) throws LogiwebServiceException, LogiwebValidationException {
-        LogiwebValidator.validateDriverFormValues(newDriver);
-
+    @Transactional
+    public Integer addNewDriver(ModelAttributeDriver driverFromForm) throws LogiwebServiceException, LogiwebValidationException {
         try {
-            newDriver.setDriverStatus(DriverStatus.REST);
+            String personalNumberAsString = String.valueOf(driverFromForm.getPersonalNumber());
+            String driverAccountEmail = "driver" + personalNumberAsString + "@logiweb.com";
+            String driverAccountPassword = "12345";
 
-            entityManager.getTransaction().begin();
-            Driver driverWithSamePersonalNumber = driverDAO.findDriverByPersonalNumber(newDriver.getPersonalNumber());
+            Integer newDriverUserId = userService.createNewUser(driverAccountEmail, driverAccountPassword, Role.ROLE_DRIVER);
+            User accountForDriver = userService.findUserById(newDriverUserId);
+
+            Driver driverWithSamePersonalNumber = driverDAO.findDriverByPersonalNumber(driverFromForm.getPersonalNumber());
 
             if (driverWithSamePersonalNumber != null) {
-                throw new LogiwebValidationException("Driver with this personal number #" + newDriver.getPersonalNumber()
+                throw new LogiwebValidationException("Driver with this personal number #" + driverFromForm.getPersonalNumber()
                         + " is already exist.");
             }
 
-            driverDAO.create(newDriver);
-            entityManager.getTransaction().commit();
+            Driver newDriverEntity = new Driver();
+            createEntityDriverFromModelAttribute(newDriverEntity, driverFromForm);
+            newDriverEntity.setLogiwebDriverAccount(accountForDriver);
+            newDriverEntity.setDriverStatus(DriverStatus.FREE);
 
-            LOGGER.info("Driver created: " + newDriver.getFirstName() + " " + newDriver.getLastName()
-                    + " personal number #" + newDriver.getPersonalNumber() + " , ID: " + newDriver.getDriverId());
+            driverDAO.create(newDriverEntity);
+
+            LOGGER.info("Driver created: " + newDriverEntity.getFirstName() + " " + newDriverEntity.getLastName()
+                    + " personal number #" + newDriverEntity.getPersonalNumber() + " , ID: " + newDriverEntity.getDriverId());
+
+            return newDriverEntity.getDriverId();
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in DriverServiceImpl - addNewDriver().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
+    }
 
-        return newDriver;
+    private Driver createEntityDriverFromModelAttribute(Driver driver, ModelAttributeDriver modelAttributeDriver) {
+        City city = new City();
+        city.setCityId(modelAttributeDriver.getCurrentCityFK());
+
+        driver.setCurrentCityFK(city);
+        driver.setPersonalNumber(modelAttributeDriver.getPersonalNumber());
+        driver.setFirstName(modelAttributeDriver.getFirstName());
+        driver.setLastName(modelAttributeDriver.getLastName());
+
+        return driver;
     }
 
     @Override
@@ -128,11 +143,10 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException {
-        Integer workingHoursResult;
-
+    public Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException { //
         try {
-            List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDriver(driverId);
+            Driver driver = driverDAO.findById(driverId);
+            List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDrivers(driver);
             Map<Driver, Integer> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
 
             //if driver don't have any records yet
@@ -140,18 +154,12 @@ public class DriverServiceImpl implements DriverService {
                 workingHours.put(driver, 0);
             }
 
-            workingHoursResult = workingHours.get(driver);
+            return workingHours.get(driver);
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in DriverServiceImpl - calculateWorkingHoursForDriver().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return workingHoursResult;
     }
 
     //***
@@ -160,7 +168,7 @@ public class DriverServiceImpl implements DriverService {
 
     }
 
-    /**
+    /** //
      * Find drivers.
      *
      * @return empty list if nothing found.
@@ -168,7 +176,7 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public List<Driver> findAllDrivers() throws LogiwebServiceException {
+    public List<Driver> findAllDrivers() throws LogiwebServiceException { //
         try {
             return driverDAO.findAll();
 
@@ -205,7 +213,7 @@ public class DriverServiceImpl implements DriverService {
 
         try {
             entityManager.getTransaction().begin();
-            driverShiftRecords = driverShiftDAO.findThisMonthRecordsForDriver(driver);
+            driverShiftRecords = driverShiftDAO.findThisMonthRecordsForDrivers(driver);
             entityManager.getTransaction().commit();
 
         } catch (LogiwebDAOException e) {
@@ -258,7 +266,7 @@ public class DriverServiceImpl implements DriverService {
             if (driver == null) {
                 throw new LogiwebValidationException("Provide valid driver employee id.");
             }
-            if (driver.getDriverStatus() != DriverStatus.REST) {
+            if (driver.getDriverStatus() != DriverStatus.FREE) {
                 throw new LogiwebValidationException("Driver must be free to start new shift.");
             }
 
@@ -314,8 +322,14 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
-    private Map<Driver, Integer> sumWorkingHoursForThisMonth(Collection<DriverShift> shiftRecords) {
-        Map<Driver, Integer> workingHoursForDrivers = new HashMap<Driver, Integer>();
+    /**
+     * Calculate total working hours for drivers that are listed in shift records.
+     *
+     * @param shiftRecords
+     * @return Map with driver as keys and working hours as values.
+     */
+    private Map<Driver, Integer> sumWorkingHoursForThisMonth(Collection<DriverShift> shiftRecords) { //
+        Map<Driver, Integer> workingHoursForDrivers = new HashMap<>();
 
         Date firstDayOfCurrentMonth = DateUtil.getFirstDateOfCurrentMonth();
         Date firstDayOfNextMonth = DateUtil.getFirstDayOfNextMonth();

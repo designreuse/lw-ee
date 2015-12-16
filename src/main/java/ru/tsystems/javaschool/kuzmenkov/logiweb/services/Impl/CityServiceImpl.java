@@ -1,7 +1,9 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.CityDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
@@ -9,44 +11,31 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceExcepti
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
- * Created by Nikolay on 26.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
-@Service
+@Service("cityService")
 public class CityServiceImpl implements CityService {
 
     private static final Logger LOGGGER = Logger.getLogger(TruckServiceImpl.class);
-
+    @PersistenceContext
     private EntityManager entityManager;
-
+    @Autowired
     private CityDAO cityDAO;
 
-    public CityServiceImpl(EntityManager entityManager, CityDAO cityDAO) {
-        this.entityManager = entityManager;
-        this.cityDAO = cityDAO;
-    }
-
     @Override
-    public List<City> findAllCities() throws LogiwebServiceException {
-        List<City> allCitiesResult;
-
+    @Transactional
+    public List<City> findAllCities() throws LogiwebServiceException { //
         try {
-            entityManager.getTransaction().begin();
-            allCitiesResult = cityDAO.findAll();
-            entityManager.getTransaction().commit();
+            return cityDAO.findAll();
 
         } catch (LogiwebDAOException e) {
             //LOG.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return allCitiesResult;
     }
 
     @Override

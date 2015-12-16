@@ -1,6 +1,8 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.CityDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.FreightDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.OrderDAO;
@@ -19,30 +21,26 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.services.OrderService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
- * Created by Nikolay on 23.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
+@Service("orderService")
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = Logger.getLogger(OrderServiceImpl.class);
-
+    @PersistenceContext
     private EntityManager entityManager;
-
+    @Autowired
     private CityDAO cityDAO;
+    @Autowired
     private FreightDAO freightDAO;
+    @Autowired
     private OrderDAO orderDAO;
+    @Autowired
     private TruckDAO truckDAO;
-
-
-    public OrderServiceImpl(CityDAO cityDAO, FreightDAO freightDAO, OrderDAO orderDAO, TruckDAO truckDAO, EntityManager entityManager) {
-        this.cityDAO = cityDAO;
-        this.freightDAO = freightDAO;
-        this.orderDAO = orderDAO;
-        this.truckDAO = truckDAO;
-        this.entityManager = entityManager;
-    }
 
     @Override
     public List<Order> findAllOrders() throws LogiwebServiceException {
@@ -144,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
             newFreight.setCityToFK(cityTo);
             newFreight.setOrderForThisFreightFK(orderForFreight);
 
-            newFreight.setFreightStatus(FreightStatus.PREPARED);
+            newFreight.setFreightStatus(FreightStatus.WAITING_FOR_PICK_UP);
 
             freightDAO.create(newFreight);
             LOGGER.info("New cargo with id #" + newFreight.getFreightId() + "created for irder id #" + orderForFreight.getOrderId());

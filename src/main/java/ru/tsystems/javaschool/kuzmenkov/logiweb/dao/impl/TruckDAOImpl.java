@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.dao.impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
@@ -15,13 +16,10 @@ import java.util.List;
  *
  * @author Nikolay Kuzmenkov.
  */
+@Repository("truckDAO")
 public class TruckDAOImpl extends AbstractDAOImpl<Truck> implements TruckDAO {
 
     private static final Logger LOGGGER = Logger.getLogger(TruckDAOImpl.class);
-
-    public TruckDAOImpl(Class<Truck> entityClass, EntityManager entityManager) {
-        super(entityClass, entityManager);
-    }
 
     @Override
     public List<Truck> findByMinCapacityWhereStatusOkAndNotAssignedToOrder(Float minCargoCapacity) throws LogiwebDAOException {

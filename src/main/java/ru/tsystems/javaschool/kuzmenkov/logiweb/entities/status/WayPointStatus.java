@@ -5,5 +5,5 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status;
  */
 public enum WayPointStatus {
 
-    PICKUP, DELIVER;
+    PICK_UP, DELIVER;
 }

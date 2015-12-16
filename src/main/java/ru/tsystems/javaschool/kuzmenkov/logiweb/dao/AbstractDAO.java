@@ -28,7 +28,7 @@ public interface AbstractDAO<T> {
      * @return persistent object or null if not found.
      * @throws LogiwebDAOException if failed to find entity by ID.
      */
-    T findById(Integer entityId) throws LogiwebDAOException;
+    T findById(Integer entityId) throws LogiwebDAOException; //
 
     /**
      * Update persistent object.
@@ -50,5 +50,5 @@ public interface AbstractDAO<T> {
      * @return list of objects or empty list.
      * @throws LogiwebDAOException if failed to find all entities.
      */
-    List<T> findAll() throws LogiwebDAOException;
+    List<T> findAll() throws LogiwebDAOException; //
 }

@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface CityService {
 
-    List<City> findAllCities() throws LogiwebServiceException;
+    List<City> findAllCities() throws LogiwebServiceException; //
 
     City findCityById(Integer cityId) throws LogiwebServiceException;
 }

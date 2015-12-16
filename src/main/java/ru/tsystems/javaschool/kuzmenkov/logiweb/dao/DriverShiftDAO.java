@@ -7,6 +7,8 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import java.util.List;
 
 /**
+ * CRUD operations for DriverShift entity.
+ *
  * @author Nikolay Kuzmenkov.
  */
 public interface DriverShiftDAO extends AbstractDAO<DriverShift> {
@@ -24,7 +26,7 @@ public interface DriverShiftDAO extends AbstractDAO<DriverShift> {
      * @return empty set if nothing was found or if empty set of drivers was past as param
      * @throws LogiwebDAOException if something unexpected happened
      */
-    List<DriverShift> findThisMonthRecordsForDrivers(List<Driver> drivers) throws LogiwebDAOException;
+    List<DriverShift> findThisMonthRecordsForDrivers(List<Driver> drivers) throws LogiwebDAOException; //
 
-    List<DriverShift> findThisMonthRecordsForDriver(Driver driver) throws LogiwebDAOException;
+    List<DriverShift> findThisMonthRecordsForDrivers(Driver driver) throws LogiwebDAOException; //
 }

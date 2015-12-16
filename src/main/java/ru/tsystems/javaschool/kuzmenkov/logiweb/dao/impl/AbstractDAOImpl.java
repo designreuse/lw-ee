@@ -67,7 +67,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
      * @throws LogiwebDAOException if failed to find entity by ID.
      */
     @Override
-    public T findById(Integer entityId) throws LogiwebDAOException {
+    public T findById(Integer entityId) throws LogiwebDAOException { //
         try {
              return entityManager.find(getEntityClass(), entityId);
 
@@ -113,14 +113,14 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
         }
     }
 
-    /**
+    /** //
      * Find all objects of that persistent class.
      *
      * @return list of objects or empty list.
      * @throws LogiwebDAOException if failed to find all entities.
      */
     @Override
-    public List<T> findAll() throws LogiwebDAOException {
+    public List<T> findAll() throws LogiwebDAOException { //
         try {
             @SuppressWarnings("unchecked")
             List<T> allEntitiesResult = entityManager.createQuery("SELECT t FROM "

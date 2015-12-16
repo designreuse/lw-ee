@@ -20,7 +20,7 @@ public class CitiesUtil {
     private CityService cityService;
 
     public Model addAllCitiesToModel(Model model) throws LogiwebServiceException {
-        Map<Integer, City> cities = new HashMap<Integer, City>();
+        Map<Integer, City> cities = new HashMap<>();
 
         for (City city : cityService.findAllCities()) {
             cities.put(city.getCityId(), city);

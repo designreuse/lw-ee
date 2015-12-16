@@ -11,34 +11,31 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Created by Nikolay on 22.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
-@Repository
+@Repository("userDAO")
 public class UserDAOImpl extends AbstractDAOImpl<User> implements UserDAO {
 
     @PersistenceContext
     EntityManager entityManager;
 
     @Override
-    public User getUserByEmailAndPassword(String email, String password) throws LogiwebDAOException {
-        List<User> queryResult;
+    public User findUserByEmail(String userEmail) throws LogiwebDAOException {
         try {
-            Query query = getEntityManager().createQuery("SELECT u FROM User u WHERE u.userEmail = :userEmail " +
-                    "AND u.userPassword = :userPassword");
-            query.setParameter("userEmail", email);
-            query.setParameter("userPassword", password);
+            Query query = entityManager.createQuery("SELECT u FROM User u WHERE u.userEmail = :email");
+            query.setParameter("email", userEmail);
 
-            queryResult = query.getResultList();
+            List<User> queryResult = query.getResultList();
 
-            if(queryResult.isEmpty()) {
-                throw new LogiwebDAOException();
+            if(queryResult != null && !queryResult.isEmpty()) {
+                return queryResult.get(0);
+            } else {
+                return null;
             }
 
         } catch (Exception e) {
-            System.out.println("Exception in UserDAOImpl");
+            //LOG.warn(e);
             throw new LogiwebDAOException(e);
         }
-
-        return queryResult.get(0);
     }
 }

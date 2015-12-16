@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Nikolay on 14.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 @Entity
 @Table(name = "shift_records")
@@ -13,23 +13,22 @@ public class DriverShift {
 
     @Id
     @GeneratedValue
-    @Column(name = "driver_shift_id", unique = true)
+    @Column(name = "driver_shift_id", nullable = false, unique = true)
     private Integer driverShiftId;
 
+    @Column(name = "driver_shift_begin", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "driver_shift_begin")
     private Date driverShiftBegin;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "driver_shift_end")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date driverShiftEnd;
 
     @ManyToOne
-    @JoinColumn(name = "driver_for_this_shift_FK")
+    @JoinColumn(name = "driver_for_this_shift_FK", nullable = false)
     private Driver driverForThisShiftFK;
 
     public DriverShift() {
-
     }
 
     public Integer getDriverShiftId() {

@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
@@ -16,6 +17,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.services.TruckService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,21 +26,16 @@ import java.util.List;
  *
  * @author Nikolay Kuzmenkov.
  */
-@Service
+@Service("truckService")
 public class TruckServiceImpl implements TruckService {
 
     private static final Logger LOGGER = Logger.getLogger(TruckServiceImpl.class);
-
+    @PersistenceContext
     private EntityManager entityManager;
-
+    @Autowired
     private DriverDAO driverDAO;
+    @Autowired
     private TruckDAO truckDAO;
-
-    public TruckServiceImpl(DriverDAO driverDAO, TruckDAO truckDAO, EntityManager entityManager) {
-        this.driverDAO = driverDAO;
-        this.truckDAO = truckDAO;
-        this.entityManager = entityManager;
-    }
 
     /**
      * Add new truck.

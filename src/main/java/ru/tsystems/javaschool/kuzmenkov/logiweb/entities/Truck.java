@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
- * Created by Nikolay on 13.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 @Entity
 @Table(name = "trucks")
@@ -14,19 +14,19 @@ public class Truck {
 
     @Id
     @GeneratedValue
-    @Column(name = "truck_id", unique = true)
+    @Column(name = "truck_id", nullable = false, unique = true)
     private Integer truckId;
 
-    @Column(name = "truck_number", unique = true)
+    @Column(name = "truck_number", nullable = false, unique = true)
     private String truckNumber;
 
-    @Column(name = "driver_count")
+    @Column(name = "driver_count", nullable = false)
     private Integer driverCount;
 
-    @Column(name = "capacity")
+    @Column(name = "capacity", nullable = false)
     private Float capacity;
 
-    @Column(name = "truck_status")
+    @Column(name = "truck_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private TruckStatus truckStatus;
 
@@ -34,7 +34,7 @@ public class Truck {
     private List<Driver> driversInTruck;
 
     @ManyToOne
-    @JoinColumn(name = "current_truck_location_FK")
+    @JoinColumn(name = "current_truck_location_FK", nullable = false)
     private City currentCityFK;
 
     @OneToOne
@@ -42,7 +42,6 @@ public class Truck {
     private Order orderForThisTruck;
 
     public Truck() {
-
     }
 
     public Integer getTruckId() {

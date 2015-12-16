@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
+import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
@@ -24,7 +25,7 @@ public interface DriverService {
      * @throws LogiwebValidationException if driver don't have all required fields or have not unique personal number.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    Driver addNewDriver(Driver newDriver) throws LogiwebServiceException, LogiwebValidationException;
+    Integer addNewDriver(ModelAttributeDriver driverFromForm) throws LogiwebServiceException, LogiwebValidationException;
 
     /**
      * Calculate working hours for driver for this month.
@@ -38,7 +39,7 @@ public interface DriverService {
      * @param driverId
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
      */
-    Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException;
+    Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException; //
 
     /**
      * Assign driver to truck.
@@ -62,7 +63,7 @@ public interface DriverService {
      * @return empty list if nothing found.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    List<Driver> findAllDrivers() throws LogiwebServiceException;
+    List<Driver> findAllDrivers() throws LogiwebServiceException; //
 
     /**
      * Find driver by id.

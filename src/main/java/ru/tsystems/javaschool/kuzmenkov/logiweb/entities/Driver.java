@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
- * Created by Nikolay on 13.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 @Entity
 @Table(name = "drivers")
@@ -14,30 +14,30 @@ public class Driver {
 
     @Id
     @GeneratedValue
-    @Column(name = "driver_id", unique = true)
+    @Column(name = "driver_id", nullable = false, unique = true)
     private Integer driverId;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "personal_number", unique = true)
+    @Column(name = "personal_number", nullable = false, unique = true)
     private Integer personalNumber;
 
-    @Column(name = "driver_status")
+    @Column(name = "driver_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private DriverStatus driverStatus;
 
     @Column(name = "working_hours_for_this_mounth")
     private Integer workingHoursThisMonth;
 
-    @OneToMany(mappedBy = "driverForThisShiftFK")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driverForThisShiftFK")
     private List<DriverShift> driverShiftRecords;
 
     @ManyToOne
-    @JoinColumn(name = "current_driver_location_FK")
+    @JoinColumn(name = "current_driver_location_FK", nullable = false)
     private City currentCityFK;
 
     @ManyToOne
@@ -49,7 +49,6 @@ public class Driver {
     private User logiwebDriverAccount;
 
     public Driver() {
-
     }
 
     public Integer getDriverId() {
@@ -122,5 +121,13 @@ public class Driver {
 
     public void setCurrentTruckFK(Truck currentTruckFK) {
         this.currentTruckFK = currentTruckFK;
+    }
+
+    public User getLogiwebDriverAccount() {
+        return logiwebDriverAccount;
+    }
+
+    public void setLogiwebDriverAccount(User logiwebDriverAccount) {
+        this.logiwebDriverAccount = logiwebDriverAccount;
     }
 }
