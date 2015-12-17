@@ -3,6 +3,7 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
@@ -30,6 +31,7 @@ import java.util.List;
 public class TruckServiceImpl implements TruckService {
 
     private static final Logger LOGGER = Logger.getLogger(TruckServiceImpl.class);
+
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -88,25 +90,16 @@ public class TruckServiceImpl implements TruckService {
      * @return list of trucks or empty list if nothing found.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    @Override
+    @Override //
+    @Transactional
     public List<Truck> findAllTrucks() throws LogiwebServiceException {
-        List<Truck> allTrucksResult;
-
         try {
-            entityManager.getTransaction().begin();
-            allTrucksResult = truckDAO.findAll();
-            entityManager.getTransaction().commit();
+            return truckDAO.findAll();
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in TruckServiceImpl - findAllTrucks().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return allTrucksResult;
     }
 
     @Override

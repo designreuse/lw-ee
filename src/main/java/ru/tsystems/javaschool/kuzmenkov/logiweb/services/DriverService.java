@@ -20,12 +20,12 @@ public interface DriverService {
     /**
      * Add new driver.
      *
-     * @param newDriver
+     * @param driverFromForm
      * @return same Driver
      * @throws LogiwebValidationException if driver don't have all required fields or have not unique personal number.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    Integer addNewDriver(ModelAttributeDriver driverFromForm) throws LogiwebServiceException, LogiwebValidationException;
+    Integer addNewDriver(ModelAttributeDriver driverFromForm) throws LogiwebServiceException, LogiwebValidationException; //
 
     /**
      * Calculate working hours for driver for this month.
@@ -57,7 +57,7 @@ public interface DriverService {
      */
     void editDriver(Driver editedDriver) throws LogiwebServiceException;
 
-    /**
+    /** //
      * Find drivers.
      *
      * @return empty list if nothing found.
@@ -78,17 +78,28 @@ public interface DriverService {
      * not trimmed. (Meaning that if record is started in previous month then it
      * will be show 'as is').
      *
-     * @param driver
+     * @param driverId
      * @return shift records or empty set
      * @throws LogiwebServiceException
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    List<DriverShift> findDriverShiftRecordsForThisMonth(Driver driver) throws LogiwebServiceException;
+    List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebServiceException;
 
-    void deleteDriver(Driver deletedDriver) throws LogiwebServiceException, LogiwebValidationException;
+    /**
+     * Delete driver.
+     *
+     * @param driverId
+     * @throws LogiwebValidationException if driver is attached to truck.
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault).
+     */
+    void deleteDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException; //
 
     Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Double maxWorkingHours) throws LogiwebServiceException;
 
     void startShiftForDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException;
+
+    Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException; //
 }

@@ -30,9 +30,6 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverStatus driverStatus;
 
-    @Column(name = "working_hours_for_this_mounth")
-    private Integer workingHoursThisMonth;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driverForThisShiftFK")
     private List<DriverShift> driverShiftRecords;
 
@@ -47,6 +44,11 @@ public class Driver {
     @OneToOne
     @JoinColumn(name = "driver_logiweb_account_id")
     private User logiwebDriverAccount;
+
+    @Transient
+    private OrderRoute orderRouteInfoForThisDriver;
+    @Transient
+    private Integer workingHoursThisMonth;
 
     public Driver() {
     }
@@ -129,5 +131,13 @@ public class Driver {
 
     public void setLogiwebDriverAccount(User logiwebDriverAccount) {
         this.logiwebDriverAccount = logiwebDriverAccount;
+    }
+
+    public OrderRoute getOrderRouteInfoForThisDriver() {
+        return orderRouteInfoForThisDriver;
+    }
+
+    public void setOrderRouteInfoForThisDriver(OrderRoute orderRouteInfoForThisDriver) {
+        this.orderRouteInfoForThisDriver = orderRouteInfoForThisDriver;
     }
 }

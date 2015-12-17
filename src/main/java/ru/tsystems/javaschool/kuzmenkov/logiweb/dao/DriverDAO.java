@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface DriverDAO extends AbstractDAO<Driver> {
 
-    Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException;
+    Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException; //
 
     List<Driver> findByCityWhereNotAssignedToTruck(City city) throws LogiwebDAOException;
 }

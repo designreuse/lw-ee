@@ -30,7 +30,7 @@ public class Truck {
     @Enumerated(EnumType.STRING)
     private TruckStatus truckStatus;
 
-    @OneToMany(mappedBy = "currentTruckFK")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "currentTruckFK")
     private List<Driver> driversInTruck;
 
     @ManyToOne

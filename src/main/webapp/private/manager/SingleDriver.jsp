@@ -4,7 +4,7 @@
 <jsp:include page="/Header.jsp">
     <jsp:param name="title" value="Driver info" />
     <jsp:param value="manager/manager.css" name="css" />
-    <jsp:param value="manager/RemoveDriver.js" name="js" />
+    <jsp:param value="manager/DeleteDriver.js" name="js" />
 </jsp:include>
 
 <jsp:include page="/Menu.jsp">

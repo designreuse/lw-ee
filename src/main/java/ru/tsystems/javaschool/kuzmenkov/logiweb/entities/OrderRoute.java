@@ -7,21 +7,21 @@ import java.util.List;
  */
 public class OrderRoute {
 
-    private double estimatedTime;
-    private Float maxWeightOnCourse;
+    private float estimatedTime;
+    private float maxWeightOnCourse;
     private List<WayPoint> bestOrderOfDelivery;
 
-    public OrderRoute(double estimatedTime, Float maxWeightOnCourse, List<WayPoint> bestOrderOfDelivery) {
+    public OrderRoute(float estimatedTime, float maxWeightOnCourse, List<WayPoint> bestOrderOfDelivery) {
         this.estimatedTime = estimatedTime;
         this.maxWeightOnCourse = maxWeightOnCourse;
         this.bestOrderOfDelivery = bestOrderOfDelivery;
     }
 
-    public double getEstimatedTime() {
+    public float getEstimatedTime() {
         return estimatedTime;
     }
 
-    public Float getMaxWeightOnCourse() {
+    public float getMaxWeightOnCourse() {
         return maxWeightOnCourse;
     }
 

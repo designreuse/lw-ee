@@ -31,7 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, LogiwebValidationException {
+    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, //
+            LogiwebValidationException {
         if (userEmail == null || userEmail.isEmpty()) {
             throw new LogiwebValidationException(
                     "Username can't be empty.");
@@ -62,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User findUserById(Integer userId) throws LogiwebServiceException {
+    public User findUserById(Integer userId) throws LogiwebServiceException { //
         try {
             return userDAO.findById(userId);
 
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private String getMD5Hash(String userPassword) throws LogiwebServiceException {
+    private String getMD5Hash(String userPassword) throws LogiwebServiceException { //
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();

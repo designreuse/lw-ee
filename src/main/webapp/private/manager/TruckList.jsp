@@ -3,7 +3,7 @@
 <jsp:include page="/Header.jsp">
     <jsp:param name="title" value="Trucks List" />
     <jsp:param value="/manager.css" name="css"/>
-    <jsp:param value="/RemoveTruck.js" name="js"/>
+    <jsp:param value="/DeleteTruck.js" name="js"/>
     
 </jsp:include>
 

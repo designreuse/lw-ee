@@ -19,7 +19,7 @@ public interface OrderService {
 
     Order addNewOrder(Order newOrder) throws LogiwebServiceException;
 
-    Order findOrderById(Integer orderId) throws LogiwebServiceException;
+    Order findOrderById(Integer orderId) throws LogiwebServiceException; //
 
     void addNewFreight(Freight newFreight) throws LogiwebServiceException, LogiwebValidationException;
 

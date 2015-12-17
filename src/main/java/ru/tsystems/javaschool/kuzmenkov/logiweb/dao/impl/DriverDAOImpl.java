@@ -26,7 +26,7 @@ public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO 
     EntityManager entityManager;
 
     @Override
-    public Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException{
+    public Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException { //
         try {
             Driver queryResult = null;
             Query query = entityManager.createQuery("SELECT dr FROM Driver dr " +

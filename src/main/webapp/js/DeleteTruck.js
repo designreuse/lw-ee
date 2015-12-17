@@ -1,27 +1,26 @@
 /**
- * Remove driver.
+ * Remove truck.
  * 
  * @param element --
  *            reference to element, that triggered this function (needed to
  *            remove row after succesful truck deletion)
  * @param id -
- *            of the driver
- *
+ *            of the truck
  */
-function removeDriver(element, id) {
-	bootbox.confirm("Delete driver?", function(result) {
+function deleteTruck(element, id) {
+	bootbox.confirm("Delete truck?", function(result) {
 		if (result) {
 			$.ajax({
-				url : "DeleteDriver",
+				url : window.location.pathname + "/" + id + "/delete",
 				type : "POST",
-				data : { driverId: id },
+				dataType : "text",
 				success : function(result) {
 					$(element).closest("tr").fadeOut(1000, function() {
 						$(this).remove();
 					});
 				},
 				error : function(result) {
-					bootbox.alert("Driver is assigned in order and cannt be deleted.");
+					bootbox.alert(result.responseText);
 				}
 			});
 		}

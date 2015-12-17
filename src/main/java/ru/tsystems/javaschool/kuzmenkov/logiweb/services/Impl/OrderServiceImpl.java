@@ -3,6 +3,7 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.CityDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.FreightDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.OrderDAO;
@@ -103,25 +104,16 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Override
+    @Override //
+    @Transactional
     public Order findOrderById(Integer orderId) throws LogiwebServiceException {
-        Order orderResult;
-
         try {
-            entityManager.getTransaction().begin();
-            orderResult = orderDAO.findById(orderId);
-            entityManager.getTransaction().commit();
+            return orderDAO.findById(orderId);
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in OrderServiceImpl - findOrderById().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return orderResult;
     }
 
     @Override

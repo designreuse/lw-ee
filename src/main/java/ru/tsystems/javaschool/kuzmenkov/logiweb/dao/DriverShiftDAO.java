@@ -28,5 +28,5 @@ public interface DriverShiftDAO extends AbstractDAO<DriverShift> {
      */
     List<DriverShift> findThisMonthRecordsForDrivers(List<Driver> drivers) throws LogiwebDAOException; //
 
-    List<DriverShift> findThisMonthRecordsForDrivers(Driver driver) throws LogiwebDAOException; //
+    List<DriverShift> findThisMonthRecordsForDriver(Driver driver) throws LogiwebDAOException; //
 }

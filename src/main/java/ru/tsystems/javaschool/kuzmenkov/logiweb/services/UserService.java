@@ -10,7 +10,8 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
  */
 public interface UserService {
 
-    Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, LogiwebValidationException;
+    Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, //
+            LogiwebValidationException;
 
-    User findUserById(Integer userId) throws LogiwebServiceException;
+    User findUserById(Integer userId) throws LogiwebServiceException; //
 }

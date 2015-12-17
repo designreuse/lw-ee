@@ -57,7 +57,7 @@ public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements 
     }
 
     @Override
-    public List<DriverShift> findThisMonthRecordsForDrivers(Driver driver) throws LogiwebDAOException { //
+    public List<DriverShift> findThisMonthRecordsForDriver(Driver driver) throws LogiwebDAOException { //
         if (driver == null) {
             return new ArrayList<>();
         }
