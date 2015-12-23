@@ -21,7 +21,7 @@ public interface TruckService {
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      * @throws LogiwebValidationException if truck don't have all required fields or not unique truck number.
      */
-    Truck addNewTruck(Truck newTruck) throws LogiwebServiceException, LogiwebValidationException;
+    Integer addNewTruck(Truck newTruck) throws LogiwebServiceException, LogiwebValidationException;
 
     /**
      * Find all trucks.
@@ -31,7 +31,7 @@ public interface TruckService {
      */
     List<Truck> findAllTrucks() throws LogiwebServiceException;
 
-    List<Truck> findFreeAndUnbrokenByCargoCapacity(Float minCargoWeightCapacity) throws LogiwebServiceException;
+    List<Truck> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException;
 
     /**
      * Find truck by truck ID.
@@ -44,7 +44,7 @@ public interface TruckService {
 
     void removeAssignedOrderAndDriversFromTruck(Truck truck) throws LogiwebServiceException, LogiwebValidationException;
 
-    void removeTruck(Truck truckToRemove) throws LogiwebServiceException, LogiwebValidationException;
+    void removeTruck(Integer truckId) throws LogiwebServiceException, LogiwebValidationException; //
 
 
 }

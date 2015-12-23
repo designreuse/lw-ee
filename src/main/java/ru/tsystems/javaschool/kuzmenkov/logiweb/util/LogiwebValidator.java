@@ -69,19 +69,19 @@ public class LogiwebValidator {
     }
 
     public static void validateFreightFormValues(Freight freight) throws LogiwebValidationException {
-        if (StringUtils.isBlank(freight.getDescription())) {
+        if(StringUtils.isBlank(freight.getDescription())) {
             throw new LogiwebValidationException("Freight description can't be blank.");
         }
-        else if (freight.getWeight() <= 0d) {
+        else if(freight.getWeight() <= 0d) {
             throw new LogiwebValidationException("Freight weight must be greater than 0.");
         }
-        else if (freight.getCityFromFK() == null) {
+        else if(freight.getCityFromFK() == null) {
             throw new LogiwebValidationException("Origin city must be specified.");
         }
-        else if (freight.getCityToFK() == null) {
+        else if(freight.getCityToFK() == null) {
             throw new LogiwebValidationException("Desitnation city must be specified.");
         }
-        else if (freight.getOrderForThisFreightFK() == null) {
+        else if(freight.getOrderForThisFreightFK() == null) {
             throw new LogiwebValidationException("Order must be specified.");
         }
     }

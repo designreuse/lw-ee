@@ -7,13 +7,14 @@
 function postFormByAjax(formId) {
 	$.ajax({
 		type : "POST",
-		url : $(formId).attr('action'),
+		url : window.location.pathname + "/" + $(formId).attr('action'),
+		dataType : "text",
 		data : $(formId).serialize(),
-		success : function(response) {
+		success : function(data) {
 			location.reload(true);
 		},
-		error : function(response) {
-			bootbox.alert("Error. Check input data.");
+		error : function(result) {
+			bootbox.alert(result.responseText);
 		}
 	});
 }

@@ -7,11 +7,11 @@
  * @param id -
  *            of the truck
  */
-function deleteTruck(element, id) {
+function deleteTruck(element, truckId) {
 	bootbox.confirm("Delete truck?", function(result) {
 		if (result) {
 			$.ajax({
-				url : window.location.pathname + "/" + id + "/delete",
+				url : window.location.pathname + "/" + truckId + "/delete",
 				type : "POST",
 				dataType : "text",
 				success : function(result) {

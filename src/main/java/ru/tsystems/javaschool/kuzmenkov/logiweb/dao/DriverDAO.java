@@ -15,5 +15,5 @@ public interface DriverDAO extends AbstractDAO<Driver> {
 
     Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException; //
 
-    List<Driver> findByCityWhereNotAssignedToTruck(City city) throws LogiwebDAOException;
+    List<Driver> findByCityWhereNotAssignedToTruck(City city) throws LogiwebDAOException; //
 }

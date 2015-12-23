@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
@@ -32,8 +33,6 @@ public class TruckServiceImpl implements TruckService {
 
     private static final Logger LOGGER = Logger.getLogger(TruckServiceImpl.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
     @Autowired
     private DriverDAO driverDAO;
     @Autowired
@@ -47,41 +46,37 @@ public class TruckServiceImpl implements TruckService {
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      * @throws LogiwebValidationException if truck don't have all required fields or not unique truck number.
      */
-
-    @Override
-    public Truck addNewTruck(Truck newTruck) throws LogiwebServiceException, LogiwebValidationException {
-        LogiwebValidator.validateTruckFormValues(newTruck);
-
-        if (!LogiwebValidator.validateTruckNumber(newTruck.getTruckNumber())) {
-            throw new LogiwebValidationException("Truck number #" + newTruck.getTruckNumber() + " is not valid.");
-        }
-
+    @Override //
+    @Transactional
+    public Integer addNewTruck(Truck newTruck) throws LogiwebServiceException, LogiwebValidationException {
         try {
             newTruck.setTruckStatus(TruckStatus.WORKING);
+            City city = new City();
+            city.setCityId(newTruck.getCurrentCityId());
+            newTruck.setCurrentCityFK(city);
 
-            entityManager.getTransaction().begin();
+            LogiwebValidator.validateTruckFormValues(newTruck);
             Truck truckWithTruckNumber = truckDAO.findTruckByTruckNumber(newTruck.getTruckNumber());
 
             if (truckWithTruckNumber != null) {
-                throw new LogiwebValidationException("Truck with number #" + newTruck.getTruckNumber() + " is already exist.");
+                throw new LogiwebValidationException("Truck with number #" + newTruck.getTruckNumber() +
+                        " is already exist.");
+            }
+
+            if (!LogiwebValidator.validateTruckNumber(newTruck.getTruckNumber())) {
+                throw new LogiwebValidationException("Truck number #" + newTruck.getTruckNumber() + " is not valid.");
             }
 
             truckDAO.create(newTruck);
-            entityManager.getTransaction().commit();
 
             LOGGER.info("Truck created: truck number #" + newTruck.getTruckNumber() + " ID: " + newTruck.getTruckId());
 
+            return newTruck.getTruckId();
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in TruckServiceImpl - addNewTruck().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return newTruck;
     }
 
     /**
@@ -102,25 +97,16 @@ public class TruckServiceImpl implements TruckService {
         }
     }
 
-    @Override
-    public List<Truck> findFreeAndUnbrokenByCargoCapacity(Float minCargoWeightCapacity) throws LogiwebServiceException {
-        List<Truck> freeTrucksResult;
-
+    @Override //
+    @Transactional
+    public List<Truck> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException {
         try {
-            entityManager.getTransaction().begin();
-            freeTrucksResult = truckDAO.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minCargoWeightCapacity);
-            entityManager.getTransaction().commit();
+            return truckDAO.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minFreightWeightCapacity);
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return freeTrucksResult;
     }
 
     /**
@@ -131,34 +117,30 @@ public class TruckServiceImpl implements TruckService {
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
     @Override
+    @Transactional
     public Truck findTruckById(Integer truckId) throws LogiwebServiceException {
         Truck truckResult;
 
         try {
-            entityManager.getTransaction().begin();
+
             truckResult = truckDAO.findById(truckId);
-            entityManager.getTransaction().commit();
+
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in TruckServiceImpl - findTruckById().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
         return truckResult;
     }
 
     @Override
+    @Transactional
     public void removeAssignedOrderAndDriversFromTruck(Truck truck) throws LogiwebServiceException, LogiwebValidationException {
         if (truck.getOrderForThisTruck().getOrderStatus() == OrderStatus.READY_TO_GO) {
             throw new LogiwebValidationException("Can't remove truck from READY TO GO order.");
         }
 
         try {
-            entityManager.getTransaction().begin();
 
             Order order = truck.getOrderForThisTruck();
             List<Driver> drivers = truck.getDriversInTruck();
@@ -176,30 +158,22 @@ public class TruckServiceImpl implements TruckService {
                 order.setAssignedTruckFK(null);
             }
 
-            entityManager.getTransaction().commit();
-
             LOGGER.info("Truck id#" + truck.getTruckId() + " and its drivers removed from order.");
 
         } catch (Exception e) {
             LOGGER.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 
-    @Override
-    public void removeTruck(Truck truckToRemove) throws LogiwebValidationException, LogiwebServiceException {
-        Integer truckToRemoveId = truckToRemove.getTruckId();
-
+    @Override //
+    @Transactional
+    public void removeTruck(Integer truckId) throws LogiwebValidationException, LogiwebServiceException {
         try {
-            entityManager.getTransaction().begin();
-            truckToRemove = truckDAO.findById(truckToRemove.getTruckId());
+            Truck truckToRemove = truckDAO.findById(truckId);
 
             if (truckToRemove == null) {
-                throw new LogiwebValidationException("Truck " + truckToRemoveId + " not exist. Deletion forbiden.");
+                throw new LogiwebValidationException("Truck " + truckId + " not exist. Deletion forbiden.");
             }
             else if (truckToRemove.getOrderForThisTruck() != null) {
                 throw new LogiwebValidationException("Truck is assigned to order. Deletion forbiden.");
@@ -209,17 +183,12 @@ public class TruckServiceImpl implements TruckService {
             }
 
             truckDAO.delete(truckToRemove);
-            entityManager.getTransaction().commit();
 
             LOGGER.info("Truck removed. Plate " + truckToRemove.getTruckNumber() + " ID: " + truckToRemove.getTruckId());
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 }

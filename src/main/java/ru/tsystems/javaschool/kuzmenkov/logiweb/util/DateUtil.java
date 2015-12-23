@@ -22,9 +22,9 @@ public class DateUtil {
      * @param laterDate
      * @return time in hours
      */
-    public static int diffInHours(Date earlierDate, Date laterDate) {
+    public static float diffInHours(Date earlierDate, Date laterDate) {
         long resultMills = laterDate.getTime() - earlierDate.getTime();
-        int resultHours = (int) resultMills / 1000 / 60 / 60;
+        float resultHours = (int) resultMills / 1000 / 60 / 60;
 
         return resultHours;
     }
@@ -39,11 +39,21 @@ public class DateUtil {
     
     /**
      * Get first day of next month with 00:00:00 on the clock.
+     *
      * @param
      * @return
      */
     public static Date getFirstDayOfNextMonth() {
         return getFirstDayOfCurrentOrNextMonth(true);
+    }
+
+    /**
+     * Calculate difference between current time and first second of next month.
+     *
+     * @return hours in float
+     */
+    public static float getHoursUntilEndOfMonth() {
+        return diffInHours(new Date(), getFirstDayOfNextMonth());
     }
 
     private static Date getFirstDayOfCurrentOrNextMonth(boolean nextMonth) {
@@ -55,7 +65,7 @@ public class DateUtil {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         
-        if (nextMonth) {
+        if(nextMonth) {
             calendar.add(Calendar.MONTH, 1); //add one month
         }
         

@@ -15,15 +15,11 @@ public interface OrderService {
 
     List<Order> findAllOrders() throws LogiwebServiceException;
 
-    List<Freight> findAllFreights() throws LogiwebServiceException;
-
-    Order addNewOrder(Order newOrder) throws LogiwebServiceException;
+    Integer addNewOrder() throws LogiwebServiceException;
 
     Order findOrderById(Integer orderId) throws LogiwebServiceException; //
 
-    void addNewFreight(Freight newFreight) throws LogiwebServiceException, LogiwebValidationException;
-
-    void assignTruckToOrder(Truck assignedTruck, Integer orderId) throws LogiwebServiceException, LogiwebValidationException;
+    void assignTruckToOrder(Integer assignedTruckId, Integer orderId) throws LogiwebServiceException, LogiwebValidationException;
 
     void setReadyStatusForOrder(Order order) throws LogiwebServiceException, LogiwebValidationException;
 }

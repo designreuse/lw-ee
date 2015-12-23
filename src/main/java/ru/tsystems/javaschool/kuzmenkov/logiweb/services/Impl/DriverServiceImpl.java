@@ -33,9 +33,6 @@ public class DriverServiceImpl implements DriverService {
 
     private static final Logger LOGGER = Logger.getLogger(DriverServiceImpl.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private FreightService freightService;
     @Autowired
@@ -101,9 +98,10 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    @Transactional
     public void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebServiceException, LogiwebValidationException {
         try {
-            entityManager.getTransaction().begin();
+
             Driver driver = driverDAO.findById(driverId);
             Truck truck = truckDAO.findById(truckId);
 
@@ -125,15 +123,11 @@ public class DriverServiceImpl implements DriverService {
             }
 
             driverDAO.update(driver);
-            entityManager.getTransaction().commit();
+
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn(e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 
@@ -151,15 +145,15 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException { //
+    public Float calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException { //
         try {
             Driver driver = driverDAO.findById(driverId);
             List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDriver(driver);
-            Map<Driver, Integer> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
+            Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
 
             //if driver don't have any records yet
             if (workingHours.get(driver) == null) {
-                workingHours.put(driver, 0);
+                workingHours.put(driver, 0f);
             }
 
             return workingHours.get(driver);
@@ -252,9 +246,10 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    @Transactional
     public void startShiftForDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException {
         try {
-            entityManager.getTransaction().begin();
+
             Driver driver = driverDAO.findById(driverId);
             if (driver == null) {
                 throw new LogiwebValidationException("Provide valid driver employee id.");
@@ -271,15 +266,11 @@ public class DriverServiceImpl implements DriverService {
 
             driver.setDriverStatus(DriverStatus.DRIVING);
             driverDAO.update(driver);
-            entityManager.getTransaction().commit();
+
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn(e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 
@@ -312,20 +303,18 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Double maxWorkingHours) throws LogiwebServiceException {
+    @Transactional //
+    public Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Float maxWorkingHours)
+            throws LogiwebServiceException {
         try {
-            entityManager.getTransaction().begin();
-
             List<Driver> freeDriversInCity = driverDAO.findByCityWhereNotAssignedToTruck(city);
             List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDrivers(freeDriversInCity);
 
-            entityManager.getTransaction().commit();
-
-            Map<Driver, Integer> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
+            Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
 
             for (Driver driver : freeDriversInCity) {   //add drivers that don't yet have journals
                 if(workingHours.get(driver) == null) {
-                    workingHours.put(driver, 0);
+                    workingHours.put(driver, 0f);
                 }
             }
 
@@ -336,21 +325,18 @@ public class DriverServiceImpl implements DriverService {
         } catch (LogiwebDAOException e) {
             LOGGER.warn(e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 
-    /**
+    /** //
+     *
      * Calculate total working hours for drivers that are listed in shift records.
      *
      * @param shiftRecords
      * @return Map with driver as keys and working hours as values.
      */
-    private Map<Driver, Integer> sumWorkingHoursForThisMonth(Collection<DriverShift> shiftRecords) { //
-        Map<Driver, Integer> workingHoursForDrivers = new HashMap<>();
+    private Map<Driver, Float> sumWorkingHoursForThisMonth(Collection<DriverShift> shiftRecords) {
+        Map<Driver, Float> workingHoursForDrivers = new HashMap<>();
 
         Date firstDayOfCurrentMonth = DateUtil.getFirstDateOfCurrentMonth();
         Date firstDayOfNextMonth = DateUtil.getFirstDayOfNextMonth();
@@ -376,8 +362,8 @@ public class DriverServiceImpl implements DriverService {
                 shiftEnded = firstDayOfNextMonth;
             }
 
-            Integer shiftDuration = DateUtil.diffInHours(shiftBeggined, shiftEnded);
-            Integer totalHoursForDriver = workingHoursForDrivers.get(driver);
+            Float shiftDuration = DateUtil.diffInHours(shiftBeggined, shiftEnded);
+            Float totalHoursForDriver = workingHoursForDrivers.get(driver);
 
             if(totalHoursForDriver == null) {
                 workingHoursForDrivers.put(driver, shiftDuration);
@@ -389,10 +375,21 @@ public class DriverServiceImpl implements DriverService {
         return workingHoursForDrivers;
     }
 
-    private void filterDriversByMaxWorkingHours(Map<Driver, Integer> workingHoursToFilter, Double maxWorkingHours) {
-        for (Map.Entry<Driver, Integer> entry : workingHoursToFilter.entrySet()) {
-            if (entry.getValue() > maxWorkingHours) {
-                workingHoursToFilter.remove(entry.getKey());
+    /**
+     * Filter Map of working hours records.
+     * Delete entry if limit of hours is exceeded.
+     *
+     * @param workingHoursToFilter
+     * @param maxWorkingHours
+     */
+    private void filterDriversByMaxWorkingHours(Map<Driver, Float> workingHoursToFilter, Float maxWorkingHours) {
+        Iterator<Map.Entry<Driver, Float>> it = workingHoursToFilter.entrySet().iterator();
+
+        while(it.hasNext()) {
+            Map.Entry<Driver, Float> entry = it.next();
+
+            if(entry.getValue() > maxWorkingHours) {
+                it.remove();
             }
         }
     }

@@ -4,6 +4,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -24,8 +25,8 @@ public class Order {
     @OneToOne(mappedBy = "orderForThisTruck")
     private Truck assignedTruckFK;
 
-    @OneToMany(mappedBy = "orderForThisFreightFK")
-    private List<Freight> orderLines;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "orderForThisFreightFK")
+    private Set<Freight> orderLines;
 
     public Order() {
     }
@@ -54,11 +55,11 @@ public class Order {
         this.assignedTruckFK = assignedTruckFK;
     }
 
-    public List<Freight> getOrderLines() {
+    public Set<Freight> getOrderLines() {
         return orderLines;
     }
 
-    public void setOrderLines(List<Freight> orderLines) {
+    public void setOrderLines(Set<Freight> orderLines) {
         this.orderLines = orderLines;
     }
 }

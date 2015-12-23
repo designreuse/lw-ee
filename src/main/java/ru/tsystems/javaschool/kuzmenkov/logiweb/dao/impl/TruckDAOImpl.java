@@ -7,7 +7,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -19,51 +18,45 @@ import java.util.List;
 @Repository("truckDAO")
 public class TruckDAOImpl extends AbstractDAOImpl<Truck> implements TruckDAO {
 
-    private static final Logger LOGGGER = Logger.getLogger(TruckDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(TruckDAOImpl.class);
 
-    @Override
+    @Override //
     public List<Truck> findByMinCapacityWhereStatusOkAndNotAssignedToOrder(Float minCargoCapacity) throws LogiwebDAOException {
-        List<Truck> queryResult;
-
         try {
-            EntityManager entityManager = getEntityManager();
-
-            Query query = entityManager.createQuery("SELECT tr FROM Truck tr WHERE tr.truckStatus = :status  " +
+            Query query = getEntityManager().createQuery("SELECT tr FROM Truck tr WHERE tr.truckStatus = :status  " +
                     "AND tr.orderForThisTruck IS NULL AND tr.capacity >= :capacity", Truck.class);
             query.setParameter("status", TruckStatus.WORKING);
             query.setParameter("capacity", minCargoCapacity);
 
-            queryResult = query.getResultList();
+            @SuppressWarnings("unchecked")
+            List<Truck> queryResult = query.getResultList();
+
             return queryResult;
 
         } catch (Exception e) {
-            LOGGGER.warn("Exception in TruckDAOImpl - findByMinCapacityWhereStatusOkAndNotAssignedToOrder()", e);
+            LOGGER.warn("Exception in TruckDAOImpl - findByMinCapacityWhereStatusOkAndNotAssignedToOrder()", e);
             throw new LogiwebDAOException(e);
         }
-
-        //return queryResult;
     }
 
     @Override
     public Truck findTruckByTruckNumber(String truckNumber) throws LogiwebDAOException {
-        Truck queryResult = null;
-
         try {
-            EntityManager em = getEntityManager();
-
-            Query query = em.createQuery("SELECT t FROM Truck t WHERE t.truckNumber = :truckNumber", Truck.class);
+            Query query = getEntityManager().createQuery("SELECT t FROM Truck t WHERE t.truckNumber = :truckNumber",
+                    Truck.class);
             query.setParameter("truckNumber", truckNumber);
+            @SuppressWarnings("unchecked")
             List<Truck> resultList = query.getResultList();
 
-            if(!resultList.isEmpty()) {
-                queryResult = resultList.get(0);
+            if(resultList.isEmpty()) {
+                return null;
+            } else {
+                return resultList.get(0);
             }
 
-        } catch (Exception e) {
-            LOGGGER.warn("Exception in TruckDAOImpl - findTruckByTruckNumber().", e);
+        } catch(Exception e) {
+            LOGGER.warn("Exception in TruckDAOImpl - findTruckByTruckNumber().", e);
             throw new LogiwebDAOException(e);
         }
-
-        return queryResult;
     }
 }

@@ -61,12 +61,9 @@ public class DriverController {
     }
 
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
-    public String addNewDriver(
-            @ModelAttribute("driverFromForm") @Valid ModelAttributeDriver driverFromForm,
-            BindingResult result, Model model) throws LogiwebServiceException {
-
+    public String addNewDriver(@ModelAttribute("driverFromForm") @Valid ModelAttributeDriver driverFromForm,
+                               BindingResult result, Model model) throws LogiwebServiceException {
         if (result.hasErrors()) {
-
             model.addAttribute("driverModel", driverFromForm);
             citiesUtil.addAllCitiesToModel(model);
             model.addAttribute("formAction", "new");
@@ -98,6 +95,7 @@ public class DriverController {
             throws LogiwebServiceException {
         try {
             driverService.deleteDriver(driverId);
+
             return "Driver deleted";
 
         } catch (LogiwebValidationException e) {
@@ -129,5 +127,22 @@ public class DriverController {
         model.addAttribute("cities", cityService.findAllCities());
 
         return "driver/SingleDriver";
+    }
+
+    @RequestMapping(value = "order/{orderId}/edit/addDriverToTruck", method = RequestMethod.POST)
+    @ResponseBody
+    public String addDriverToTruck(@RequestParam("driversIds") Integer[] driversIds, @RequestParam("truckId") Integer truckId,
+                                   HttpServletResponse response) throws LogiwebServiceException {
+        try {
+            for (Integer driverId : driversIds) {
+                driverService.assignDriverToTruck(driverId, truckId);
+            }
+
+            return "Drivers are added to truck";
+
+        } catch (LogiwebValidationException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return e.getMessage();
+        }
     }
 }

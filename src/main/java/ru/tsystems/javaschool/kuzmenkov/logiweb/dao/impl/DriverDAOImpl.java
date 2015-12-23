@@ -22,14 +22,11 @@ public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO 
 
     private static final Logger LOGGER = Logger.getLogger(DriverDAOImpl.class);
 
-    @PersistenceContext
-    EntityManager entityManager;
-
-    @Override
-    public Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException { //
+    @Override //
+    public Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException {
         try {
             Driver queryResult = null;
-            Query query = entityManager.createQuery("SELECT dr FROM Driver dr " +
+            Query query = getEntityManager().createQuery("SELECT dr FROM Driver dr " +
                     "WHERE dr.personalNumber = :driverPersonalNumber", Driver.class);
             query.setParameter("driverPersonalNumber", driverPersonalNumber);
             @SuppressWarnings("unchecked")
@@ -47,22 +44,21 @@ public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO 
         }
     }
 
-    @Override
+    @Override //
     public List<Driver> findByCityWhereNotAssignedToTruck(City city) throws LogiwebDAOException {
-        List<Driver> queryResult;
-
         try {
-            Query query = entityManager.createQuery("SELECT dr FROM Driver dr WHERE dr.currentTruckFK IS NULL"
+            Query query = getEntityManager().createQuery("SELECT dr FROM Driver dr WHERE dr.currentTruckFK IS NULL"
                     + " AND dr.currentCityFK = :city", Driver.class);
             query.setParameter("city", city);
 
-            queryResult = query.getResultList();
+            @SuppressWarnings("unchecked")
+            List<Driver> queryResult = query.getResultList();
+
+            return queryResult;
 
         } catch (Exception e) {
             LOGGER.warn(e);
             throw new LogiwebDAOException(e);
         }
-
-        return queryResult;
     }
 }

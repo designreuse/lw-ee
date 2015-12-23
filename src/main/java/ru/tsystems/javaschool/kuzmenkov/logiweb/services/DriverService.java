@@ -39,7 +39,7 @@ public interface DriverService {
      * @param driverId
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
      */
-    Integer calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException; //
+    Float calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException; //
 
     /**
      * Assign driver to truck.
@@ -97,7 +97,8 @@ public interface DriverService {
      */
     void deleteDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException; //
 
-    Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Double maxWorkingHours) throws LogiwebServiceException;
+    Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Float maxWorkingHours)
+            throws LogiwebServiceException; //
 
     void startShiftForDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException;
 

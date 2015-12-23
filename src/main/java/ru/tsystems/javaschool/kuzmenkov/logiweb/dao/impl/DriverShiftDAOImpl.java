@@ -22,9 +22,6 @@ import java.util.List;
 @Repository("driverShiftDAO")
 public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements DriverShiftDAO {
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Override
     public List<DriverShift> findThisMonthRecordsForDrivers(List<Driver> drivers) throws LogiwebDAOException { //
         if(drivers == null || drivers.isEmpty()) {
@@ -39,7 +36,7 @@ public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements 
                     + " AND ((driverShiftEnd BETWEEN :firstDayOfMonth AND :firstDayOfNextMonth)"
                     + " OR (ds.driverShiftBegin BETWEEN :firstDayOfMonth AND :firstDayOfNextMonth))";
 
-            Query query = entityManager.createQuery(queryString, DriverShift.class)
+            Query query = getEntityManager().createQuery(queryString, DriverShift.class)
                     .setHint("org.hibernate.cacheable", false);     //fix for strange behavior of hiber
             query.setParameter("drivers", drivers);
             query.setParameter("firstDayOfMonth", firstDateOfCurrentMonth);

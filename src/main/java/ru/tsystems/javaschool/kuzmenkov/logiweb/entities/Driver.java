@@ -30,7 +30,7 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverStatus driverStatus;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driverForThisShiftFK")
+    @OneToMany(fetch = FetchType.LAZY ,mappedBy = "driverForThisShiftFK")
     private List<DriverShift> driverShiftRecords;
 
     @ManyToOne
@@ -48,7 +48,7 @@ public class Driver {
     @Transient
     private OrderRoute orderRouteInfoForThisDriver;
     @Transient
-    private Integer workingHoursThisMonth;
+    private Float workingHoursThisMonth;
 
     public Driver() {
     }
@@ -93,11 +93,11 @@ public class Driver {
         this.driverStatus = driverStatus;
     }
 
-    public Integer getWorkingHoursThisMonth() {
+    public Float getWorkingHoursThisMonth() {
         return workingHoursThisMonth;
     }
 
-    public void setWorkingHoursThisMonth(Integer workingHoursThisMonth) {
+    public void setWorkingHoursThisMonth(Float workingHoursThisMonth) {
         this.workingHoursThisMonth = workingHoursThisMonth;
     }
 

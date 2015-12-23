@@ -37,6 +37,9 @@ public class Truck {
     @JoinColumn(name = "current_truck_location_FK", nullable = false)
     private City currentCityFK;
 
+    @Transient
+    private Integer currentCityId;
+
     @OneToOne
     @JoinColumn(name = "order_for_this_truck_FK")
     private Order orderForThisTruck;
@@ -106,5 +109,13 @@ public class Truck {
 
     public void setOrderForThisTruck(Order orderForThisTruck) {
         this.orderForThisTruck = orderForThisTruck;
+    }
+
+    public Integer getCurrentCityId() {
+        return currentCityId;
+    }
+
+    public void setCurrentCityId(Integer currentCityId) {
+        this.currentCityId = currentCityId;
     }
 }

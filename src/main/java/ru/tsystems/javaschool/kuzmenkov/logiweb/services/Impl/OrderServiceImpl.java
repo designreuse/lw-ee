@@ -43,64 +43,33 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private TruckDAO truckDAO;
 
-    @Override
+    @Override //
+    @Transactional
     public List<Order> findAllOrders() throws LogiwebServiceException {
-        List<Order> allOrdersResult;
-
         try {
-            entityManager.getTransaction().begin();
-            allOrdersResult = orderDAO.findAll();
-            entityManager.getTransaction().commit();
-
-            return allOrdersResult;
+            return orderDAO.findAll();
 
         } catch(LogiwebDAOException e) {
             System.out.println("Exception in OrderServiceImpl");
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 
-    @Override
-    public List<Freight> findAllFreights() throws LogiwebServiceException {
-        List<Freight> allFreightsResult;
-
+    @Override //
+    @Transactional
+    public Integer addNewOrder() throws LogiwebServiceException {
         try {
-            entityManager.getTransaction().begin();
-            allFreightsResult = freightDAO.findAll();
-            entityManager.getTransaction().rollback();
-
-            return allFreightsResult;
-
-        } catch(LogiwebDAOException e) {
-            System.out.println("Exception in OrderServiceImpl");
-            throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
-        }
-    }
-
-    @Override
-    public Order addNewOrder(Order newOrder) throws LogiwebServiceException {
-        try {
-            entityManager.getTransaction().begin();
+            Order newOrder = new Order();
+            newOrder.setOrderStatus(OrderStatus.CREATED);
             orderDAO.create(newOrder);
-            entityManager.getTransaction().commit();
 
-            return newOrder;
+            LOGGER.info("Order created. ID#" + newOrder.getOrderId());
+
+            return newOrder.getOrderId();
 
         } catch(LogiwebDAOException e) {
             System.out.println("Exception in OrderServiceImpl");
             throw new LogiwebServiceException(e);
-        } finally {
-            if(entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 
@@ -108,7 +77,14 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order findOrderById(Integer orderId) throws LogiwebServiceException {
         try {
-            return orderDAO.findById(orderId);
+            Order order = orderDAO.findById(orderId);
+
+            if (order == null) {
+                return null;
+            }
+            else {
+                return order;
+            }
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in OrderServiceImpl - findOrderById().", e);
@@ -117,51 +93,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addNewFreight(Freight newFreight) throws LogiwebServiceException,LogiwebValidationException {
-        LogiwebValidator.validateFreightFormValues(newFreight);
-
-        try {
-            entityManager.getTransaction().begin();
-
-            //get managed entities
-            City cityFrom = cityDAO.findById(newFreight.getCityFromFK().getCityId());
-            City cityTo = cityDAO.findById(newFreight.getCityToFK().getCityId());
-
-            Order orderForFreight = orderDAO.findById(newFreight.getOrderForThisFreightFK().getOrderId());
-
-            //switch detached entities in cargo to managed ones
-            newFreight.setCityFromFK(cityFrom);
-            newFreight.setCityToFK(cityTo);
-            newFreight.setOrderForThisFreightFK(orderForFreight);
-
-            newFreight.setFreightStatus(FreightStatus.WAITING_FOR_PICK_UP);
-
-            freightDAO.create(newFreight);
-            LOGGER.info("New cargo with id #" + newFreight.getFreightId() + "created for irder id #" + orderForFreight.getOrderId());
-            entityManager.refresh(newFreight.getOrderForThisFreightFK());
-            entityManager.getTransaction().commit();
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Something unexpected happend.", e);
-            throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
-        }
-    }
-
-    @Override
-    public void assignTruckToOrder(Truck assignedTruck, Integer orderId) throws LogiwebServiceException,
+    @Transactional
+    public void assignTruckToOrder(Integer assignedTruckId, Integer orderId) throws LogiwebServiceException,
             LogiwebValidationException {
-
         try {
-            if(assignedTruck == null) {
-                throw new LogiwebValidationException("Selected truck does not exist.");
-            }
-
-            entityManager.getTransaction().begin();
-            assignedTruck = truckDAO.findById(assignedTruck.getTruckId());
+            Truck assignedTruck = truckDAO.findById(assignedTruckId);
 
             if(assignedTruck == null) {
                 throw new LogiwebValidationException("Selected truck does not exist.");
@@ -190,17 +126,11 @@ public class OrderServiceImpl implements OrderService {
             orderDAO.update(orderForTruck);
             truckDAO.update(assignedTruck);
 
-            System.out.println("Truck with ID" + assignedTruck.getTruckId() + " assign to order " + orderForTruck.getOrderId());
-
-            entityManager.getTransaction().commit();
+            LOGGER.info("Truck with ID" + assignedTruck.getTruckId() + " assign to order " + orderForTruck.getOrderId());
 
         } catch(LogiwebDAOException e) {
             System.out.println("Exception in OrderServiceImpl");
             throw new LogiwebServiceException(e);
-        } finally {
-            if(entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 
