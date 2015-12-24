@@ -97,11 +97,10 @@ public class DriverServiceImpl implements DriverService {
         return driver;
     }
 
-    @Override
+    @Override //
     @Transactional
     public void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebServiceException, LogiwebValidationException {
         try {
-
             Driver driver = driverDAO.findById(driverId);
             Truck truck = truckDAO.findById(truckId);
 
@@ -109,10 +108,10 @@ public class DriverServiceImpl implements DriverService {
                 throw new LogiwebValidationException("Driver and truck must exist.");
             }
 
-            List<Driver> driverCountInTruck = truck.getDriversInTruck();
+            Set<Driver> driverCountInTruck = truck.getDriversInTruck();
 
             if(driverCountInTruck == null) {
-                driverCountInTruck = new ArrayList<>();
+                driverCountInTruck = new HashSet<>();
             }
 
             if(driverCountInTruck.size() < truck.getDriverCount()) {
@@ -123,7 +122,6 @@ public class DriverServiceImpl implements DriverService {
             }
 
             driverDAO.update(driver);
-
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn(e);
@@ -247,15 +245,22 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public void startShiftForDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException {
+    public void startShiftForDriver(Integer driverNumber) throws LogiwebServiceException, LogiwebValidationException {
         try {
+            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
 
-            Driver driver = driverDAO.findById(driverId);
             if (driver == null) {
-                throw new LogiwebValidationException("Provide valid driver employee id.");
+                throw new LogiwebValidationException("Provide valid driver personal number.");
             }
+
             if (driver.getDriverStatus() != DriverStatus.FREE) {
                 throw new LogiwebValidationException("Driver must be free to start new shift.");
+            }
+
+            DriverShift unfinishedShift = driverShiftDAO.findUnfinishedShiftForDriver(driver);
+
+            if (unfinishedShift != null) {
+                throw new LogiwebValidationException("Finish existing shift before creating new one.");
             }
 
             DriverShift newShift = new DriverShift();
@@ -264,11 +269,10 @@ public class DriverServiceImpl implements DriverService {
 
             driverShiftDAO.create(newShift);
 
-            driver.setDriverStatus(DriverStatus.DRIVING);
+            driver.setDriverStatus(DriverStatus.REST_IN_SHIFT);
             driverDAO.update(driver);
 
-
-        } catch (LogiwebDAOException e) {
+        } catch(LogiwebDAOException e) {
             LOGGER.warn(e);
             throw new LogiwebServiceException(e);
         }

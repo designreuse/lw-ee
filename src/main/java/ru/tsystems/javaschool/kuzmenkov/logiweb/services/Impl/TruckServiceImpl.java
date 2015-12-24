@@ -10,6 +10,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
@@ -21,7 +22,9 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Business logic related to trucks (implementation).
@@ -133,34 +136,44 @@ public class TruckServiceImpl implements TruckService {
         return truckResult;
     }
 
-    @Override
+    @Override //
     @Transactional
-    public void removeAssignedOrderAndDriversFromTruck(Truck truck) throws LogiwebServiceException, LogiwebValidationException {
-        if (truck.getOrderForThisTruck().getOrderStatus() == OrderStatus.READY_TO_GO) {
-            throw new LogiwebValidationException("Can't remove truck from READY TO GO order.");
-        }
-
+    public void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException,
+            LogiwebValidationException {
         try {
+            Truck truck = truckDAO.findById(truckId);
 
-            Order order = truck.getOrderForThisTruck();
-            List<Driver> drivers = truck.getDriversInTruck();
+            if(truck == null) {
+                throw new LogiwebValidationException("Truck not found.");
+            }
+
+            if(truck.getOrderForThisTruck() == null) {
+                throw new LogiwebValidationException("Order is not assigned.");
+            }
+
+            if(truck.getOrderForThisTruck().getOrderStatus() == OrderStatus.READY_TO_GO) {
+                throw new LogiwebValidationException("Can't remove truck from READY TO GO order.");
+            }
+
+            Order orderForTruck = truck.getOrderForThisTruck();
+            Set<Driver> driversInTruck = truck.getDriversInTruck();
+
             truck.setOrderForThisTruck(null);
-            truck.setDriversInTruck(new ArrayList<Driver>());
+            truck.setDriversInTruck(new HashSet<>());
+
+            for (Driver driver : driversInTruck) {
+                driver.setCurrentTruckFK(null);
+                driver.setDriverStatus(DriverStatus.FREE);
+            }
+
+            if(orderForTruck != null) {
+                orderForTruck.setAssignedTruckFK(null);
+            }
 
             truckDAO.update(truck);
-
-            for(Driver driver : drivers) {
-                driver.setCurrentTruckFK(null);
-                driverDAO.update(driver);
-            }
-
-            if(order != null) {
-                order.setAssignedTruckFK(null);
-            }
-
             LOGGER.info("Truck id#" + truck.getTruckId() + " and its drivers removed from order.");
 
-        } catch (Exception e) {
+        } catch (LogiwebDAOException e) {
             LOGGER.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
         }

@@ -64,4 +64,32 @@ public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements 
 
         return findThisMonthRecordsForDrivers(drivers);
     }
+
+    @Override
+    public DriverShift findUnfinishedShiftForDriver(Driver driver) throws LogiwebDAOException {
+        try {
+            String queryString = "SELECT ds FROM DriverShift ds WHERE driverForThisShiftFK = :driver " +
+                    "AND driverShiftEnd IS NULL";
+
+            Query query = getEntityManager().createQuery(queryString, DriverShift.class);
+            query.setParameter("driver", driver);
+
+            /*
+             * type List needs unchecked conversion to conform to
+             * List<DriverShiftJournal>
+             */
+            @SuppressWarnings("unchecked")
+            List<DriverShift> queryResult = query.getResultList();
+
+            if (queryResult.isEmpty()) {
+                return null;
+            } else {
+                return queryResult.get(0);
+            }
+
+        } catch(Exception e) {
+            //LOGGER.warn(e);
+            throw new LogiwebDAOException(e);
+        }
+    }
 }

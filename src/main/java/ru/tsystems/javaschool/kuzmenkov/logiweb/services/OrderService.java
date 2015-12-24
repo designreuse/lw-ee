@@ -21,5 +21,5 @@ public interface OrderService {
 
     void assignTruckToOrder(Integer assignedTruckId, Integer orderId) throws LogiwebServiceException, LogiwebValidationException;
 
-    void setReadyStatusForOrder(Order order) throws LogiwebServiceException, LogiwebValidationException;
+    void setReadyStatusForOrder(Integer orderId) throws LogiwebServiceException, LogiwebValidationException;
 }

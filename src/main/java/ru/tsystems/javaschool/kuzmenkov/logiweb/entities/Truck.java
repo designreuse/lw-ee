@@ -4,6 +4,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -31,7 +32,7 @@ public class Truck {
     private TruckStatus truckStatus;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "currentTruckFK")
-    private List<Driver> driversInTruck;
+    private Set<Driver> driversInTruck;
 
     @ManyToOne
     @JoinColumn(name = "current_truck_location_FK", nullable = false)
@@ -87,11 +88,11 @@ public class Truck {
         this.truckStatus = truckStatus;
     }
 
-    public List<Driver> getDriversInTruck() {
+    public Set<Driver> getDriversInTruck() {
         return driversInTruck;
     }
 
-    public void setDriversInTruck(List<Driver> driversInTruck) {
+    public void setDriversInTruck(Set<Driver> driversInTruck) {
         this.driversInTruck = driversInTruck;
     }
 

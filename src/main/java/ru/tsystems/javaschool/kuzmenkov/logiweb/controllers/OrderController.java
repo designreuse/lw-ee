@@ -175,6 +175,54 @@ public class OrderController {
         }
     }
 
+    /**
+     * Remove truck and drivers from this order.
+     *
+     * @param orderId
+     * @return
+     * @throws LogiwebServiceException
+     */
+    @RequestMapping(value = "order/{orderId}/edit/removeDriversAndTruck", method = RequestMethod.POST,
+            produces = "text/plain")
+    @ResponseBody
+    public String removeDriversAndTruckFromOrder(@PathVariable("orderId") Integer orderId, HttpServletResponse response)
+            throws LogiwebServiceException {
+        try {
+            Order order = orderService.findOrderById(orderId);
+            Truck truck = order.getAssignedTruckFK();
+
+            if(truck != null) {
+                truckService.removeAssignedOrderAndDriversFromTruck(truck.getTruckId());
+
+                return "Drivers and Truck relieved from order.";
+
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+                return "Truck is not assigned";
+            }
+
+        } catch (LogiwebValidationException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return e.getMessage();
+        }
+    }
+
+    @RequestMapping(value = "order/{orderId}/edit/setStatusReady", method = RequestMethod.POST, produces = "text/plain")
+    @ResponseBody
+    public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response)
+            throws LogiwebServiceException {
+        try {
+            orderService.setReadyStatusForOrder(orderId);
+
+            return "Status 'READY' is set";
+
+        } catch (LogiwebValidationException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return e.getMessage();
+        }
+    }
+
     private Freight createDetachedFreightFromRequestParams(HttpServletRequest request)
             throws LogiwebValidationException {
         Integer orderId;

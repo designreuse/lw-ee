@@ -42,7 +42,7 @@ public interface TruckService {
      */
     Truck findTruckById(Integer truckId) throws LogiwebServiceException;
 
-    void removeAssignedOrderAndDriversFromTruck(Truck truck) throws LogiwebServiceException, LogiwebValidationException;
+    void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException, LogiwebValidationException;
 
     void removeTruck(Integer truckId) throws LogiwebServiceException, LogiwebValidationException; //
 

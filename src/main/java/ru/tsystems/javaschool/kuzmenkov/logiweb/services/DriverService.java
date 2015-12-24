@@ -49,7 +49,7 @@ public interface DriverService {
      * @throws LogiwebValidationException if truck or diver not exist, or if truck already havefull driver count assigned.
      * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
      */
-    void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebServiceException, LogiwebValidationException;
+    void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebServiceException, LogiwebValidationException; //
 
     /**
      * @param editedDriver
@@ -71,7 +71,7 @@ public interface DriverService {
      * @param driverId
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    Driver findDriverById(Integer driverId) throws LogiwebServiceException;
+    Driver findDriverById(Integer driverId) throws LogiwebServiceException; //
 
     /**
      * Find shift records that are started or ended in this month. Records are
@@ -84,7 +84,7 @@ public interface DriverService {
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebServiceException;
+    List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebServiceException; //
 
     /**
      * Delete driver.
@@ -100,7 +100,18 @@ public interface DriverService {
     Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Float maxWorkingHours)
             throws LogiwebServiceException; //
 
-    void startShiftForDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException;
+    /**
+     * Start new shift and change driver status to Resting en route.
+     *
+     * @param driverNumber
+     * @throws LogiwebValidationException
+     *             if unfinished shift for this driver is exist. Or if driver
+     *             does not exist. Or if driver status is not FREE.
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
+    void startShiftForDriver(Integer driverNumber) throws LogiwebServiceException, LogiwebValidationException; //
 
     Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException; //
 }

@@ -77,14 +77,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order findOrderById(Integer orderId) throws LogiwebServiceException {
         try {
-            Order order = orderDAO.findById(orderId);
-
-            if (order == null) {
-                return null;
-            }
-            else {
-                return order;
-            }
+            return orderDAO.findById(orderId);
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in OrderServiceImpl - findOrderById().", e);
@@ -135,40 +128,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void setReadyStatusForOrder(Order order) throws LogiwebValidationException, LogiwebServiceException {
-        if(order == null) {
-            throw new LogiwebValidationException("Order does not exist.");
-        }
-        if (order.getOrderLines() == null || order.getOrderLines().isEmpty()) {
-            throw new LogiwebValidationException("Order must contain at least 1 cargo.");
-        }
-        else if (order.getAssignedTruckFK() == null) {
-            throw new LogiwebValidationException("Order must have assigned truck.");
-        }
-        else if (order.getAssignedTruckFK().getDriversInTruck() == null || order.getAssignedTruckFK().getDriversInTruck().size()
-                < order.getAssignedTruckFK().getDriverCount()) {
-            throw new LogiwebValidationException("Truck must have full count of drivers. Assign drivers.");
-        }
-        else if (order.getOrderStatus() != OrderStatus.CREATED) {
-            throw new LogiwebValidationException("Order must be in 'CREATED' state.");
-        }
-
+    @Transactional
+    public void setReadyStatusForOrder(Integer orderId) throws LogiwebValidationException, LogiwebServiceException {
         try {
-            entityManager.getTransaction().begin();
+            Order order = orderDAO.findById(orderId);
+
+            if(order == null) {
+                throw new LogiwebValidationException("Order does not exist.");
+            }
+            if (order.getOrderLines() == null || order.getOrderLines().isEmpty()) {
+                throw new LogiwebValidationException("Order must contain at least 1 cargo.");
+            }
+            else if (order.getAssignedTruckFK() == null) {
+                throw new LogiwebValidationException("Order must have assigned truck.");
+            }
+            else if (order.getAssignedTruckFK().getDriversInTruck() == null || order.getAssignedTruckFK().getDriversInTruck().size()
+                    < order.getAssignedTruckFK().getDriverCount()) {
+                throw new LogiwebValidationException("Truck must have full count of drivers. Assign drivers.");
+            }
+            else if (order.getOrderStatus() != OrderStatus.CREATED) {
+                throw new LogiwebValidationException("Order must be in 'CREATED' state.");
+            }
+
             order.setOrderStatus(OrderStatus.READY_TO_GO);
+
             orderDAO.update(order);
-
             LOGGER.info("Order id#" + order.getOrderId() + " changed status to " + OrderStatus.READY_TO_GO);
-
-            entityManager.getTransaction().commit();
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in OrderServiceImpl - setReadyStatusForOrder().", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
     }
 }
