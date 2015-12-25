@@ -278,6 +278,34 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    @Override
+    @Transactional
+    public void endShiftForDriver(Integer driverNumber) throws LogiwebValidationException, LogiwebServiceException {
+        try {
+            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
+
+            if (driver == null) {
+                throw new LogiwebValidationException("Provide valid driver employee id.");
+            }
+
+            DriverShift unfinishedShift = driverShiftDAO.findUnfinishedShiftForDriver(driver);
+
+            if (unfinishedShift == null) {
+                throw new LogiwebValidationException("There is no active shift for this driver.");
+            }
+
+            unfinishedShift.setDriverShiftEnd(new Date());
+            driverShiftDAO.update(unfinishedShift);
+
+            driver.setDriverStatus(DriverStatus.FREE);
+            driverDAO.update(driver);
+
+        } catch(LogiwebDAOException e) {
+            LOGGER.warn(e);
+            throw new LogiwebServiceException(e);
+        }
+    }
+
     @Override //
     @Transactional
     public Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException {

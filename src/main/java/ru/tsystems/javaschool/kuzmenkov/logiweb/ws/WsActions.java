@@ -19,4 +19,13 @@ public interface WsActions {
      *             does not exist. Or if driver status is not FREE.
      */
     void startShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverNumber) throws LogiwebValidationException;
+
+    /**
+     * End shift for driver.
+     *
+     * @param driverNumber
+     * @throws LogiwebValidationException if there is no unfinished shift for this driver. Or if driver
+     *             does not exist.
+     */
+    void endShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverNumber) throws LogiwebValidationException;
 }

@@ -31,4 +31,15 @@ public class WsActionsImpl implements WsActions {
             throw new ServerErrorException(500);
         }
     }
+
+    @Override
+    public void endShiftForDriver(Integer driverNumber) throws LogiwebValidationException {
+        try {
+            driverService.endShiftForDriver(driverNumber);
+
+        } catch (LogiwebServiceException e) {
+            LOGGER.warn("Something unexpected happen", e);
+            throw new ServerErrorException(500);
+        }
+    }
 }

@@ -113,5 +113,18 @@ public interface DriverService {
      */
     void startShiftForDriver(Integer driverNumber) throws LogiwebServiceException, LogiwebValidationException; //
 
+    /**
+     * End shift and change driver status to Free.
+     *
+     * @param driverNumber
+     * @throws LogiwebValidationException
+     *             if there is no unfinished shift for this driver. Or if driver
+     *             does not exist.
+     * @throws LogiwebServiceException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
+    void endShiftForDriver(Integer driverNumber) throws LogiwebValidationException, LogiwebServiceException;
+
     Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException; //
 }
