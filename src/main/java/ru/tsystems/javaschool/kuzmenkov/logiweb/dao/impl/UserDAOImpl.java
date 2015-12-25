@@ -16,13 +16,10 @@ import java.util.List;
 @Repository("userDAO")
 public class UserDAOImpl extends AbstractDAOImpl<User> implements UserDAO {
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Override
     public User findUserByEmail(String userEmail) throws LogiwebDAOException {
         try {
-            Query query = entityManager.createQuery("SELECT u FROM User u WHERE u.userEmail = :email");
+            Query query = getEntityManager().createQuery("SELECT u FROM User u WHERE u.userEmail = :email");
             query.setParameter("email", userEmail);
 
             List<User> queryResult = query.getResultList();

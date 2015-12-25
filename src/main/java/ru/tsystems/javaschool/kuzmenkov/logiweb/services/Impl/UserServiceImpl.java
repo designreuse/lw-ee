@@ -2,6 +2,10 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.UserDAO;
@@ -16,6 +20,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -24,10 +30,26 @@ import java.security.NoSuchAlgorithmException;
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
-    @PersistenceContext
-    private EntityManager entityManager;
+
     @Autowired
     private UserDAO userDAO;
+
+    @Override
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        try {
+            User user = userDAO.findUserByEmail(userName);
+
+            if (user == null) {
+                throw new UsernameNotFoundException(userName);
+            } else {
+                return buildSecurityUserFromUserEntity(user);
+            }
+
+        } catch (LogiwebDAOException e) {
+            LOGGER.warn("Something unexpected happend.", e);
+            throw new UsernameNotFoundException(userName);
+        }
+    }
 
     @Override
     @Transactional
@@ -90,5 +112,16 @@ public class UserServiceImpl implements UserService {
             LOGGER.warn("MD5 hashing failed", e);
             throw new LogiwebServiceException("MD5 hashing failed", e);
         }
+    }
+
+    private org.springframework.security.core.userdetails.User buildSecurityUserFromUserEntity(User userEntity) {
+        String username = userEntity.getUserEmail();
+        String password = userEntity.getUserPassword();
+        GrantedAuthority userRole = new SimpleGrantedAuthority(userEntity.getUserRole().name());
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(userRole);
+
+        return new org.springframework.security.core.userdetails.User(username, password, authorities);
     }
 }
