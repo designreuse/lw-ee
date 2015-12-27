@@ -20,6 +20,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.util.CitiesUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

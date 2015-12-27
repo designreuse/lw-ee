@@ -9,6 +9,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.FreightDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.OrderDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.FreightStatus;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.WayPointStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
@@ -106,6 +107,32 @@ public class FreightServiceImpl implements FreightService {
 
         } catch(LogiwebDAOException e) {
             throw new LogiwebServiceException("Unexpected exception.");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void setPickedUpStatus(Integer freightId) throws IllegalStateException, LogiwebServiceException {
+        try {
+            Freight freight = freightDAO.findById(freightId);
+            if (freight == null) {
+                throw new IllegalStateException();
+            }
+
+            if (freight.getOrderForThisFreightFK().getOrderStatus() != OrderStatus.READY_TO_GO) {
+                throw new IllegalStateException("Order for cargo must be in 'Ready to go' state");
+            }
+
+            if (freight.getFreightStatus() != FreightStatus.WAITING_FOR_PICK_UP) {
+                throw new IllegalStateException("Cargo must be in 'Waiting for pickup' state");
+            }
+
+            freight.setFreightStatus(FreightStatus.PICKED_UP);
+            freightDAO.update(freight);
+
+        } catch (LogiwebDAOException e) {
+            LOGGER.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
         }
     }
 

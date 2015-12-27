@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
 
 import javax.jws.WebService;
 import javax.ws.rs.ServerErrorException;
@@ -20,6 +21,8 @@ public class WsActionsImpl implements WsActions {
 
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private FreightService freightService;
 
     @Override
     public void startShiftForDriver(Integer driverNumber) throws LogiwebValidationException {
@@ -36,6 +39,27 @@ public class WsActionsImpl implements WsActions {
     public void endShiftForDriver(Integer driverNumber) throws LogiwebValidationException {
         try {
             driverService.endShiftForDriver(driverNumber);
+
+        } catch (LogiwebServiceException e) {
+            LOGGER.warn("Something unexpected happen", e);
+            throw new ServerErrorException(500);
+        }
+    }
+
+    @Override
+    public void setStatusDrivingForDriver(Integer driverNumber) {
+        try {
+            driverService.setStatusDrivingForDriver(driverNumber);
+        } catch (LogiwebServiceException e) {
+            LOGGER.warn("Something unexpected happen", e);
+            throw new ServerErrorException(500);
+        }
+    }
+
+    @Override
+    public void setStatusPickedUpForFreight(Integer freightId) throws IllegalStateException {
+        try {
+            freightService.setPickedUpStatus(freightId);
 
         } catch (LogiwebServiceException e) {
             LOGGER.warn("Something unexpected happen", e);

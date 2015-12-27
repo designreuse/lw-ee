@@ -306,6 +306,25 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    @Override
+    @Transactional
+    public void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebServiceException {
+        try {
+            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
+
+            if (driver == null) {
+                throw new LogiwebServiceException();
+            }
+
+            driver.setDriverStatus(DriverStatus.DRIVING);
+            driverDAO.update(driver);
+
+        } catch (LogiwebDAOException e) {
+            LOGGER.warn(e);
+            throw new LogiwebServiceException(e);
+        }
+    }
+
     @Override //
     @Transactional
     public Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException {

@@ -28,4 +28,16 @@ public interface WsActions {
      *             does not exist.
      */
     void endShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverNumber) throws LogiwebValidationException;
+
+    void setStatusDrivingForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverNumber);
+
+    /**
+     * Set 'Picked up' status for freight.
+     *
+     * @param freightId
+     * @throws IllegalStateException
+     *             if cargo is not in 'Ready for pickup' state or order is not in
+     *             'Ready to go' state
+     */
+    void setStatusPickedUpForFreight(@WebParam(name = "FreightId") Integer freightId) throws IllegalStateException;
 }

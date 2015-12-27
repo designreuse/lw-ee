@@ -126,5 +126,7 @@ public interface DriverService {
      */
     void endShiftForDriver(Integer driverNumber) throws LogiwebValidationException, LogiwebServiceException;
 
+    void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebServiceException;
+
     Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException; //
 }

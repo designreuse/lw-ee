@@ -18,8 +18,8 @@
 <script
     src="<c:url value="/js/bootstrap.min.js"/>"></script>
 <script
-    src="<c:url value="/js/bootbox.min.js"/>"></script> 
-   
+    src="<c:url value="/js/bootbox.min.js"/>"></script>
+
     
  <c:forEach items="${param.css}" var="cssFile">
     <link href="<c:url value="/css/${cssFile}"/>" rel="stylesheet">
