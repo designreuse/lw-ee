@@ -3,6 +3,7 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.entities;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 import java.util.Set;
 

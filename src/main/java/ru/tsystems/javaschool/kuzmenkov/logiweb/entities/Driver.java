@@ -3,6 +3,8 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.entities;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
 /**

@@ -37,8 +37,4 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <import resource="classpath:META-INF/cxf/cxf.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
-    <jaxws:endpoint id="wsDriver" implementor="#wsActions" address="/driver" />
-
 </beans>

@@ -13,6 +13,6 @@
 
        <bean id="wsActions" class="ru.tsystems.javaschool.kuzmenkov.logiweb.ws.WsActionsImpl"/>
 
-
+       <jaxws:endpoint id="wsDriver" implementor="#wsActions" address="/soap" />
 
 </beans>

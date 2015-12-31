@@ -5,6 +5,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
+import sun.rmi.runtime.Log;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -15,4 +16,6 @@ public interface UserService extends UserDetailsService {
             LogiwebValidationException;
 
     User findUserById(Integer userId) throws LogiwebServiceException; //
+
+    String getMD5Hash(String userPassword) throws LogiwebServiceException;
 }

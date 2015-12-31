@@ -1,7 +1,10 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.ws;
 
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
@@ -40,4 +43,13 @@ public interface WsActions {
      *             'Ready to go' state
      */
     void setStatusPickedUpForFreight(@WebParam(name = "FreightId") Integer freightId) throws IllegalStateException;
+
+    /**
+     * Takes a driver credentials and processes authentication using SOAP webservice.
+     */
+    DriverInfo authenticateDriver(@WebParam(name = "driverId") Integer driverId,
+                              @WebParam(name = "driverPassword") String driverPassword) throws LogiwebServiceException;
+
+    @WebMethod
+    int say(@WebParam(name = "name") String name);
 }

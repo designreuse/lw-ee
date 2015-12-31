@@ -129,4 +129,6 @@ public interface DriverService {
     void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebServiceException;
 
     Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException; //
+
+    Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebServiceException;
 }

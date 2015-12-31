@@ -50,6 +50,17 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    public Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebServiceException {
+        try {
+            return driverDAO.findDriverByPersonalNumber(personalNumber);
+
+        } catch (LogiwebDAOException e) {
+           throw new LogiwebServiceException(e);
+        }
+    }
+
+    @Override
+    @Transactional
     public Integer addNewDriver(ModelAttributeDriver driverFromForm) throws LogiwebServiceException, //
             LogiwebValidationException {
         try {

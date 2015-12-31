@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private String getMD5Hash(String userPassword) throws LogiwebServiceException { //
+    public String getMD5Hash(String userPassword) throws LogiwebServiceException { //
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();

@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.entities;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
@@ -10,6 +11,10 @@ public class OrderRoute {
     private float estimatedTime;
     private float maxWeightOnCourse;
     private List<WayPoint> bestOrderOfDelivery;
+
+    public OrderRoute() {
+
+    }
 
     public OrderRoute(float estimatedTime, float maxWeightOnCourse, List<WayPoint> bestOrderOfDelivery) {
         this.estimatedTime = estimatedTime;

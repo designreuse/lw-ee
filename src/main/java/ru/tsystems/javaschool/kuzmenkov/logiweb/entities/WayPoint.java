@@ -11,6 +11,10 @@ public class WayPoint {
     private City city;
     private Freight freight;
 
+    public WayPoint() {
+
+    }
+
     public WayPoint(WayPointStatus wayPointStatus, City city, Freight freight) {
         this.wayPointStatus = wayPointStatus;
         this.city = city;
