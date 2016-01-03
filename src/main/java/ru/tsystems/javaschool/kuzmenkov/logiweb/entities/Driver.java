@@ -3,6 +3,8 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.entities;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
 /**
  * @author Nikolay Kuzmenkov.
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "drivers")
 public class Driver {
@@ -32,6 +36,7 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverStatus driverStatus;
 
+    @XmlTransient
     @OneToMany(fetch = FetchType.LAZY ,mappedBy = "driverForThisShiftFK")
     private List<DriverShift> driverShiftRecords;
 
@@ -39,16 +44,20 @@ public class Driver {
     @JoinColumn(name = "current_driver_location_FK", nullable = false)
     private City currentCityFK;
 
+    @XmlTransient
     @ManyToOne
     @JoinColumn(name = "current_truck_FK")
     private Truck currentTruckFK;
 
+    @XmlTransient
     @OneToOne
     @JoinColumn(name = "driver_logiweb_account_id")
     private User logiwebDriverAccount;
 
+    @XmlTransient
     @Transient
     private OrderRoute orderRouteInfoForThisDriver;
+    @XmlTransient
     @Transient
     private Float workingHoursThisMonth;
 

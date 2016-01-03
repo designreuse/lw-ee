@@ -15,4 +15,9 @@
 
        <jaxws:endpoint id="wsDriver" implementor="#wsActions" address="/soap" />
 
+       <!-- SOAP container -->
+       <jaxws:endpoint id="driverWebService" address="/driver"
+                       implementor="ru.tsystems.javaschool.kuzmenkov.logiweb.ws.DriverWebServiceImpl" />
+
+
 </beans>
