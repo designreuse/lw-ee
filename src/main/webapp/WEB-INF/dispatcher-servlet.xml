@@ -20,7 +20,10 @@
     <import resource="webservices-config.xml"/>
 
     <context:annotation-config/>
+    <aop:aspectj-autoproxy />
     <context:component-scan base-package="ru.tsystems.javaschool.kuzmenkov.logiweb"/>
+
+    <bean name="mainAspect" class="ru.tsystems.javaschool.kuzmenkov.logiweb.aspect.MainAspect" />
 
     <!-- Spring MVC config -->
 
