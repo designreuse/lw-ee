@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
 import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;

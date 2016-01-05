@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;

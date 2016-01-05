@@ -9,13 +9,13 @@
 	<div class="panel-body">
 
 		<%-- Edit priveleges --%>
-
-		<div class="panel-footer">
-			<a href="${pageContext.request.contextPath}/driver/new" role="button"
-			   class="btn btn-default btn-large btn-block"><span
-					class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new driver</a>
-		</div>
-
+		<sec:authorize access="hasRole('ROLE_MANAGER')">
+			<div class="panel-footer">
+				<a href="${pageContext.request.contextPath}/driver/new" role="button"
+				   class="btn btn-default btn-large btn-block"><span
+						class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new driver</a>
+			</div>
+		</sec:authorize>
 
 		<table class="table table-striped">
 			<thead>
@@ -32,9 +32,10 @@
 
 					<%-- Edit priveleges --%>
 
+					<sec:authorize access="hasRole('ROLE_MANAGER')">
 						<th class="text-center">Edit</th>
 						<th class="text-center">Delete</th>
-
+					</sec:authorize>
 
 				</tr>
 			</thead>
@@ -59,13 +60,15 @@
 								test="${empty driver.currentTruckFK.orderForThisTruck}">Not assigned</c:if>
 
 
-
+							<sec:authorize access="hasRole('ROLE_MANAGER')">
 								<a href="${pageContext.request.contextPath}/order/${driver.currentTruckFK.orderForThisTruck.orderId}">
 								    ${driver.currentTruckFK.orderForThisTruck.orderId}
 								</a>
-							 <sec:authorize access="hasRole('ROLE_DRIVER')">
+							</sec:authorize>
+							<sec:authorize access="hasRole('ROLE_DRIVER')">
 			                       ${driver.currentTruckFK.orderForThisTruck}
-			                </sec:authorize></td>
+			                </sec:authorize>
+						</td>
 
 						<td>
 						  <fmt:formatNumber type="number" value="${driver.workingHoursThisMonth}"/>
@@ -78,6 +81,7 @@
 
 						<%-- Edit priveleges --%>
 
+						<sec:authorize access="hasRole('ROLE_MANAGER')">
 							<td class="text-center">
 								 <a
 	                             href="${pageContext.request.contextPath}/driver/${driver.driverId}/edit"><span
@@ -90,7 +94,7 @@
 								class="glyphicon glyphicon-remove red-on-hover"
 								aria-hidden="true"></span></td>
 
-
+						</sec:authorize>
 
 					</tr>
 				</c:forEach>

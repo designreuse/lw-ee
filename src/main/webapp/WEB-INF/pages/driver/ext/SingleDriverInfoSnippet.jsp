@@ -31,12 +31,12 @@
     </c:if>
 
     <c:if test="${!empty driver.currentTruckFK.orderForThisTruck}">
-			<li class="list-group-item">Current order: 
-			   
+			<li class="list-group-item">Current order:
 
+                <sec:authorize access="hasRole('ROLE_MANAGER')">
 				     <a href="${pageContext.request.contextPath}/order/${driver.currentTruckFK.orderForThisTruck.orderId}">
 				     ${driver.currentTruckFK.orderForThisTruck.orderId}</a>
-
+                </sec:authorize>
                 <sec:authorize access="hasRole('ROLE_DRIVER')">
 					   ${driver.currentTruckFK.orderForThisTruck.orderId}
                 </sec:authorize>

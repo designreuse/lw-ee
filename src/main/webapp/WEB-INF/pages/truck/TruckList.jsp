@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <jsp:include page="../Header.jsp">
     <jsp:param name="title" value="Trucks List" />
@@ -7,19 +8,21 @@
 </jsp:include>
 
 <jsp:include page="../HeaderMenu.jsp">
-    <jsp:param name="homeLink" value="/manager" />
+    <jsp:param name="homeLink" value="/" />
     <jsp:param name="userRoleForTitle" value="Manager" />
 </jsp:include>
 
 <div class="panel panel-default">
     <div class="panel-heading"><h1>List of trucks</h1></div>
 	<%-- Edit priveleges --%>
+	<sec:authorize access="hasRole('ROLE_MANAGER')">
+		<div class="panel-footer">
+			<a href="${pageContext.request.contextPath}/truck/new" role="button"
+			   class="btn btn-default btn-large btn-block"><span
+					class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new truck</a>
+		</div>
+	</sec:authorize>
 
-	<div class="panel-footer">
-		<a href="${pageContext.request.contextPath}/truck/new" role="button"
-		   class="btn btn-default btn-large btn-block"><span
-				class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new truck</a>
-	</div>
     <div class="panel-body">
 		<table class="table table-striped">
 			<thead>

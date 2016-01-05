@@ -37,7 +37,7 @@ public class Driver {
     private DriverStatus driverStatus;
 
     @XmlTransient
-    @OneToMany(fetch = FetchType.LAZY ,mappedBy = "driverForThisShiftFK")
+    @OneToMany(fetch = FetchType.EAGER ,mappedBy = "driverForThisShiftFK")
     private List<DriverShift> driverShiftRecords;
 
     @ManyToOne

@@ -11,12 +11,13 @@
 		<div class="navbar-header">
 			<span class="navbar-brand">
 			
-
-				    Manager@LogiWeb
+				<sec:authorize access="hasRole('ROLE_MANAGER')">
+					Manager@LogiWeb
+				</sec:authorize>
 
 				<sec:authorize access="hasRole('ROLE_DRIVER')">
-                    Driver@LogiWeb
-                </sec:authorize>
+					Driver@LogiWeb
+				</sec:authorize>
 			
 			</span>
 		</div>
@@ -27,11 +28,12 @@
 			<ul class="nav navbar-nav">
 				<li><a href="<c:url value="${param.homeLink}"/>">Home</a></li>
 
-
+				<sec:authorize access="hasRole('ROLE_MANAGER')">
 					<li><a href="<c:url value="/driver"/>">Drivers</a></li>
 					<li><a href="<c:url value="/truck"/>">Trucks</a></li>
 					<li><a href="<c:url value="/order"/>">Orders</a></li>
 					<li><a href="<c:url value="/freight"/>">Freights</a></li>
+				</sec:authorize>
 
 			</ul>
 

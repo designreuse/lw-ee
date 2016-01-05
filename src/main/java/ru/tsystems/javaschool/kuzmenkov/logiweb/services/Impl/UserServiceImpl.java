@@ -95,6 +95,18 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    @Transactional
+    public User findUserByEmail(String userEmail) throws LogiwebServiceException {
+        try {
+            return userDAO.findUserByEmail(userEmail);
+
+        } catch (LogiwebDAOException e) {
+            LOGGER.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
+        }
+    }
+
     public String getMD5Hash(String userPassword) throws LogiwebServiceException { //
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

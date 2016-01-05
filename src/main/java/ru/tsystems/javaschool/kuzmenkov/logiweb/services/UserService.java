@@ -18,4 +18,6 @@ public interface UserService extends UserDetailsService {
     User findUserById(Integer userId) throws LogiwebServiceException; //
 
     String getMD5Hash(String userPassword) throws LogiwebServiceException;
+
+    User findUserByEmail(String userEmail) throws LogiwebServiceException;
 }
