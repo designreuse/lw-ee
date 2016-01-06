@@ -14,7 +14,7 @@ public class MainAspect {
 
     private static final Logger LOGGER = Logger.getLogger(MainAspect.class);
 
-    @Pointcut("execution(* ru.tsystems.javaschool.kuzmenkov.logiweb.services.impl.*.* (..))")
+    @Pointcut("execution(* ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.*.* (..))")
     public void servicePointCut() {}
 
     @Before("servicePointCut()")

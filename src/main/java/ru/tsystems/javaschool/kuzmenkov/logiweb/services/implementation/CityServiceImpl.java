@@ -1,4 +1,4 @@
-package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
+package ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -21,8 +19,6 @@ import java.util.List;
 public class CityServiceImpl implements CityService {
 
     private static final Logger LOGGGER = Logger.getLogger(TruckServiceImpl.class);
-    @PersistenceContext
-    private EntityManager entityManager;
     @Autowired
     private CityDAO cityDAO;
 
@@ -39,23 +35,15 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    @Transactional
     public City findCityById(Integer cityId) throws LogiwebServiceException {
-        City cityResult;
-
         try {
-            entityManager.getTransaction().begin();
-            cityResult = cityDAO.findById(cityId);
-            entityManager.getTransaction().commit();
+
+            return cityDAO.findById(cityId);
 
         } catch (LogiwebDAOException e) {
             LOGGGER.warn("Exception in CityServiceImpl - findCityById.", e);
             throw new LogiwebServiceException(e);
-        } finally {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
         }
-
-        return cityResult;
     }
 }

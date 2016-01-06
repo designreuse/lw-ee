@@ -1,10 +1,9 @@
-package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
+package ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
@@ -19,9 +18,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.TruckService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,8 +32,6 @@ public class TruckServiceImpl implements TruckService {
 
     private static final Logger LOGGER = Logger.getLogger(TruckServiceImpl.class);
 
-    @Autowired
-    private DriverDAO driverDAO;
     @Autowired
     private TruckDAO truckDAO;
 

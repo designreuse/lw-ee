@@ -1,28 +1,20 @@
-package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
+package ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.CityDAO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.FreightDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.OrderDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.FreightStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.OrderService;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -32,12 +24,6 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = Logger.getLogger(OrderServiceImpl.class);
-    @PersistenceContext
-    private EntityManager entityManager;
-    @Autowired
-    private CityDAO cityDAO;
-    @Autowired
-    private FreightDAO freightDAO;
     @Autowired
     private OrderDAO orderDAO;
     @Autowired

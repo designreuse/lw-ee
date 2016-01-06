@@ -1,4 +1,4 @@
-package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
+package ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
@@ -15,13 +14,9 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceExcepti
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.services.OrderService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 
 /**
@@ -48,6 +43,15 @@ public class DriverServiceImpl implements DriverService {
     private OrderDAO orderDAO;
     @Autowired
     private UserDAO userDAO;
+
+    public DriverServiceImpl() {
+
+    }
+
+    public DriverServiceImpl(DriverDAO driverDAO, TruckDAO truckDAO) {
+        this.driverDAO = driverDAO;
+        this.truckDAO = truckDAO;
+    }
 
     @Override
     @Transactional

@@ -1,4 +1,4 @@
-package ru.tsystems.javaschool.kuzmenkov.logiweb.services.Impl;
+package ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceExcepti
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
