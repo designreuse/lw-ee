@@ -1,6 +1,5 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
-import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
@@ -21,12 +20,12 @@ public interface DriverService {
     /**
      * Add new driver.
      *
-     * @param driverFromForm
+     * @param newDriverDTO newDriverDTO
      * @return same Driver
      * @throws LogiwebValidationException if driver don't have all required fields or have not unique personal number.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    Integer addNewDriver(ModelAttributeDriver driverFromForm) throws LogiwebServiceException, LogiwebValidationException; //
+    Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebServiceException, LogiwebValidationException; //
 
     /**
      * Calculate working hours for driver for this month.

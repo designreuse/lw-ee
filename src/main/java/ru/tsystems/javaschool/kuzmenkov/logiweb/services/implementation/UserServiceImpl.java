@@ -83,18 +83,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User findUserById(Integer userId) throws LogiwebServiceException { //
-        try {
-            return userDAO.findById(userId);
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Something unexcpected happend.");
-            throw new LogiwebServiceException(e);
-        }
-    }
-
-    @Override
-    @Transactional
     public User findUserByEmail(String userEmail) throws LogiwebServiceException {
         try {
             return userDAO.findUserByEmail(userEmail);

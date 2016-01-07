@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
@@ -16,12 +17,14 @@ public interface TruckService {
     /**
      * Add new truck.
      *
-     * @param newTruck
+     * @param newTruckDTO newTruckDTO
      * @return same truck.
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     * @throws LogiwebServiceException if unexpected exception occurred on lower
+     *              level (not user fault).
      * @throws LogiwebValidationException if truck don't have all required fields or not unique truck number.
      */
-    Integer addNewTruck(Truck newTruck) throws LogiwebServiceException, LogiwebValidationException;
+    Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException,
+            LogiwebValidationException;
 
     /**
      * Find all trucks.

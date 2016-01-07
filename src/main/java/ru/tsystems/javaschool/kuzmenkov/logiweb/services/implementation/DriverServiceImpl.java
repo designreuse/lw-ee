@@ -4,8 +4,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
@@ -30,9 +31,13 @@ public class DriverServiceImpl implements DriverService {
     private static final Logger LOGGER = Logger.getLogger(DriverServiceImpl.class);
 
     @Autowired
+    private EntityDTODataConverter converter;
+
+    @Autowired
     private FreightService freightService;
     @Autowired
-    UserService userService;
+    private UserService userService;
+
     @Autowired
     private DriverDAO driverDAO;
     @Autowired
@@ -43,15 +48,6 @@ public class DriverServiceImpl implements DriverService {
     private OrderDAO orderDAO;
     @Autowired
     private UserDAO userDAO;
-
-    public DriverServiceImpl() {
-
-    }
-
-    public DriverServiceImpl(DriverDAO driverDAO, TruckDAO truckDAO) {
-        this.driverDAO = driverDAO;
-        this.truckDAO = truckDAO;
-    }
 
     @Override
     @Transactional
@@ -66,25 +62,24 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public Integer addNewDriver(ModelAttributeDriver driverFromForm) throws LogiwebServiceException, //
+    public Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebServiceException, //
             LogiwebValidationException {
         try {
-            String personalNumberAsString = String.valueOf(driverFromForm.getPersonalNumber());
+            Driver driverWithSamePersonalNumber = driverDAO.findDriverByPersonalNumber(newDriverDTO.getPersonalNumber());
+
+            if (driverWithSamePersonalNumber != null) {
+                throw new LogiwebValidationException("Driver with this personal number #" + newDriverDTO.getPersonalNumber()
+                        + " is already exist.");
+            }
+
+            String personalNumberAsString = String.valueOf(newDriverDTO.getPersonalNumber());
             String driverAccountEmail = "driver" + personalNumberAsString + "@logiweb.com";
             String driverAccountPassword = "12345";
 
             Integer newDriverUserId = userService.createNewUser(driverAccountEmail, driverAccountPassword, Role.ROLE_DRIVER);
-            User accountForDriver = userService.findUserById(newDriverUserId);
+            User accountForDriver = userDAO.findById(newDriverUserId);
 
-            Driver driverWithSamePersonalNumber = driverDAO.findDriverByPersonalNumber(driverFromForm.getPersonalNumber());
-
-            if (driverWithSamePersonalNumber != null) {
-                throw new LogiwebValidationException("Driver with this personal number #" + driverFromForm.getPersonalNumber()
-                        + " is already exist.");
-            }
-
-            Driver newDriverEntity = new Driver();
-            createEntityDriverFromModelAttribute(newDriverEntity, driverFromForm);
+            Driver newDriverEntity = converter.convertDriverDTOToEntity(newDriverDTO);
             newDriverEntity.setLogiwebDriverAccount(accountForDriver);
             newDriverEntity.setDriverStatus(DriverStatus.FREE);
 
@@ -99,18 +94,6 @@ public class DriverServiceImpl implements DriverService {
             LOGGER.warn("Exception in DriverServiceImpl - addNewDriver().", e);
             throw new LogiwebServiceException(e);
         }
-    }
-
-    private Driver createEntityDriverFromModelAttribute(Driver driver, ModelAttributeDriver modelAttributeDriver) { //
-        City city = new City();
-        city.setCityId(modelAttributeDriver.getCurrentCityFK());
-
-        driver.setCurrentCityFK(city);
-        driver.setPersonalNumber(modelAttributeDriver.getPersonalNumber());
-        driver.setFirstName(modelAttributeDriver.getFirstName());
-        driver.setLastName(modelAttributeDriver.getLastName());
-
-        return driver;
     }
 
     @Override //
@@ -128,6 +111,7 @@ public class DriverServiceImpl implements DriverService {
 
             if(driverCountInTruck == null) {
                 driverCountInTruck = new HashSet<>();
+                truck.setDriversInTruck(driverCountInTruck);
             }
 
             if(driverCountInTruck.size() < truck.getDriverCount()) {
@@ -136,8 +120,6 @@ public class DriverServiceImpl implements DriverService {
             } else {
                 throw new LogiwebValidationException("All crew positions are occupied. Can't add Driver to crew.");
             }
-
-            driverDAO.update(driver);
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn(e);

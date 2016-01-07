@@ -4,8 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
@@ -25,15 +30,26 @@ import java.util.Map;
 @Controller
 public class DriverController {
 
+    /**
+     */
     @Autowired
     private CityService cityService;
+    /**
+     */
     @Autowired
-    DriverService driverService;
+    private DriverService driverService;
+    /**
+     */
     @Autowired
-    CitiesUtil citiesUtil;
+    private CitiesUtil citiesUtil;
 
+    /**
+     * @param model model
+     * @return DriverList.jsp
+     * @throws LogiwebServiceException LogiwebServiceException
+     */
     @RequestMapping("driver")
-    public String showDrivers(Model model) throws LogiwebServiceException {
+    private String showDrivers(Model model) throws LogiwebServiceException {
         List<Driver> drivers = driverService.findAllDrivers();
         model.addAttribute("drivers", drivers);
 
@@ -47,16 +63,16 @@ public class DriverController {
     }
 
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.GET)
-    public String showFormForAddNewDriver(Model model) throws LogiwebServiceException {
+    private String showFormForAddNewDriver(Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "new");
-        model.addAttribute("driverFromForm", new ModelAttributeDriver());
+        model.addAttribute("driverFromForm", new DriverDTO());
         citiesUtil.addAllCitiesToModel(model);
 
         return "driver/AddOrEditDriver";
     }
 
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
-    public String addNewDriver(@ModelAttribute("driverFromForm") @Valid ModelAttributeDriver driverFromForm,
+    private String addNewDriver(@ModelAttribute("driverFromForm") @Valid DriverDTO driverFromForm,
                                BindingResult result, Model model) throws LogiwebServiceException {
         if (result.hasErrors()) {
             model.addAttribute("driverModel", driverFromForm);

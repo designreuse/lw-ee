@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.controllers.model.ModelAttributeDriver;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
@@ -52,7 +52,7 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
     @Rollback(true)
     public void testDriverAddNewDriver() throws LogiwebServiceException, LogiwebValidationException {
         int a = driverService.findAllDrivers().size();
-        ModelAttributeDriver driver = new ModelAttributeDriver();
+        DriverDTO driver = new DriverDTO();
         driver.setFirstName("testFirstName2");
         driver.setLastName("testLastName2");
         driver.setPersonalNumber(22222);

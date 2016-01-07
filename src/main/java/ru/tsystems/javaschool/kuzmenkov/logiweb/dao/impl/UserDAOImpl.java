@@ -3,7 +3,10 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.dao.impl;
 import org.springframework.stereotype.Repository;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.UserDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,5 +37,10 @@ public class UserDAOImpl extends AbstractDAOImpl<User> implements UserDAO {
             //LOG.warn(e);
             throw new LogiwebDAOException(e);
         }
+    }
+
+    @Override
+    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, LogiwebValidationException {
+        return null;
     }
 }

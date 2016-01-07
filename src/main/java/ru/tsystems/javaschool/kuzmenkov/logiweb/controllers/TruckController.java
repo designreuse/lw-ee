@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
@@ -42,17 +43,17 @@ public class TruckController {
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.GET)
     public String showFormForNewTruck(Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "new");
-        model.addAttribute("truckFromForm", new Truck());
+        model.addAttribute("truckFromForm", new TruckDTO());
         citiesUtil.addAllCitiesToModel(model);
 
         return "truck/AddOrEditTruck";
     }
 
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.POST)
-    public String addTruck(@ModelAttribute("truckFromForm") Truck newTruck, BindingResult result, Model model)
+    public String addTruck(@ModelAttribute("truckFromForm") TruckDTO newTruckFromForm, BindingResult result, Model model)
             throws LogiwebServiceException {
         if (result.hasErrors()) {
-            model.addAttribute("truckModel", newTruck);
+            model.addAttribute("truckModel", newTruckFromForm);
             model.addAttribute("formAction", "new");
             citiesUtil.addAllCitiesToModel(model);
 
@@ -60,7 +61,7 @@ public class TruckController {
         }
 
         try {
-            truckService.addNewTruck(newTruck);
+            truckService.addNewTruck(newTruckFromForm);
 
             return "redirect:/truck";
 

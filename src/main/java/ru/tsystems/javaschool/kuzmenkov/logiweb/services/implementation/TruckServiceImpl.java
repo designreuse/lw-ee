@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
@@ -16,6 +17,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.TruckService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
 import java.util.HashSet;
@@ -33,42 +35,56 @@ public class TruckServiceImpl implements TruckService {
     private static final Logger LOGGER = Logger.getLogger(TruckServiceImpl.class);
 
     @Autowired
+    private EntityDTODataConverter converter;
+    @Autowired
     private TruckDAO truckDAO;
+
+    public boolean validateTruckNumber(String truckNumber) {
+        if(!truckNumber.matches("^[A-Z0-9]{7}$")) {             // only letters and numbers (7 times)
+            return false;
+        }
+        else if(!truckNumber.matches("^[A-Z]{2}\\d{5}$")) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
 
     /**
      * Add new truck.
      *
-     * @param newTruck
+     * @param newTruckDTO
      * @return same truck.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      * @throws LogiwebValidationException if truck don't have all required fields or not unique truck number.
      */
     @Override //
     @Transactional
-    public Integer addNewTruck(Truck newTruck) throws LogiwebServiceException, LogiwebValidationException {
+    public Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException, LogiwebValidationException {
         try {
-            newTruck.setTruckStatus(TruckStatus.WORKING);
-            City city = new City();
-            city.setCityId(newTruck.getCurrentCityId());
-            newTruck.setCurrentCityFK(city);
+            if (!LogiwebValidator.validateTruckNumber(newTruckDTO.getTruckNumber())) {
+                throw new LogiwebValidationException("Truck number #" + newTruckDTO.getTruckNumber() + " is not valid.");
+            }
 
-            LogiwebValidator.validateTruckFormValues(newTruck);
-            Truck truckWithTruckNumber = truckDAO.findTruckByTruckNumber(newTruck.getTruckNumber());
+            Truck truckWithSameTruckNumber = truckDAO.findTruckByTruckNumber(newTruckDTO.getTruckNumber());
 
-            if (truckWithTruckNumber != null) {
-                throw new LogiwebValidationException("Truck with number #" + newTruck.getTruckNumber() +
+            if (truckWithSameTruckNumber != null) {
+                throw new LogiwebValidationException("Truck with number #" + newTruckDTO.getTruckNumber() +
                         " is already exist.");
             }
 
-            if (!LogiwebValidator.validateTruckNumber(newTruck.getTruckNumber())) {
-                throw new LogiwebValidationException("Truck number #" + newTruck.getTruckNumber() + " is not valid.");
-            }
+            Truck newTruckEntity = converter.convertTruckDTOToEntity(newTruckDTO);
 
-            truckDAO.create(newTruck);
+            newTruckEntity.setTruckStatus(TruckStatus.WORKING);
+            LogiwebValidator.validateTruckFormValues(newTruckEntity);
 
-            LOGGER.info("Truck created: truck number #" + newTruck.getTruckNumber() + " ID: " + newTruck.getTruckId());
+            truckDAO.create(newTruckEntity);
 
-            return newTruck.getTruckId();
+            LOGGER.info("Truck created: truck number #" + newTruckEntity.getTruckNumber() + " ID: " + newTruckEntity.getTruckId());
+
+            return newTruckEntity.getTruckId();
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in TruckServiceImpl - addNewTruck().", e);

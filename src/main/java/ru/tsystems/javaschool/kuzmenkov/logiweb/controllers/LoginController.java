@@ -20,32 +20,46 @@ import java.util.Collection;
 @Controller
 public class LoginController {
 
+    /**
+     */
     @Autowired
     private UserService userService;
 
+    /**
+     * @return Login.jsp
+     */
     @RequestMapping(value = "/login")
-    public String login() {
+    private String login() {
         return "main/Login";
     }
 
+    /**
+     * @return redirect:/manager or redirect:/driver
+     * @throws LogiwebServiceException kk
+     */
     @RequestMapping("/")
-    public String dispatch() throws LogiwebServiceException {
-        Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)
-                SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+    private String dispatch() throws LogiwebServiceException {
+        Collection<SimpleGrantedAuthority> authorities =
+                (Collection<SimpleGrantedAuthority>) SecurityContextHolder.
+                        getContext().getAuthentication().getAuthorities();
 
-        GrantedAuthority managerRole = new SimpleGrantedAuthority(Role.ROLE_MANAGER.name());
-        GrantedAuthority driverRole = new SimpleGrantedAuthority(Role.ROLE_DRIVER.name());
+        GrantedAuthority managerRole = new SimpleGrantedAuthority(
+                Role.ROLE_MANAGER.name());
+        GrantedAuthority driverRole = new SimpleGrantedAuthority(
+                Role.ROLE_DRIVER.name());
 
         if (authorities.contains(managerRole)) {
             return "redirect:/manager";
 
         } else if (authorities.contains(driverRole)) {
-            org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User)
-                    SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            org.springframework.security.core.userdetails.User user =
+                    (org.springframework.security.core.userdetails.User)
+                            SecurityContextHolder.getContext().
+                                    getAuthentication().getPrincipal();
 
-            User logedInDriver = userService.findUserByEmail(user.getUsername());
+            User logedInDriver = userService.findUserByEmail(
+                    user.getUsername());
             Integer driverId = logedInDriver.getAttachedDriver().getDriverId();
-            
             return "forward:/driver/" + driverId;
         }
 
