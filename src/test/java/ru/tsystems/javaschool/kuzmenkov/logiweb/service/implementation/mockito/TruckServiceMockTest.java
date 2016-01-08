@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author Nikolay Kuzmenkov.
  */
-public class TruckServiceTest {
+public class TruckServiceMockTest {
 
     @InjectMocks
     private TruckServiceImpl truckServiceImpl;

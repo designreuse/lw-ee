@@ -13,32 +13,32 @@
     <li class="list-group-item">Personal number: <span class="label label-info"> ${driver.personalNumber}</span></li>
     <li class="list-group-item">Name: ${driver.firstName} ${driver.lastName}</li>
     <li class="list-group-item">Status: <span class="label label-info">${driver.driverStatus}</span></li>
-    <li class="list-group-item">Location: ${driver.currentCityFK.name}</li>
+    <li class="list-group-item">Location: ${cities[driver.currentCityId].name}</li>
     
-    <c:if test="${!empty driver.currentTruckFK.truckNumber}">
-        <li class="list-group-item">Current truck: ${driver.currentTruckFK.truckNumber}</li>
+    <c:if test="${!empty driver.currentTruckNumber}">
+        <li class="list-group-item">Current truck: ${driver.currentTruckNumber}</li>
     </c:if>
     
-    <c:if test="${!empty driver.currentTruckFK.driversInTruck}">
+    <c:if test="${!empty driver.coDriversIds}">
         <li class="list-group-item">Co-driver:
-            <c:forEach var="coDriverId" items="${driver.currentTruckFK.driversInTruck}">
-                <c:if test="${coDriverId.driverId != driver.driverId}">
-                    <a href="${pageContext.request.contextPath}/driver/${coDriverId.driverId}">
-                        ${coDrivers[coDriverId.driverId].lastName}</a><span class="comma-separator">,</span>
+            <c:forEach var="coDriverId" items="${driver.coDriversIds}">
+                <c:if test="${coDriverId != driver.driverId}">
+                    <a href="${pageContext.request.contextPath}/driver/${coDriverId}">
+                        ${coDrivers[coDriverId].lastName}</a><span class="comma-separator">,</span>
                 </c:if>
             </c:forEach>
         </li>
     </c:if>
 
-    <c:if test="${!empty driver.currentTruckFK.orderForThisTruck}">
+    <c:if test="${!empty driver.currentOrderId}">
 			<li class="list-group-item">Current order:
 
                 <sec:authorize access="hasRole('ROLE_MANAGER')">
-				     <a href="${pageContext.request.contextPath}/order/${driver.currentTruckFK.orderForThisTruck.orderId}">
-				     ${driver.currentTruckFK.orderForThisTruck.orderId}</a>
+				     <a href="${pageContext.request.contextPath}/order/${driver.currentOrderId}">
+				     ${driver.currentOrderId}</a>
                 </sec:authorize>
                 <sec:authorize access="hasRole('ROLE_DRIVER')">
-					   ${driver.currentTruckFK.orderForThisTruck.orderId}
+					   ${driver.currentOrderId}
                 </sec:authorize>
 
 			</li>

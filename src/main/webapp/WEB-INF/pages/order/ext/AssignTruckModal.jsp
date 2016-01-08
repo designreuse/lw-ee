@@ -33,7 +33,7 @@
 									<c:forEach items="${suggestedTrucks}" var="truck">
 										<option value="${truck.truckId}">Number:
 											${truck.truckNumber} | Max weight: ${truck.capacity} |
-											Current city: ${cities[truck.currentCityFK.cityId].name} | Driver
+											Current city: ${cities[truck.currentCityId].name} | Driver
 											count: ${truck.driverCount}</option>
 									</c:forEach>
 								</select>

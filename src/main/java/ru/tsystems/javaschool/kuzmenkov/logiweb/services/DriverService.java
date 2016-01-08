@@ -63,7 +63,7 @@ public interface DriverService {
      * @return empty list if nothing found.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    List<Driver> findAllDrivers() throws LogiwebServiceException; //
+    Set<DriverDTO> findAllDrivers() throws LogiwebServiceException; //
 
     /**
      * Find driver by id.
@@ -71,7 +71,7 @@ public interface DriverService {
      * @param driverId
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    Driver findDriverById(Integer driverId) throws LogiwebServiceException; //
+    DriverDTO findDriverById(Integer driverId) throws LogiwebServiceException; //
 
     /**
      * Find shift records that are started or ended in this month. Records are
@@ -97,7 +97,7 @@ public interface DriverService {
      */
     void deleteDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException; //
 
-    Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Float maxWorkingHours)
+    Set<DriverDTO> findUnassignedDriversByWorkingHoursAndCity(Integer cityId, Float maxWorkingHours)
             throws LogiwebServiceException; //
 
     /**
@@ -128,7 +128,7 @@ public interface DriverService {
 
     void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebServiceException;
 
-    Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException; //
+    DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException; //
 
     Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebServiceException;
 }

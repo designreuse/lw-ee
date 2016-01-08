@@ -112,9 +112,10 @@ public class TruckServiceImpl implements TruckService {
 
     @Override //
     @Transactional
-    public List<Truck> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException {
+    public List<TruckDTO> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException {
         try {
-            return truckDAO.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minFreightWeightCapacity);
+            return converter.convertListTruckEntitiesToDTO(
+                    truckDAO.findByMinCapacityWhereStatusOkAndNotAssignedToOrder(minFreightWeightCapacity));
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Something unexpected happend.", e);

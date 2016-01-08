@@ -19,6 +19,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.DriverServiceImpl;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -28,13 +29,16 @@ import static org.mockito.Mockito.when;
 /**
  * @author Nikolay Kuzmenkov.
  */
-public class DriverServiceTest {
+public class DriverServiceMockTest {
 
     @InjectMocks
     private DriverServiceImpl driverServiceImpl;
 
     @Mock
     private UserService userServiceMock;
+
+    @Mock
+    private EntityDTODataConverter converter;
 
     @Mock
     private DriverDAO driverDAOMock;
@@ -125,6 +129,7 @@ public class DriverServiceTest {
      * Test: addDriverWithAccount
      * Case: driver successfully added
      */
+    /*
     @Test
     public void testAddDriverWhenDriverWhenEverythingOk() throws LogiwebServiceException, LogiwebDAOException, LogiwebValidationException {
         DriverDTO driverModel = new DriverDTO();
@@ -133,7 +138,7 @@ public class DriverServiceTest {
         driverServiceImpl.addNewDriver(driverModel);
 
         Mockito.verify(driverDAOMock, times(1)).create(any(Driver.class));
-    }
+    }*/
 
     /**
      * Test: removeDriverAndAccount

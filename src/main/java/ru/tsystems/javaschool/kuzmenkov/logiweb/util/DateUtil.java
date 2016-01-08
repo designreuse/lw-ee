@@ -2,6 +2,8 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Set of utils to help with dates.
@@ -73,5 +75,40 @@ public class DateUtil {
         calendar.setTime(new Date());
         
         return result;
+    }
+
+    /**
+     * Converts interval of dates to specific format of cal-heatmap javascript
+     * plugin.
+     *
+     * @see https://kamisama.github.io/cal-heatmap/
+     *
+     * @param start
+     * @param end
+     * @return Map<String, Integer> where string is unix timestamp of hour
+     *         (anywhere from begging of it up until the end) and Integer is
+     *         always 1 (represents intensity at this hour). Timestamps
+     *         are made with 1 hour intervals.
+     */
+    public static Map<String, Integer> convertIntervalToCalHeatmapFormat(Date start, Date end) {
+        if (end == null) {
+            end = new Date(); //now
+        }
+
+        Map<String, Integer> counter = new HashMap<String, Integer>();
+        Calendar cal = Calendar.getInstance();
+
+        Date intervalPivot = new Date(start.getTime());
+
+        while (intervalPivot.before(end)) {
+            long unixTimestamp = intervalPivot.getTime() / 1000L;
+            counter.put(String.valueOf(unixTimestamp), 1);
+            cal.setTime(intervalPivot);
+            cal.add(Calendar.HOUR_OF_DAY, 1);
+            intervalPivot = cal.getTime();
+        }
+        cal.setTime(new Date());
+
+        return counter;
     }
 }

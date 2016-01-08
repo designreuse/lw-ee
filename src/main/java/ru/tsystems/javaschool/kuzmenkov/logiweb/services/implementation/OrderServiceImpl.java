@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.OrderDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.OrderDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
@@ -14,6 +15,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.OrderService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
 
 import java.util.List;
 
@@ -24,6 +26,9 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = Logger.getLogger(OrderServiceImpl.class);
+
+    @Autowired
+    private EntityDTODataConverter converter;
     @Autowired
     private OrderDAO orderDAO;
     @Autowired
@@ -61,9 +66,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override //
     @Transactional
-    public Order findOrderById(Integer orderId) throws LogiwebServiceException {
+    public OrderDTO findOrderById(Integer orderId) throws LogiwebServiceException {
         try {
-            return orderDAO.findById(orderId);
+            Order order = orderDAO.findById(orderId);
+
+            if (order == null) {
+                return null;
+            } else {
+                return converter.convertOrderEntityToDTO(order);
+            }
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in OrderServiceImpl - findOrderById().", e);

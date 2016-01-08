@@ -18,6 +18,11 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -56,12 +61,48 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
         driver.setFirstName("testFirstName2");
         driver.setLastName("testLastName2");
         driver.setPersonalNumber(22222);
-        driver.setCurrentCityFK(500);
+        driver.setCurrentCityId(500);
 
         driverService.addNewDriver(driver);
         int b = driverService.findAllDrivers().size();
 
         assertTrue(b == a + 1);
         driverService.deleteDriver(driverService.getDriverByPersonalNumber(22222).getDriverId());
+    }
+
+    //a test to check the "read" method
+    @Test
+    public void testDriverRead() throws LogiwebServiceException {
+        DriverDTO driverToRead = driverService.findDriverById(501);
+        assertTrue(driverToRead.getPersonalNumber() == 11111);
+    }
+
+    //a test to check the "delete" method
+    @Test
+    public void testDriverDelete() throws LogiwebServiceException, LogiwebValidationException {
+        DriverDTO driverToDelete = driverService.findDriverById(501);
+        driverService.deleteDriver(driverToDelete.getDriverId());
+        assertNull(driverService.findDriverById(501));
+    }
+
+    //a test to check the "getAll" method
+    @Test
+    public void testDriverFindAll() throws LogiwebServiceException {
+        Set<DriverDTO> driverList = driverService.findAllDrivers();
+        assertTrue(driverList.size() > 1);
+    }
+
+    //a test to check the "getDriverByPersonalNumber" method success
+    @Test
+    public void testDriverGetByPersonalNumberSuccess() throws LogiwebServiceException {
+        Driver driver = driverService.getDriverByPersonalNumber(11111);
+        assertNotNull(driver);
+    }
+
+    //a test to check the "getContractByNumber" method for return "null" result
+    @Test
+    public void testDriverGetByPersonalNumberWithNullResult() throws LogiwebServiceException {
+        Driver driver = driverService.getDriverByPersonalNumber(1111122);
+        assertNull(driver);
     }
 }

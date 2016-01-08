@@ -39,6 +39,8 @@ public class DriverServiceImpl implements DriverService {
     private UserService userService;
 
     @Autowired
+    private CityDAO cityDAO;
+    @Autowired
     private DriverDAO driverDAO;
     @Autowired
     private TruckDAO truckDAO;
@@ -155,7 +157,7 @@ public class DriverServiceImpl implements DriverService {
             return workingHours.get(driver);
 
         } catch (LogiwebDAOException e) {
-            LOGGER.warn("Exception in DriverServiceImpl - calculateWorkingHoursForDriver().", e);
+            LOGGER.warn("Exception in DriverServiceImpl - calculateWorkingHoursForDriver();", e);
             throw new LogiwebServiceException(e);
         }
     }
@@ -174,9 +176,9 @@ public class DriverServiceImpl implements DriverService {
      */
     @Override
     @Transactional
-    public List<Driver> findAllDrivers() throws LogiwebServiceException { //
+    public Set<DriverDTO> findAllDrivers() throws LogiwebServiceException { //
         try {
-            return driverDAO.findAll();
+            return converter.convertListDriverEntitiesToDTO(driverDAO.findAll());
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in DriverServiceImpl - findAllDrivers().", e);
@@ -186,9 +188,15 @@ public class DriverServiceImpl implements DriverService {
 
     @Override //
     @Transactional
-    public Driver findDriverById(Integer driverId) throws LogiwebServiceException {
+    public DriverDTO findDriverById(Integer driverId) throws LogiwebServiceException {
         try {
-            return driverDAO.findById(driverId);
+            Driver driver = driverDAO.findById(driverId);
+
+            if (driver != null) {
+                return converter.convertDriverEntityToDTO(driver);
+            } else {
+                return null;
+            }
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Something unexcpected happend.");
@@ -325,25 +333,25 @@ public class DriverServiceImpl implements DriverService {
 
     @Override //
     @Transactional
-    public Driver getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException {
+    public DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException {
         try {
-            Driver driver = driverDAO.findById(driverId);
-            if (driver == null) {
+            DriverDTO driverDTO = findDriverById(driverId);
+            if (driverDTO == null) {
                 return null;
             }
 
-            driver.setWorkingHoursThisMonth(calculateWorkingHoursForDriver(driver.getDriverId()));
-            driver.setDriverShiftRecords(findDriverShiftRecordsForThisMonth(driver.getDriverId()));
+            driverDTO.setWorkingHoursThisMonth(calculateWorkingHoursForDriver(driverDTO.getDriverId()));
+            driverDTO.setDriverShiftRecordsForThisMonth(findDriverShiftRecordsForThisMonth(driverDTO.getDriverId()));
 
-            if (driver.getCurrentTruckFK() == null) {
-                return driver;
+            if (driverDTO.getCurrentOrderId() == null) {
+                return driverDTO;
             }
 
-            Order order = orderDAO.findById(driver.getCurrentTruckFK().getOrderForThisTruck().getOrderId());
+            Order order = orderDAO.findById(driverDTO.getCurrentOrderId());
             OrderRoute orderRouteInfo = freightService.getRouteInformationForOrder(order.getOrderId());
-            driver.setOrderRouteInfoForThisDriver(orderRouteInfo);
+            driverDTO.setOrderRouteInfoForDriver(orderRouteInfo);
 
-            return driver;
+            return driverDTO;
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in DriverServiceImpl - getDriverWithFullInfo().", e);
@@ -353,9 +361,15 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional //
-    public Set<Driver> findUnassignedDriversByWorkingHoursAndCity(City city, Float maxWorkingHours)
+    public Set<DriverDTO> findUnassignedDriversByWorkingHoursAndCity(Integer cityId, Float maxWorkingHours)
             throws LogiwebServiceException {
         try {
+            City city = cityDAO.findById(cityId);
+
+            if (city == null) {
+                throw new LogiwebServiceException();
+            }
+
             List<Driver> freeDriversInCity = driverDAO.findByCityWhereNotAssignedToTruck(city);
             List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDrivers(freeDriversInCity);
 
@@ -369,7 +383,7 @@ public class DriverServiceImpl implements DriverService {
 
             filterDriversByMaxWorkingHours(workingHours, maxWorkingHours);
 
-            return workingHours.keySet();
+            return converter.convertListDriverEntitiesToDTO(workingHours.keySet());
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn(e);
@@ -434,10 +448,10 @@ public class DriverServiceImpl implements DriverService {
     private void filterDriversByMaxWorkingHours(Map<Driver, Float> workingHoursToFilter, Float maxWorkingHours) {
         Iterator<Map.Entry<Driver, Float>> it = workingHoursToFilter.entrySet().iterator();
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Map.Entry<Driver, Float> entry = it.next();
 
-            if(entry.getValue() > maxWorkingHours) {
+            if (entry.getValue() > maxWorkingHours) {
                 it.remove();
             }
         }

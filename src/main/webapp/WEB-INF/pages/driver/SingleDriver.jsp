@@ -13,15 +13,15 @@
 
 <jsp:include page="ext/SingleDriverInfoSnippet.jsp"/>
 
-<c:if test="${!empty driver.orderRouteInfoForThisDriver}">
+<c:if test="${!empty driver.orderRouteInfoForDriver}">
 	<!-- Print waypoints-->
-	<c:set var="routeInfo" value="${driver.orderRouteInfoForThisDriver}" scope="request" />
+	<c:set var="routeInfo" value="${driver.orderRouteInfoForDriver}" scope="request" />
 	<jsp:include page="../order/ext/WaypointsSnippet.jsp"/>
 </c:if>
 
-<c:if test="${!empty driver.driverShiftRecords}">
+<c:if test="${!empty driver.driverShiftRecordsForThisMonth}">
 	<!-- Print shift records-->
-	<c:set var="shiftRecords" value="${driver.driverShiftRecords}" scope="request" />
+	<c:set var="shiftRecords" value="${driver.driverShiftRecordsForThisMonth}" scope="request" />
 	<jsp:include page="ext/ShiftRecordsSnippet.jsp">
 		<jsp:param name="comment" value="this month" />
 	</jsp:include>

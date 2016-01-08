@@ -1,8 +1,14 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.dto;
 
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.OrderRoute;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -21,21 +27,24 @@ public class DriverDTO {
 
     private String lastName;
 
-    @NotNull
-    private Integer currentCityFK;
+    private DriverStatus driverStatus;
 
-    private Integer orderId;
+    @NotNull
+    private Integer currentCityId;
+
+    private Integer currentOrderId;
+
+    private Float workingHoursThisMonth;
+
+    private String currentTruckNumber;
+
+    private Set<Integer> coDriversIds;
+
+    private OrderRoute orderRouteInfoForDriver;
+
+    private List<DriverShift> driverShiftRecordsForThisMonth;
 
     public DriverDTO() {
-
-    }
-
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
     }
 
     public Integer getDriverId() {
@@ -70,11 +79,67 @@ public class DriverDTO {
         this.lastName = lastName;
     }
 
-    public Integer getCurrentCityFK() {
-        return currentCityFK;
+    public DriverStatus getDriverStatus() {
+        return driverStatus;
     }
 
-    public void setCurrentCityFK(Integer currentCityFK) {
-        this.currentCityFK = currentCityFK;
+    public void setDriverStatus(DriverStatus driverStatus) {
+        this.driverStatus = driverStatus;
+    }
+
+    public Integer getCurrentCityId() {
+        return currentCityId;
+    }
+
+    public void setCurrentCityId(Integer currentCityId) {
+        this.currentCityId = currentCityId;
+    }
+
+    public Integer getCurrentOrderId() {
+        return currentOrderId;
+    }
+
+    public void setCurrentOrderId(Integer currentOrderId) {
+        this.currentOrderId = currentOrderId;
+    }
+
+    public Float getWorkingHoursThisMonth() {
+        return workingHoursThisMonth;
+    }
+
+    public void setWorkingHoursThisMonth(Float workingHoursThisMonth) {
+        this.workingHoursThisMonth = workingHoursThisMonth;
+    }
+
+    public String getCurrentTruckNumber() {
+        return currentTruckNumber;
+    }
+
+    public void setCurrentTruckNumber(String currentTruckNumber) {
+        this.currentTruckNumber = currentTruckNumber;
+    }
+
+    public Set<Integer> getCoDriversIds() {
+        return coDriversIds;
+    }
+
+    public void setCoDriversIds(Set<Integer> coDriversIds) {
+        this.coDriversIds = coDriversIds;
+    }
+
+    public OrderRoute getOrderRouteInfoForDriver() {
+        return orderRouteInfoForDriver;
+    }
+
+    public void setOrderRouteInfoForDriver(OrderRoute orderRouteInfoForDriver) {
+        this.orderRouteInfoForDriver = orderRouteInfoForDriver;
+    }
+
+    public List<DriverShift> getDriverShiftRecordsForThisMonth() {
+        return driverShiftRecordsForThisMonth;
+    }
+
+    public void setDriverShiftRecordsForThisMonth(List<DriverShift> driverShiftRecordsForThisMonth) {
+        this.driverShiftRecordsForThisMonth = driverShiftRecordsForThisMonth;
     }
 }

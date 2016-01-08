@@ -54,7 +54,7 @@
                             <div class="col-md-4">
                                 <select id="originCityId" name="originCityId" class="form-control">
                                     <c:forEach items="${cities}" var="entry">
-                                        <option value="${entry.cityId}">${entry.name}</option>
+                                        <option value="${entry.key}">${entry.value.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -68,7 +68,7 @@
                                 <select id="destinationCityId" name="destinationCityId"
                                     class="form-control">
                                     <c:forEach items="${cities}" var="entry">
-                                        <option value="${entry.cityId}">${entry.name}</option>
+                                        <option value="${entry.key}">${entry.value.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>

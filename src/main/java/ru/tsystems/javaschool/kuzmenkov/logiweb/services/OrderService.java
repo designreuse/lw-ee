@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.OrderDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
@@ -17,7 +18,7 @@ public interface OrderService {
 
     Integer addNewOrder() throws LogiwebServiceException;
 
-    Order findOrderById(Integer orderId) throws LogiwebServiceException; //
+    OrderDTO findOrderById(Integer orderId) throws LogiwebServiceException; //
 
     void assignTruckToOrder(Integer assignedTruckId, Integer orderId) throws LogiwebServiceException, LogiwebValidationException;
 

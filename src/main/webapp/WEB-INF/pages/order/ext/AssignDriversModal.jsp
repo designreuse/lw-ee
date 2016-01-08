@@ -23,13 +23,13 @@
             <div class="modal-body">
 
                 <form class="form-horizontal" id="assignDriverForm" method="POST" action="addDriverToTruck">
-                <input type="hidden" name="truckId" value='<c:if test="${!empty order.assignedTruckFK }">${order.assignedTruckFK.truckId}</c:if>'>
+                <input type="hidden" name="truckId" value='<c:if test="${!empty order.assignedTruck }">${order.assignedTruck.truckId}</c:if>'>
                 
-                <c:if test="${!empty order.assignedTruckFK && empty order.assignedTruckFK.driversInTruck}">
-                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruckFK.driverCount}'>
+                <c:if test="${!empty order.assignedTruck && empty order.assignedTruck.driversIdsAndNames}">
+                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruck.driverCount}'>
                 </c:if>
-                <c:if test="${!empty order.assignedTruckFK && !empty order.assignedTruckFK.driversInTruck}">
-                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruckFK.driverCount - fn:length(order.assignedTruckFK.driversInTruck)}'>
+                <c:if test="${!empty order.assignedTruck && !empty order.assignedTruck.driversIdsAndNames}">
+                    <input type="hidden" name="maxDriversToAssign" value='${order.assignedTruck.driverCount - fn:length(order.assignedTruck.driversIdsAndNames)}'>
                 </c:if>
                 
                     <fieldset>
@@ -44,7 +44,7 @@
                                             type="checkbox" name="driversIds"
                                             id="driver-checkbox-${driver.driverId}" value="${driver.driverId}">
                                             ${driver.firstName} ${driver.lastName} | Current city:
-                                            ${driver.currentCityFK.name} | This month working hours: <fmt:formatNumber
+                                            ${cities[driver.currentCityId].name} | This month working hours: <fmt:formatNumber
                                                 type="number" value="${driver.workingHoursThisMonth}"
                                                 pattern=".#" />
                                         </label>

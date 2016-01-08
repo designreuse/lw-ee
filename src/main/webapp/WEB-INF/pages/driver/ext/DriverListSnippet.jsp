@@ -48,30 +48,28 @@
 						<td><c:out value="${driver.firstName}" /></td>
 						<td><c:out value="${driver.lastName}" /></td>
 						<td><c:out value="${driver.driverStatus}" /></td>
-						<td><c:out value="${cities[driver.currentCityFK.cityId].name}" /></td>
+						<td><c:out value="${cities[driver.currentCityId].name}" /></td>
 						<td>
 						    <c:choose>
-								<c:when test="${!empty driver.currentTruckFK.truckNumber}">${driver.currentTruckFK.truckNumber}</c:when>
+								<c:when test="${!empty driver.currentTruckNumber}">${driver.currentTruckNumber}</c:when>
 								<c:otherwise>Not assigned</c:otherwise>
 							</c:choose>
 						</td>
 
-						<td><c:if
-								test="${empty driver.currentTruckFK.orderForThisTruck}">Not assigned</c:if>
-
+						<td><c:if test="${empty driver.currentOrderId}">Not assigned</c:if>
 
 							<sec:authorize access="hasRole('ROLE_MANAGER')">
-								<a href="${pageContext.request.contextPath}/order/${driver.currentTruckFK.orderForThisTruck.orderId}">
-								    ${driver.currentTruckFK.orderForThisTruck.orderId}
+								<a href="${pageContext.request.contextPath}/order/${driver.currentOrderId}">
+								    ${driver.currentOrderId}
 								</a>
 							</sec:authorize>
 							<sec:authorize access="hasRole('ROLE_DRIVER')">
-			                       ${driver.currentTruckFK.orderForThisTruck}
+			                       ${driver.currentOrderId}
 			                </sec:authorize>
 						</td>
 
 						<td>
-						  <fmt:formatNumber type="number" value="${driver.workingHoursThisMonth}"/>
+						  	<fmt:formatNumber type="number" value="${driver.workingHoursThisMonth}"/>
 						</td>
 
 						<td class="text-center"><a
@@ -80,20 +78,16 @@
 						</td>
 
 						<%-- Edit priveleges --%>
-
 						<sec:authorize access="hasRole('ROLE_MANAGER')">
 							<td class="text-center">
-								 <a
-	                             href="${pageContext.request.contextPath}/driver/${driver.driverId}/edit"><span
-									class="glyphicon glyphicon-pencil"
-									aria-hidden="true"></span></a>
+								 <a href="${pageContext.request.contextPath}/driver/${driver.driverId}/edit"><span
+									class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+								 </a>
 							</td>
 
-							<td class="text-center"><span
-								onclick="deleteDriver(this, ${driver.driverId})"
-								class="glyphicon glyphicon-remove red-on-hover"
-								aria-hidden="true"></span></td>
-
+							<td class="text-center"><span onclick="deleteDriver(this, ${driver.driverId})"
+								class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
+							</td>
 						</sec:authorize>
 
 					</tr>
@@ -101,7 +95,7 @@
 
 			</tbody>
 		</table>
-	</div>
 
+	</div>
 
 </div>

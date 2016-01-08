@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.controllers;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.OrderDTO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
@@ -19,8 +23,11 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -52,34 +59,34 @@ public class OrderController {
 
     @RequestMapping(value = { "order/{orderId}/edit", "order/{orderId}" }, method = RequestMethod.GET)
     public String editOrder(@PathVariable("orderId") Integer orderId, Model model) throws LogiwebServiceException {
-        Order order = orderService.findOrderById(orderId);
+        OrderDTO orderToShow = orderService.findOrderById(orderId);
 
-        if (order == null) {
+        if (orderToShow == null) {
             throw new LogiwebServiceException("Order #" + orderId + " not exist.");
         }
 
-        OrderRoute orderRouteInfo = freightService.getRouteInformationForOrder(order.getOrderId());
+        OrderRoute orderRouteInfo = freightService.getRouteInformationForOrder(orderToShow.getOrderId());
 
         model.addAttribute("orderId", orderId);
-        model.addAttribute("order", order);
+        model.addAttribute("order", orderToShow);
         model.addAttribute("routeInfo", orderRouteInfo);
         model.addAttribute("maxWorkingHoursLimit", DRIVER_WORKING_HOURS_LIMIT);
 
         //suggest trucks
-        if(order.getAssignedTruckFK() == null) {
-            List<Truck> suggestedTrucks = truckService.findFreeAndUnbrokenByFreightCapacity(
+        if(orderToShow.getAssignedTruck() == null) {
+            List<TruckDTO> suggestedTrucks = truckService.findFreeAndUnbrokenByFreightCapacity(
                     orderRouteInfo.getMaxWeightOnCourse());
             model.addAttribute("suggestedTrucks", suggestedTrucks);
         }
 
         //suggest drivers
-        if(order.getAssignedTruckFK() != null) {
+        if(orderToShow.getAssignedTruck() != null) {
             Float workingHoursLimit = calcMaxWorkingHoursThatDriverCanHave(orderRouteInfo.getEstimatedTime());
 
-            Set<Driver> suggestedDrivers = driverService.findUnassignedDriversByWorkingHoursAndCity(
-                    order.getAssignedTruckFK().getCurrentCityFK(), workingHoursLimit);
+            Set<DriverDTO> suggestedDrivers = driverService.findUnassignedDriversByWorkingHoursAndCity(
+                    orderToShow.getAssignedTruck().getCurrentCityId(), workingHoursLimit);
 
-            for (Driver driver : suggestedDrivers) {
+            for (DriverDTO driver : suggestedDrivers) {
                 driver.setWorkingHoursThisMonth(driverService.calculateWorkingHoursForDriver(driver.getDriverId()));
             }
 
@@ -88,8 +95,7 @@ public class OrderController {
 
         model.addAttribute("statuses", OrderStatus.values());
 
-        //citiesUtil.addAllCitiesToModel(model);
-        model.addAttribute("cities", cityService.findAllCities());
+        citiesUtil.addAllCitiesToModel(model);
 
         return "order/EditOrder";
     }
@@ -105,7 +111,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = {"/freight"})
-    public ModelAndView showCargoes() throws LogiwebServiceException {
+    public ModelAndView showFreights() throws LogiwebServiceException {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("freight/FreightList");
         mav.addObject("freights", freightService.findAllFreights());
@@ -188,8 +194,8 @@ public class OrderController {
     public String removeDriversAndTruckFromOrder(@PathVariable("orderId") Integer orderId, HttpServletResponse response)
             throws LogiwebServiceException {
         try {
-            Order order = orderService.findOrderById(orderId);
-            Truck truck = order.getAssignedTruckFK();
+            OrderDTO order = orderService.findOrderById(orderId);
+            TruckDTO truck = order.getAssignedTruck();
 
             if(truck != null) {
                 truckService.removeAssignedOrderAndDriversFromTruck(truck.getTruckId());
@@ -221,6 +227,51 @@ public class OrderController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
         }
+    }
+
+    /**
+     * Redirects to the order's map page.
+     */
+    @RequestMapping(value = "/orders/{orderId}/map", method = RequestMethod.GET)
+    public ModelAndView showOrderOnMap(@PathVariable("orderId") int orderId, ModelAndView model) throws LogiwebServiceException {
+
+        OrderDTO order = orderService.findOrderById(orderId);
+
+        if (order.getAssignedTruck().getCurrentCityId() != null) {
+
+            String mainCity = truckService.findTruckById(order.getAssignedTruck().getTruckId())
+                    .getCurrentCityFK().getName();
+
+            Set<Freight> waypointSet = order.getFreightsOrderLines();
+
+            Set<Freight> waypointConcurrentSet = Collections.newSetFromMap(new ConcurrentHashMap<Freight, Boolean>());
+
+            waypointConcurrentSet.addAll(waypointSet);
+
+            Set<String> citySet = new HashSet<>();
+
+            // remove main (start/end) waypoint
+            for (Freight waypoint : waypointConcurrentSet) {
+                if (mainCity.equals(waypoint.getCityFromFK().getName())) {
+                    waypointSet.remove(waypoint);
+                    continue;
+                }
+
+                citySet.add(waypoint.getCityToFK().getName());
+            }
+
+            Gson gson = new Gson();
+
+            String waypoints = gson.toJson("Moscow");
+
+            model.addObject("mainCity", mainCity);
+
+            model.addObject("waypoints", waypoints);
+        }
+
+        model.setViewName("order/gmaps");
+
+        return model;
     }
 
     private Freight createDetachedFreightFromRequestParams(HttpServletRequest request)

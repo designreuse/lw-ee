@@ -34,7 +34,7 @@ public interface TruckService {
      */
     List<Truck> findAllTrucks() throws LogiwebServiceException;
 
-    List<Truck> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException;
+    List<TruckDTO> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException;
 
     /**
      * Find truck by truck ID.

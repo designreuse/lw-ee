@@ -76,14 +76,14 @@
           </div>
         </spring:bind>
         
-        <spring:bind path="currentCityFK">
+        <spring:bind path="currentCityId">
           <div class="form-group ${status.error ? 'has-error' : ''}">
             <label class="col-md-4 control-label">City</label>
             <div class="col-md-4">
-                <form:select path="currentCityFK" class="form-control">
+                <form:select path="currentCityId" class="form-control">
                     <form:options items="${cities}" itemLabel="name"/>
                 </form:select>
-                <form:errors path="currentCityFK" class="control-label" />
+                <form:errors path="currentCityId" class="control-label" />
             </div>
           </div>
         </spring:bind>
@@ -98,6 +98,5 @@
 
 	</fieldset>
 </form:form>
-
 
 <jsp:include page="../Footer.jsp" />

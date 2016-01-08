@@ -40,20 +40,20 @@
 			 
 			 <h4>Assigned truck<small> truck number</small>:
 			     <c:choose>
-			         <c:when test="${empty order.assignedTruckFK}"><span class="label label-warning">Not assigned</span></c:when>
-			         <c:otherwise><span class="label label-success">${order.assignedTruckFK.truckNumber }</span></c:otherwise>
+			         <c:when test="${empty order.assignedTruck}"><span class="label label-warning">Not assigned</span></c:when>
+			         <c:otherwise><span class="label label-success">${order.assignedTruck.truckNumber }</span></c:otherwise>
 			     </c:choose>
 			 </h4>
 			 
 			 <h4>Assigned drivers 
-			     <c:if test="${!empty order.assignedTruckFK}">
-			         (${fn:length(order.assignedTruckFK.driversInTruck)} / ${order.assignedTruckFK.driverCount})
+			     <c:if test="${!empty order.assignedTruck}">
+			         (${fn:length(order.assignedTruck.driversIdsAndNames)} / ${order.assignedTruck.driverCount})
                  </c:if>:
                  
                  <c:choose>
-                     <c:when test="${!empty order.assignedTruckFK && !empty order.assignedTruckFK.driversInTruck}">
-                        <c:forEach items="${order.assignedTruckFK.driversInTruck}" var="driverId">
-                            <a href="${pageContext.request.contextPath}/driver/${driverId.driverId}">${driverId.firstName} ${driverId.lastName}</a><span class="comma-separator">,</span>
+                     <c:when test="${!empty order.assignedTruck && !empty order.assignedTruck.driversIdsAndNames}">
+                        <c:forEach items="${order.assignedTruck.driversIdsAndNames}" var="driverId">
+                            <a href="${pageContext.request.contextPath}/driver/${driverId.key}">${driverId.value}</a><span class="comma-separator">,</span>
                         </c:forEach>
                      </c:when>
                      <c:otherwise><span class="label label-danger">Not assigned</span></c:otherwise>
@@ -81,7 +81,7 @@
 				<div class="btn-group-vertical" role="group" aria-label="...">
 
 					<!-- Add freight -->
-					<button type="button" class="btn btn-default btn-lg <c:if test="${order.orderStatus != orderCreated || !empty order.assignedTruckFK}">disabled</c:if>" data-toggle="modal" data-target="#add-freight">
+					<button type="button" class="btn btn-default btn-lg <c:if test="${order.orderStatus != orderCreated || !empty order.assignedTruck}">disabled</c:if>" data-toggle="modal" data-target="#add-freight">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-oil" aria-hidden="true"></span> Add
 						freight
@@ -89,7 +89,7 @@
 
 					<!-- Assign truck -->
 					<button type="button"
-						class="btn btn-default btn-lg <c:if test="${!empty order.assignedTruckFK || order.orderStatus != orderCreated}">disabled</c:if>"
+						class="btn btn-default btn-lg <c:if test="${!empty order.assignedTruck || order.orderStatus != orderCreated}">disabled</c:if>"
 						data-toggle="modal" data-target="#assign-truck">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-bed" aria-hidden="true"></span> Assign
@@ -97,7 +97,7 @@
 					</button>
 
 					<!-- Assign driver to tuck -->
-					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruckFK || (!empty order.assignedTruckFK.driversInTruck && fn:length(order.assignedTruckFK.driversInTruck) >= order.assignedTruckFK.driverCount)}">disabled</c:if>"
+					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruck || (!empty order.assignedTruck.driversIdsAndNames && fn:length(order.assignedTruck.driversIdsAndNames) >= order.assignedTruck.driverCount)}">disabled</c:if>"
 					data-toggle="modal" data-target="#assign-driver">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-user" aria-hidden="true"></span>
@@ -107,7 +107,7 @@
 					<!-- Status change -->
 					<button type="button" class="btn btn-default btn-lg 
 					    <c:choose>
-	                       <c:when test="${order.orderStatus == 'CREATED' && !empty order.assignedTruckFK && (!empty order.assignedTruckFK.driversInTruck && fn:length(order.assignedTruckFK.driversInTruck) >= order.assignedTruckFK.driverCount)}"></c:when>
+	                       <c:when test="${order.orderStatus == 'CREATED' && !empty order.assignedTruck && (!empty order.assignedTruck.driversIdsAndNames && fn:length(order.assignedTruck.driversIdsAndNames) >= order.assignedTruck.driverCount)}"></c:when>
 	                       
 	                       <c:otherwise>disabled</c:otherwise>
                         </c:choose>"
@@ -146,7 +146,7 @@
 
 					<tbody>
 
-						<c:forEach items="${order.orderLines}" var="freight">
+						<c:forEach items="${order.freightsOrderLines}" var="freight">
 							<tr>
 								<td>${freight.freightId}</td>
 								<td>${freight.description}</td>
