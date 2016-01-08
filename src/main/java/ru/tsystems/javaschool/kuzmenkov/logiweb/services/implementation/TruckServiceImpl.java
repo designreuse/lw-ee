@@ -62,7 +62,7 @@ public class TruckServiceImpl implements TruckService {
      */
     @Override //
     @Transactional
-    public Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException, LogiwebValidationException {
+    public Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException {
         try {
             if (!LogiwebValidator.validateTruckNumber(newTruckDTO.getTruckNumber())) {
                 throw new LogiwebValidationException("Truck number #" + newTruckDTO.getTruckNumber() + " is not valid.");
@@ -149,8 +149,7 @@ public class TruckServiceImpl implements TruckService {
 
     @Override //
     @Transactional
-    public void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException,
-            LogiwebValidationException {
+    public void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException {
         try {
             Truck truck = truckDAO.findById(truckId);
 
@@ -190,9 +189,9 @@ public class TruckServiceImpl implements TruckService {
         }
     }
 
-    @Override //
+    @Override
     @Transactional
-    public void removeTruck(Integer truckId) throws LogiwebValidationException, LogiwebServiceException {
+    public void removeTruck(Integer truckId) throws LogiwebServiceException {
         try {
             Truck truckToRemove = truckDAO.findById(truckId);
 

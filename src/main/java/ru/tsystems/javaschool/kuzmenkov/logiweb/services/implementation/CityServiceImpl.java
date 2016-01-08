@@ -18,18 +18,18 @@ import java.util.List;
 @Service("cityService")
 public class CityServiceImpl implements CityService {
 
-    private static final Logger LOGGGER = Logger.getLogger(TruckServiceImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(CityServiceImpl.class);
     @Autowired
     private CityDAO cityDAO;
 
     @Override
     @Transactional
-    public List<City> findAllCities() throws LogiwebServiceException { //
+    public List<City> findAllCities() throws LogiwebServiceException {
         try {
             return cityDAO.findAll();
 
         } catch (LogiwebDAOException e) {
-            //LOG.warn("Something unexcpected happend.");
+            LOGGER.warn("Exception in CityServiceImpl - findAllCities().", e);
             throw new LogiwebServiceException(e);
         }
     }
@@ -42,7 +42,7 @@ public class CityServiceImpl implements CityService {
             return cityDAO.findById(cityId);
 
         } catch (LogiwebDAOException e) {
-            LOGGGER.warn("Exception in CityServiceImpl - findCityById.", e);
+            LOGGER.warn("Exception in CityServiceImpl - findCityById.", e);
             throw new LogiwebServiceException(e);
         }
     }

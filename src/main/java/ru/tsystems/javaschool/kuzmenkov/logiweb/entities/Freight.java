@@ -39,6 +39,7 @@ public class Freight {
     private Order orderForThisFreightFK;
 
     public Freight() {
+        // Default constructor without parameters.
     }
 
     public Integer getFreightId() {

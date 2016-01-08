@@ -29,6 +29,7 @@ public class Order {
     private Set<Freight> orderLines;
 
     public Order() {
+        // Default constructor without parameters.
     }
 
     public Integer getOrderId() {

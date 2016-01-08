@@ -53,7 +53,7 @@ public class DriverController {
      * @throws LogiwebServiceException LogiwebServiceException
      */
     @RequestMapping("driver")
-    private String showDrivers(Model model) throws LogiwebServiceException {
+    public String showDrivers(Model model) throws LogiwebServiceException {
         Set<DriverDTO> drivers = driverService.findAllDrivers();
         model.addAttribute("drivers", drivers);
 
@@ -67,7 +67,7 @@ public class DriverController {
     }
 
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.GET)
-    private String showFormForAddNewDriver(Model model) throws LogiwebServiceException {
+    public String showFormForAddNewDriver(Model model) throws LogiwebServiceException {
         model.addAttribute("formAction", "new");
         model.addAttribute("driverFromForm", new DriverDTO());
         citiesUtil.addAllCitiesToModel(model);
@@ -76,7 +76,7 @@ public class DriverController {
     }
 
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
-    private String addNewDriver(@ModelAttribute("driverFromForm") @Valid DriverDTO driverFromForm,
+    public String addNewDriver(@ModelAttribute("driverFromForm") @Valid DriverDTO driverFromForm,
                                BindingResult result, Model model) throws LogiwebServiceException {
         if (result.hasErrors()) {
             model.addAttribute("driverModel", driverFromForm);
@@ -160,38 +160,4 @@ public class DriverController {
             return e.getMessage();
         }
     }
-
-    /**
-     * Produce JSON in specific for cal-heatmap format. Method returns data on
-     * driver working hours separated by 1 hour intervals.
-     *
-     * Example: {"1420070400" : 1} "1420070400" -- is unix timestamp 1 --
-     * intensity in this time point *
-     *
-     * @see https://kamisama.github.io/cal-heatmap/
-     *
-     * @param driverId
-     * @return
-     * @throws LogiwebServiceException
-     */
-    /*@RequestMapping(value = { "driver/{driverId}/calendarHeatMapData" }, method = RequestMethod.GET)
-    @ResponseBody
-    public Map<String, Integer> makeCalendarHeatMapJsonData(@PathVariable("driverId") int driverId)
-            throws LogiwebServiceException {
-        Map<String, Integer> calendarHeatData = new HashMap<>();
-
-        Driver driver = driverService.findDriverById(driverId);
-        if (driver == null) {
-            throw new LogiwebServiceException();
-        }
-        List<DriverShift> journals = driverService.findDriverShiftRecordsForThisMonth(driver.getDriverId());
-
-        for (DriverShift j : journals) {
-            Map<String, Integer> counter = DateUtil.convertIntervalToCalHeatmapFormat(j.getDriverShiftBegin(),
-                    j.getDriverShiftEnd());
-            calendarHeatData.putAll(counter);
-        }
-
-        return calendarHeatData;
-    }*/
 }

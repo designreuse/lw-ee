@@ -20,6 +20,7 @@ public class OrderDTO {
     private Set<Freight> freightsOrderLines;
 
     public OrderDTO() {
+        // Default constructor without parameter.
     }
 
     public Integer getOrderId() {

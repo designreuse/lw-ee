@@ -47,6 +47,7 @@ public class Truck {
     private Order orderForThisTruck;
 
     public Truck() {
+        // Default constructor without parameters.
     }
 
     public Integer getTruckId() {

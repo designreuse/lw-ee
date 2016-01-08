@@ -34,19 +34,19 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private TruckDAO truckDAO;
 
-    @Override //
+    @Override
     @Transactional
     public List<Order> findAllOrders() throws LogiwebServiceException {
         try {
             return orderDAO.findAll();
 
         } catch(LogiwebDAOException e) {
-            System.out.println("Exception in OrderServiceImpl");
+            LOGGER.warn("Exception in OrderServiceImpl - findAllOrders().", e);
             throw new LogiwebServiceException(e);
         }
     }
 
-    @Override //
+    @Override
     @Transactional
     public Integer addNewOrder() throws LogiwebServiceException {
         try {
@@ -59,12 +59,12 @@ public class OrderServiceImpl implements OrderService {
             return newOrder.getOrderId();
 
         } catch(LogiwebDAOException e) {
-            System.out.println("Exception in OrderServiceImpl");
+            LOGGER.warn("Exception in OrderServiceImpl - addNewOrder().", e);
             throw new LogiwebServiceException(e);
         }
     }
 
-    @Override //
+    @Override
     @Transactional
     public OrderDTO findOrderById(Integer orderId) throws LogiwebServiceException {
         try {
@@ -84,8 +84,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void assignTruckToOrder(Integer assignedTruckId, Integer orderId) throws LogiwebServiceException,
-            LogiwebValidationException {
+    public void assignTruck(Integer assignedTruckId, Integer orderId) throws LogiwebServiceException {
         try {
             Truck assignedTruck = truckDAO.findById(assignedTruckId);
 
@@ -119,14 +118,14 @@ public class OrderServiceImpl implements OrderService {
             LOGGER.info("Truck with ID" + assignedTruck.getTruckId() + " assign to order " + orderForTruck.getOrderId());
 
         } catch(LogiwebDAOException e) {
-            System.out.println("Exception in OrderServiceImpl");
+            LOGGER.warn("Exception in OrderServiceImpl - assignTruck().", e);
             throw new LogiwebServiceException(e);
         }
     }
 
     @Override
     @Transactional
-    public void setReadyStatusForOrder(Integer orderId) throws LogiwebValidationException, LogiwebServiceException {
+    public void setReadyStatusForOrder(Integer orderId) throws LogiwebServiceException {
         try {
             Order order = orderDAO.findById(orderId);
 

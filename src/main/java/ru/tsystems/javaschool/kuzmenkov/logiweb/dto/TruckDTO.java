@@ -33,6 +33,10 @@ public class TruckDTO {
 
     private TruckStatus truckStatus;
 
+    public TruckDTO() {
+        // Default constractor without parameter
+    }
+
     public int getTruckId() {
         return truckId;
     }

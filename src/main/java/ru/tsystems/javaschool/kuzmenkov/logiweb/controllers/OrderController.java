@@ -171,7 +171,7 @@ public class OrderController {
         }
 
         try {
-            orderService.assignTruckToOrder(truckId, orderId);
+            orderService.assignTruck(truckId, orderId);
 
             return "Truck assigned";
 

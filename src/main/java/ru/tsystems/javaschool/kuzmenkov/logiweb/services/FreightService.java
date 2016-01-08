@@ -3,7 +3,6 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.OrderRoute;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ public interface FreightService {
 
     void setPickedUpStatus(Integer freightId) throws IllegalStateException, LogiwebServiceException;
 
-    void addNewFreight(Freight newFreight) throws LogiwebServiceException, LogiwebValidationException;
+    void addNewFreight(Freight newFreight) throws LogiwebServiceException;
 
     List<Freight> findAllFreights() throws LogiwebServiceException;
 

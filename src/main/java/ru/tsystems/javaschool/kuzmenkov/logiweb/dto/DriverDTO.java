@@ -45,6 +45,7 @@ public class DriverDTO {
     private List<DriverShift> driverShiftRecordsForThisMonth;
 
     public DriverDTO() {
+        // Default constructor without parameter.
     }
 
     public Integer getDriverId() {

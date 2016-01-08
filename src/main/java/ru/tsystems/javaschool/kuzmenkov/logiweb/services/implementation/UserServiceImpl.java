@@ -51,8 +51,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, //
-            LogiwebValidationException {
+    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException {
         if (userEmail == null || userEmail.isEmpty()) {
             throw new LogiwebValidationException(
                     "Username can't be empty.");

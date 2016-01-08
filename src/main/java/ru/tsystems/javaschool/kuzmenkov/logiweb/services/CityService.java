@@ -6,11 +6,11 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceExcepti
 import java.util.List;
 
 /**
- * Created by Nikolay on 26.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 public interface CityService {
 
-    List<City> findAllCities() throws LogiwebServiceException; //
+    List<City> findAllCities() throws LogiwebServiceException;
 
     City findCityById(Integer cityId) throws LogiwebServiceException;
 }

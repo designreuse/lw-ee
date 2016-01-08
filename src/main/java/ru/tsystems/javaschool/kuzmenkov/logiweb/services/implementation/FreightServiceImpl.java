@@ -51,7 +51,7 @@ public class FreightServiceImpl implements FreightService {
 
     @Override
     @Transactional
-    public void addNewFreight(Freight newFreight) throws LogiwebServiceException,LogiwebValidationException {
+    public void addNewFreight(Freight newFreight) throws LogiwebServiceException {
         LogiwebValidator.validateFreightFormValues(newFreight);
         try {
             //get managed entities

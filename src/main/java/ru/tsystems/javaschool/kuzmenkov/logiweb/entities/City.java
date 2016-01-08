@@ -20,6 +20,7 @@ public class City {
 
 
     public City() {
+        // Default constructor without parameters.
     }
 
     public Integer getCityId() {

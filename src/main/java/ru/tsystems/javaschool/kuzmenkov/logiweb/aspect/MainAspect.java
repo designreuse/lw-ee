@@ -19,7 +19,9 @@ public class MainAspect {
     private static final Logger LOGGER = Logger.getLogger(MainAspect.class);
 
     @Pointcut("execution(* ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.*.* (..))")
-    public void servicePointCut() {}
+    public void servicePointCut() {
+        // Pointcut for advice execution.
+    }
 
     @Before("servicePointCut()")
     public void loggingBeforeActionAdvice(JoinPoint joinPoint) {

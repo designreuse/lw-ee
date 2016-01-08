@@ -18,7 +18,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;

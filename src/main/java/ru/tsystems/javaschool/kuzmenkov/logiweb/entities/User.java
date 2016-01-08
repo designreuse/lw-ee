@@ -30,6 +30,7 @@ public class User {
     private Driver attachedDriver;
 
     public User() {
+        // Default constructor without parameters.
     }
 
     public Integer getUserId() {

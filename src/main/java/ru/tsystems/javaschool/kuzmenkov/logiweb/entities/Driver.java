@@ -62,6 +62,7 @@ public class Driver {
     private Float workingHoursThisMonth;
 
     public Driver() {
+        // Default constructor without parameters.
     }
 
     public Integer getDriverId() {

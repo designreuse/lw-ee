@@ -1,11 +1,12 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions;
 
 /**
- * Created by Nikolay on 23.11.2015.
+ * @author Nikolay Kuzmenkov.
  */
 public class LogiwebDAOException extends Exception {
 
     public LogiwebDAOException() {
+        super();
     }
 
     public LogiwebDAOException(String message) {

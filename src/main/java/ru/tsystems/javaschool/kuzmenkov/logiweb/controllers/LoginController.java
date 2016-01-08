@@ -29,7 +29,7 @@ public class LoginController {
      * @return Login.jsp
      */
     @RequestMapping(value = "/login")
-    private String login() {
+    public String login() {
         return "main/Login";
     }
 
@@ -38,7 +38,7 @@ public class LoginController {
      * @throws LogiwebServiceException kk
      */
     @RequestMapping("/")
-    private String dispatch() throws LogiwebServiceException {
+    public String dispatch() throws LogiwebServiceException {
         Collection<SimpleGrantedAuthority> authorities =
                 (Collection<SimpleGrantedAuthority>) SecurityContextHolder.
                         getContext().getAuthentication().getAuthorities();

@@ -12,7 +12,7 @@ public class WayPoint {
     private Freight freight;
 
     public WayPoint() {
-
+        // Default constructor without parameters.
     }
 
     public WayPoint(WayPointStatus wayPointStatus, City city, Freight freight) {

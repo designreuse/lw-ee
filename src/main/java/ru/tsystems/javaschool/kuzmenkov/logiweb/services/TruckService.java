@@ -23,8 +23,7 @@ public interface TruckService {
      *              level (not user fault).
      * @throws LogiwebValidationException if truck don't have all required fields or not unique truck number.
      */
-    Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException,
-            LogiwebValidationException;
+    Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException;
 
     /**
      * Find all trucks.
@@ -45,9 +44,9 @@ public interface TruckService {
      */
     Truck findTruckById(Integer truckId) throws LogiwebServiceException;
 
-    void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException, LogiwebValidationException;
+    void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException;
 
-    void removeTruck(Integer truckId) throws LogiwebServiceException, LogiwebValidationException; //
+    void removeTruck(Integer truckId) throws LogiwebServiceException;
 
 
 }

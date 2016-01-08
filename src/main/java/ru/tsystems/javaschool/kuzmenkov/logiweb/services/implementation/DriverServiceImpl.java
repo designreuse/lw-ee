@@ -64,8 +64,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebServiceException, //
-            LogiwebValidationException {
+    public Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebServiceException {
         try {
             Driver driverWithSamePersonalNumber = driverDAO.findDriverByPersonalNumber(newDriverDTO.getPersonalNumber());
 
@@ -165,7 +164,7 @@ public class DriverServiceImpl implements DriverService {
     //***
     @Override
     public void editDriver(Driver editedDriver) throws LogiwebServiceException {
-
+        // Do later.
     }
 
     /** //

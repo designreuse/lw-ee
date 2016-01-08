@@ -1,6 +1,5 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.entities;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ public class OrderRoute {
     private List<WayPoint> bestOrderOfDelivery;
 
     public OrderRoute() {
-
+        // Default constructor without parameters.
     }
 
     public OrderRoute(float estimatedTime, float maxWeightOnCourse, List<WayPoint> bestOrderOfDelivery) {

@@ -29,6 +29,7 @@ public class DriverShift {
     private Driver driverForThisShiftFK;
 
     public DriverShift() {
+        // Default constructor without parameters.
     }
 
     public Integer getDriverShiftId() {
