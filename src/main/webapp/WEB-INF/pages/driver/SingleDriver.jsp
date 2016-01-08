@@ -4,7 +4,7 @@
 <jsp:include page="../Header.jsp">
     <jsp:param name="title" value="Driver info" />
     <jsp:param value="common.css, cal-heatmap.css" name="css" />
-    <jsp:param value="RemoveRecord.js, d3.min.js, cal-heatmap.min.js, showCalHeatMap.js" name="js" />
+    <jsp:param value="RemoveRecord.js" name="js" />
 </jsp:include>
 
 <jsp:include page="../HeaderMenu.jsp">

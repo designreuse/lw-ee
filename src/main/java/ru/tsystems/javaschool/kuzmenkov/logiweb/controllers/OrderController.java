@@ -239,8 +239,7 @@ public class OrderController {
 
         if (order.getAssignedTruck().getCurrentCityId() != null) {
 
-            String mainCity = truckService.findTruckById(order.getAssignedTruck().getTruckId())
-                    .getCurrentCityFK().getName();
+            String mainCity = cityService.findCityById(order.getAssignedTruck().getCurrentCityId()).getName();
 
             Set<Freight> waypointSet = order.getFreightsOrderLines();
 

@@ -26,12 +26,25 @@ public interface TruckService {
     Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException;
 
     /**
+     * Edit truck.
+     *
+     * @param editedTruckDTO
+     * @throws LogiwebValidationException
+     *             if truck don't have all required fields or have not unique license
+     *             plate
+     * @throws LogiwebServiceException
+     *             if unexpected exception occurred on lower level (not user
+     *             fault)
+     */
+    void editTruck(TruckDTO editedTruckDTO) throws LogiwebServiceException;
+
+    /**
      * Find all trucks.
      *
      * @return list of trucks or empty list if nothing found.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    List<Truck> findAllTrucks() throws LogiwebServiceException;
+    List<TruckDTO> findAllTrucks() throws LogiwebServiceException;
 
     List<TruckDTO> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException;
 
@@ -42,7 +55,7 @@ public interface TruckService {
      * @return truck by this truck ID or null.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    Truck findTruckById(Integer truckId) throws LogiwebServiceException;
+    TruckDTO findTruckById(Integer truckId) throws LogiwebServiceException;
 
     void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException;
 

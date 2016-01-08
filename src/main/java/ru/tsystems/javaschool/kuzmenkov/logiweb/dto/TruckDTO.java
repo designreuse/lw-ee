@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class TruckDTO {
 
-    private int truckId;
+    private Integer truckId;
 
     @NotBlank
     private String truckNumber;
@@ -37,11 +37,11 @@ public class TruckDTO {
         // Default constractor without parameter
     }
 
-    public int getTruckId() {
+    public Integer getTruckId() {
         return truckId;
     }
 
-    public void setTruckId(int truckId) {
+    public void setTruckId(Integer truckId) {
         this.truckId = truckId;
     }
 

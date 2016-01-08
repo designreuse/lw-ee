@@ -22,19 +22,32 @@ public interface DriverWebService {
      * @throws LogiwebValidationException if unfinished shift for this driver is exist. Or if driver
      *             does not exist. Or if driver status is not FREE.
      */
-    void startShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber) throws LogiwebValidationException;
+    void startShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber)
+            throws LogiwebValidationException;
+
     /**
-     * Takes an id and a status of a driver and responses with the driver status using SOAP webservice.
+     * End shift for driver.
+     *
+     * @param driverPersonalNumber
+     *
      */
+    void endShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber)
+            ;
+
+    void setStatusRestingForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber);
+
+    void setStatusDrivingForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber);
+
+
+    /*
     @WebMethod
     String setDriverStatus(@WebParam(name = "driverId") int driverId,
                            @WebParam(name = "driverStatus") String driverStatus);
 
-    /**
-     * Takes a driver id and gets his/her status using SOAP webservice.
-     */
+
     @WebMethod
     String getDriverStatus(@WebParam(name = "driverId") int driverId) throws LogiwebServiceException;
+    */
 
     /**
      * Takes a driver credentials and processes authentication using SOAP webservice.

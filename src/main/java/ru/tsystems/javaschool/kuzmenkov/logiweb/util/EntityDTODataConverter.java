@@ -84,6 +84,7 @@ public class EntityDTODataConverter {
         truckEntity.setTruckNumber(truckDTO.getTruckNumber());
         truckEntity.setDriverCount(truckDTO.getDriverCount());
         truckEntity.setCapacity(truckDTO.getCapacity());
+        truckEntity.setTruckStatus(truckDTO.getTruckStatus());
 
         return truckEntity;
     }

@@ -39,19 +39,6 @@ public class TruckServiceImpl implements TruckService {
     @Autowired
     private TruckDAO truckDAO;
 
-    public boolean validateTruckNumber(String truckNumber) {
-        if(!truckNumber.matches("^[A-Z0-9]{7}$")) {             // only letters and numbers (7 times)
-            return false;
-        }
-        else if(!truckNumber.matches("^[A-Z]{2}\\d{5}$")) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-
-
     /**
      * Add new truck.
      *
@@ -92,17 +79,64 @@ public class TruckServiceImpl implements TruckService {
         }
     }
 
+    @Override
+    @Transactional
+    public void editTruck(TruckDTO editedTruckDTO) throws LogiwebServiceException {
+        if(editedTruckDTO.getTruckId() == null || editedTruckDTO.getTruckId() <= 0) {
+            throw new LogiwebValidationException("Truck ID is not provided or incorrect.");
+        }
+
+        if (!LogiwebValidator.validateTruckNumber(editedTruckDTO.getTruckNumber())) {
+            throw new LogiwebValidationException("Truck number " + editedTruckDTO.getTruckNumber() + " is not valid.");
+        }
+
+        try {
+            Truck truckWithSameNumber = truckDAO.findTruckByTruckNumber(editedTruckDTO.getTruckNumber());
+
+            if (truckWithSameNumber != null && truckWithSameNumber.getTruckId() != editedTruckDTO.getTruckId()) {
+                throw new LogiwebValidationException("Truck number " + editedTruckDTO.getTruckNumber() + " is already in use.");
+            }
+
+            Truck truckEntityToEdit = truckDAO.findById(editedTruckDTO.getTruckId());
+
+            if (truckEntityToEdit == null) {
+                throw new LogiwebValidationException("Truck with ID " + editedTruckDTO.getTruckId() + " not found.");
+            }
+
+            if (truckEntityToEdit.getOrderForThisTruck() != null) {
+                throw new LogiwebValidationException("Can't edit truck while order is assigned.");
+            }
+
+            truckEntityToEdit.setTruckNumber(editedTruckDTO.getTruckNumber());
+            truckEntityToEdit.setDriverCount(editedTruckDTO.getDriverCount());
+            truckEntityToEdit.setCapacity(editedTruckDTO.getCapacity());
+            truckEntityToEdit.setTruckStatus(editedTruckDTO.getTruckStatus());
+            City city = new City();
+            city.setCityId(editedTruckDTO.getCurrentCityId());
+            truckEntityToEdit.setCurrentCityFK(city);
+            LogiwebValidator.validateTruckFormValues(truckEntityToEdit);
+
+            truckDAO.update(truckEntityToEdit);
+
+            LOGGER.info("Truck edited. Number " + truckEntityToEdit.getTruckNumber() + " ID: " + truckEntityToEdit.getTruckId());
+
+        } catch (LogiwebDAOException e) {
+            LOGGER.warn("Exception in TruckServiceImpl - editTruck().", e);
+            throw new LogiwebServiceException(e);
+        }
+    }
+
     /**
      * Find all trucks.
      *
      * @return list of trucks or empty list if nothing found.
      * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
      */
-    @Override //
+    @Override
     @Transactional
-    public List<Truck> findAllTrucks() throws LogiwebServiceException {
+    public List<TruckDTO> findAllTrucks() throws LogiwebServiceException {
         try {
-            return truckDAO.findAll();
+            return converter.convertListTruckEntitiesToDTO(truckDAO.findAll());
 
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in TruckServiceImpl - findAllTrucks().", e);
@@ -132,19 +166,19 @@ public class TruckServiceImpl implements TruckService {
      */
     @Override
     @Transactional
-    public Truck findTruckById(Integer truckId) throws LogiwebServiceException {
-        Truck truckResult;
-
+    public TruckDTO findTruckById(Integer truckId) throws LogiwebServiceException {
         try {
+            Truck truck = truckDAO.findById(truckId);
 
-            truckResult = truckDAO.findById(truckId);
-
-
+            if (truck == null) {
+                return null;
+            } else {
+                return converter.convertTruckEntityToDTO(truck);
+            }
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Exception in TruckServiceImpl - findTruckById().", e);
             throw new LogiwebServiceException(e);
         }
-        return truckResult;
     }
 
     @Override //

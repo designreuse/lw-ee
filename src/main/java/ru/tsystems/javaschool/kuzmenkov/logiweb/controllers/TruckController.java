@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
@@ -33,9 +34,9 @@ public class TruckController {
 
     @RequestMapping(value = {"truck"})
     public String showTrucks(Model model) throws LogiwebServiceException {
-        List<Truck> trucks = truckService.findAllTrucks();
+        List<TruckDTO> trucks = truckService.findAllTrucks();
         model.addAttribute("trucks", trucks);
-        model.addAttribute("cities", cityService.findAllCities());
+        citiesUtil.addAllCitiesToModel(model);
 
         return "truck/TruckList";
     }
@@ -49,11 +50,28 @@ public class TruckController {
         return "truck/AddOrEditTruck";
     }
 
+    @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.GET)
+    public String showFormForEditDriver(@PathVariable("truckId") Integer truckId, Model model) throws LogiwebServiceException {
+        model.addAttribute("formAction", "edit");
+
+        TruckDTO truckToEdit = truckService.findTruckById(truckId);
+
+        if (truckToEdit == null) {
+            throw new LogiwebServiceException();
+        }
+
+        model.addAttribute("truckFromForm", truckToEdit);
+        citiesUtil.addAllCitiesToModel(model);
+        model.addAttribute("truckStatuses", TruckStatus.values());
+
+        return "truck/AddOrEditTruck";
+    }
+
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.POST)
     public String addTruck(@ModelAttribute("truckFromForm") TruckDTO newTruckFromForm, BindingResult result, Model model)
             throws LogiwebServiceException {
         if (result.hasErrors()) {
-            model.addAttribute("truckModel", newTruckFromForm);
+            model.addAttribute("truckFromForm", newTruckFromForm);
             model.addAttribute("formAction", "new");
             citiesUtil.addAllCitiesToModel(model);
 
@@ -69,6 +87,31 @@ public class TruckController {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("formAction", "new");
             citiesUtil.addAllCitiesToModel(model);
+            return "truck/AddOrEditTruck";
+        }
+    }
+
+    @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.POST)
+    public String editTruck(
+            @ModelAttribute("truckFromForm") @Valid TruckDTO editTruckFromForm, BindingResult result, Model model)
+            throws LogiwebServiceException {
+        if (result.hasErrors()) {
+            model.addAttribute("truckFromForm", editTruckFromForm);
+            citiesUtil.addAllCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
+
+            return "truck/AddOrEditTruck";
+        }
+
+        try {
+            truckService.editTruck(editTruckFromForm);
+
+            return "redirect:/truck";
+
+        } catch (LogiwebValidationException e) {
+            model.addAttribute("error", e.getMessage());
+            citiesUtil.addAllCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
             return "truck/AddOrEditTruck";
         }
     }

@@ -19,9 +19,6 @@ public class DriverWebServiceImpl implements DriverWebService {
 
     private static final Logger LOGGER = Logger.getLogger(DriverWebServiceImpl.class);
 
-    //@Autowired
-    //private DriverStatusChangeService driverStatusChangeService;
-
     @Autowired
     private DriverService driverService;
 
@@ -35,30 +32,20 @@ public class DriverWebServiceImpl implements DriverWebService {
             throw new ServerErrorException(500);
         }
     }
-    /**
-     * Takes an id and a status of a driver and responses with the driver status using SOAP webservice.
-     */
+
     @Override
-    public String setDriverStatus(int driverId, String driverStatus) {
+    public void endShiftForDriver(Integer driverPersonalNumber) {
 
-        /*Driver driver = new Driver();
-        driver.setId(driverId);
-        driver.setStatus(driverStatus);
-        DriverStatusChange driverStatusChange = new DriverStatusChange(driverStatus, driver);
-
-        driverStatusChangeService.saveOrUpdateDriverStatus(driverStatusChange);
-
-        driverService.updateDriverStatusAndWorkedHours(driver);*/
-
-        return "Driver status successfully saved!";
     }
 
-    /**
-     * Takes a driver id and gets his/her status using SOAP webservice.
-     */
     @Override
-    public String getDriverStatus(int driverId) throws LogiwebServiceException {
-        return driverService.getDriverByPersonalNumber(driverId).getDriverStatus().name();
+    public void setStatusRestingForDriver(Integer driverPersonalNumber) {
+
+    }
+
+    @Override
+    public void setStatusDrivingForDriver(Integer driverPersonalNumber) {
+
     }
 
     /**
