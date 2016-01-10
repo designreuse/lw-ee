@@ -54,7 +54,7 @@ public interface DriverService {
      * @param editedDriver
      * @throws LogiwebServiceException
      */
-    void editDriver(Driver editedDriver) throws LogiwebServiceException;
+    void editDriver(DriverDTO editedDriver) throws LogiwebServiceException;
 
     /** //
      * Find drivers.

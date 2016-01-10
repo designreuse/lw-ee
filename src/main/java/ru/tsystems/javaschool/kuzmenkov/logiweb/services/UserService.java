@@ -12,7 +12,5 @@ public interface UserService extends UserDetailsService {
 
     Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException;
 
-    String getMD5Hash(String userPassword) throws LogiwebServiceException;
-
     User findUserByEmail(String userEmail) throws LogiwebServiceException;
 }

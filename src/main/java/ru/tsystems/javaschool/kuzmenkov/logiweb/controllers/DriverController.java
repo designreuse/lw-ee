@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.RecordNotFoundException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.CitiesUtil;
@@ -75,6 +77,24 @@ public class DriverController {
         return "driver/AddOrEditDriver";
     }
 
+    @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.GET)
+    public String showFormForEditDriver(@PathVariable("driverId") Integer driverId, Model model)
+            throws LogiwebServiceException {
+        model.addAttribute("formAction", "edit");
+        DriverDTO driverToEdit = driverService.findDriverById(driverId);
+
+        if (driverToEdit == null) {
+            throw new RecordNotFoundException();
+        }
+
+        model.addAttribute("driverFromForm", driverToEdit);
+        citiesUtil.addAllCitiesToModel(model);
+        model.addAttribute("driverStatuses", DriverStatus.values());
+
+        return "driver/AddOrEditDriver";
+
+    }
+
     @RequestMapping(value = {"driver/new"}, method = RequestMethod.POST)
     public String addNewDriver(@ModelAttribute("driverFromForm") @Valid DriverDTO driverFromForm,
                                BindingResult result, Model model) throws LogiwebServiceException {
@@ -95,6 +115,31 @@ public class DriverController {
             model.addAttribute("error", e.getMessage());
             citiesUtil.addAllCitiesToModel(model);
             model.addAttribute("formAction", "new");
+            return "driver/AddOrEditDriver";
+        }
+    }
+
+    @RequestMapping(value = {"driver/{driverId}/edit"}, method = RequestMethod.POST)
+    public String editDriver(@ModelAttribute("driverFromForm") @Valid DriverDTO editDriverFromForm,
+                             BindingResult result, Model model) throws LogiwebServiceException {
+        if (result.hasErrors()) {
+            model.addAttribute("driverFromForm", editDriverFromForm);
+            citiesUtil.addAllCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
+
+            return "driver/AddOrEditDriver";
+        }
+
+        try {
+            driverService.editDriver(editDriverFromForm);//convertDriverEmpIdToAccountNameByTemplate(editDriverFromForm.getPersonalNumber()));
+
+            return "redirect:/driver/" + editDriverFromForm.getDriverId();
+
+        } catch (LogiwebValidationException e) {
+            model.addAttribute("error", e.getMessage());
+            citiesUtil.addAllCitiesToModel(model);
+            model.addAttribute("formAction", "edit");
+
             return "driver/AddOrEditDriver";
         }
     }

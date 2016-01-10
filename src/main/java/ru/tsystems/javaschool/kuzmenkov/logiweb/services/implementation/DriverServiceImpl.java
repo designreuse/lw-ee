@@ -163,7 +163,7 @@ public class DriverServiceImpl implements DriverService {
 
     //***
     @Override
-    public void editDriver(Driver editedDriver) throws LogiwebServiceException {
+    public void editDriver(DriverDTO editedDriver) throws LogiwebServiceException {
         // Do later.
     }
 

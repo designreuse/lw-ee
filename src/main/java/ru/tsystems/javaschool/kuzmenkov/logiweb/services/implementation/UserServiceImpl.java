@@ -15,6 +15,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.util.PasswordConverter;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -66,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
             User newUser = new User();
             newUser.setUserEmail(userEmail);
-            newUser.setUserPassword(getMD5Hash(userPassword));
+            newUser.setUserPassword(PasswordConverter.getMD5Hash(userPassword));
             newUser.setUserRole(userRole);
             userDAO.create(newUser);
 
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
             return newUser.getUserId();
 
-        } catch (LogiwebDAOException e) {
+        } catch (NoSuchAlgorithmException| LogiwebDAOException e) {
             LOGGER.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
         }
@@ -89,26 +90,6 @@ public class UserServiceImpl implements UserService {
         } catch (LogiwebDAOException e) {
             LOGGER.warn("Something unexcpected happend.");
             throw new LogiwebServiceException(e);
-        }
-    }
-
-    @Override
-    public String getMD5Hash(String userPassword) throws LogiwebServiceException { //
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.reset();
-            byte[] array = md.digest(userPassword.getBytes());
-            StringBuilder sb = new StringBuilder();
-
-            for(int i = 0; i < array.length; ++i) {
-                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
-            }
-
-            return sb.toString();
-
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.warn("MD5 hashing failed", e);
-            throw new LogiwebServiceException("MD5 hashing failed", e);
         }
     }
 
