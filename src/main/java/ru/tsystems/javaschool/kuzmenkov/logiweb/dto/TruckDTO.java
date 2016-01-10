@@ -14,7 +14,7 @@ public class TruckDTO {
 
     private Integer truckId;
 
-    @NotBlank
+    @NotBlank(message = "empty field")
     private String truckNumber;
 
     @NotNull
@@ -24,7 +24,7 @@ public class TruckDTO {
     @NotNull
     private Integer currentCityId;
 
-    @NotNull
+    @NotNull(message = "Empty field")
     private Float capacity;
 
     private Integer assignedOrderId;

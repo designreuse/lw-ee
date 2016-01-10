@@ -38,21 +38,16 @@ public interface DriverWebService {
 
     void setStatusDrivingForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber);
 
-
-    /*
-    @WebMethod
-    String setDriverStatus(@WebParam(name = "driverId") int driverId,
-                           @WebParam(name = "driverStatus") String driverStatus);
-
-
-    @WebMethod
-    String getDriverStatus(@WebParam(name = "driverId") int driverId) throws LogiwebServiceException;
-    */
-
     /**
      * Takes a driver credentials and processes authentication using SOAP webservice.
      */
-    @WebMethod
     Driver authenticateDriver(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber,
                               @WebParam(name = "driverPassword") String driverPassword) throws LogiwebServiceException;
+
+
+    Driver getDriverInfo(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber) throws LogiwebServiceException;
+
+    void setStatusPickUpForFreight(@WebParam(name = "freightId") Integer freightId);
+
+    void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(@WebParam(name = "freightId") Integer freightId) throws LogiwebServiceException;
 }

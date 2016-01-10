@@ -1,15 +1,11 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.dao.impl;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.UserDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -18,6 +14,8 @@ import java.util.List;
  */
 @Repository("userDAO")
 public class UserDAOImpl extends AbstractDAOImpl<User> implements UserDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(UserDAOImpl.class);
 
     @Override
     public User findUserByEmail(String userEmail) throws LogiwebDAOException {
@@ -34,13 +32,8 @@ public class UserDAOImpl extends AbstractDAOImpl<User> implements UserDAO {
             }
 
         } catch (Exception e) {
-            //LOG.warn(e);
+            LOGGER.warn("Exception in UserDAOImpl - findUserByEmail().", e);
             throw new LogiwebDAOException(e);
         }
-    }
-
-    @Override
-    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException, LogiwebValidationException {
-        return null;
     }
 }

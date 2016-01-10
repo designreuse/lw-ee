@@ -92,6 +92,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public String getMD5Hash(String userPassword) throws LogiwebServiceException { //
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

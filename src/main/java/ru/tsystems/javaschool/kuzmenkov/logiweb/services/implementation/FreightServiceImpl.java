@@ -87,7 +87,7 @@ public class FreightServiceImpl implements FreightService {
             return freightDAO.findAll();
 
         } catch(LogiwebDAOException e) {
-            System.out.println("Exception in OrderServiceImpl");
+            LOGGER.warn("Something unexpected happend.", e);
             throw new LogiwebServiceException(e);
         }
     }
@@ -112,22 +112,52 @@ public class FreightServiceImpl implements FreightService {
 
     @Override
     @Transactional
-    public void setPickedUpStatus(Integer freightId) throws IllegalStateException, LogiwebServiceException {
+    public void setPickUpStatus(Integer freightId) throws IllegalStateException, LogiwebServiceException {
         try {
             Freight freight = freightDAO.findById(freightId);
+
             if (freight == null) {
                 throw new IllegalStateException();
             }
 
             if (freight.getOrderForThisFreightFK().getOrderStatus() != OrderStatus.READY_TO_GO) {
-                throw new IllegalStateException("Order for cargo must be in 'Ready to go' state");
+                throw new IllegalStateException("Order for freight must be in 'Ready to go' state");
             }
 
             if (freight.getFreightStatus() != FreightStatus.WAITING_FOR_PICK_UP) {
-                throw new IllegalStateException("Cargo must be in 'Waiting for pickup' state");
+                throw new IllegalStateException("Freight must be in 'Waiting for pickup' state");
             }
 
             freight.setFreightStatus(FreightStatus.PICKED_UP);
+            freightDAO.update(freight);
+
+        } catch (LogiwebDAOException e) {
+            LOGGER.warn("Something unexcpected happend.");
+            throw new LogiwebServiceException(e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void setDeliverStatus(Integer freightId) throws LogiwebServiceException {
+        try {
+            Freight freight = freightDAO.findById(freightId);
+
+            if (freight == null) {
+                throw new IllegalStateException();
+            }
+
+            if (freight.getOrderForThisFreightFK().getOrderStatus() != OrderStatus.READY_TO_GO) {
+                throw new IllegalStateException(
+                        "Order for freight must be in 'Ready to go' state");
+            }
+
+            if (freight.getFreightStatus() != FreightStatus.PICKED_UP) {
+                throw new IllegalStateException(
+                        "Freight must be in 'Waiting for pickup' state");
+            }
+
+            freight.setFreightStatus(FreightStatus.DELIVERED);
             freightDAO.update(freight);
 
         } catch (LogiwebDAOException e) {

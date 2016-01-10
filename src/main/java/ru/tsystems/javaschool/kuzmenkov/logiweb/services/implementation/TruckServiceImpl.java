@@ -187,10 +187,6 @@ public class TruckServiceImpl implements TruckService {
         try {
             Truck truck = truckDAO.findById(truckId);
 
-            if(truck == null) {
-                throw new LogiwebValidationException("Truck not found.");
-            }
-
             if(truck.getOrderForThisTruck() == null) {
                 throw new LogiwebValidationException("Order is not assigned.");
             }

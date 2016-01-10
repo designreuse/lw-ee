@@ -11,7 +11,9 @@ import java.util.List;
  */
 public interface FreightService {
 
-    void setPickedUpStatus(Integer freightId) throws IllegalStateException, LogiwebServiceException;
+    void setPickUpStatus(Integer freightId) throws IllegalStateException, LogiwebServiceException;
+
+    void setDeliverStatus(Integer freightId) throws LogiwebServiceException;
 
     void addNewFreight(Freight newFreight) throws LogiwebServiceException;
 

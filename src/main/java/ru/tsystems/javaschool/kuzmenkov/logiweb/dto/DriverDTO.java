@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.OrderRoute;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
@@ -16,15 +17,12 @@ import java.util.Set;
 public class DriverDTO {
 
     private Integer driverId;
-    @NotNull(message = "hello")
-    @Min(value = 3, message = "hello2")
-
-    /*@Pattern(regexp = "^[1-9]*$", message = "Personal number field is in wrong format. Use integers.")*/
+    @NotNull(message = "Driver personal number can not be empty")
     private Integer personalNumber;
-    @NotNull
+    @NotBlank(message = "Driver first name can not be empty")
     @Size(min = 1, max = 256, message = "Name should be 1-256 chars long.")
     private String firstName;
-
+    @NotBlank(message = "Driver lastst name can not be empty")
     private String lastName;
 
     private DriverStatus driverStatus;

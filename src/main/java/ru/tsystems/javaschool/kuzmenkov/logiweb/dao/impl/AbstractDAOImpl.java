@@ -7,7 +7,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -92,7 +91,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
             entityManager.merge(changeableEntity);
 
         } catch (Exception e) {
-            System.out.println("Exception in AbstractDAOImpl.");
+            LOGGER.warn("Exception in AbstractDAOImpl - update().", e);
             throw new LogiwebDAOException(e);
         }
     }

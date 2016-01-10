@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.dao.impl;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.DriverShiftDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
@@ -7,8 +8,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +20,8 @@ import java.util.List;
  */
 @Repository("driverShiftDAO")
 public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements DriverShiftDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(DriverShiftDAOImpl.class);
 
     @Override
     public List<DriverShift> findThisMonthRecordsForDrivers(List<Driver> drivers) throws LogiwebDAOException { //
@@ -48,7 +49,7 @@ public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements 
             return queryResult;
 
         } catch (Exception e) {
-            //LOG.warn(e);
+            LOGGER.warn("Exception in DriverShiftDAOImpl - findThisMonthRecordsForDrivers().", e);
             throw new LogiwebDAOException(e);
         }
     }
@@ -88,7 +89,7 @@ public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements 
             }
 
         } catch(Exception e) {
-            //LOGGER.warn(e);
+            LOGGER.warn("Exception in DriverShiftDAOImpl - findUnfinishedShiftForDriver().", e);
             throw new LogiwebDAOException(e);
         }
     }

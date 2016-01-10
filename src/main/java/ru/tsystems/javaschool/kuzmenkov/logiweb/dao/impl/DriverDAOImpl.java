@@ -7,8 +7,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -20,14 +18,17 @@ import java.util.List;
 @Repository("driverDAO")
 public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO {
 
+    /**
+     */
     private static final Logger LOGGER = Logger.getLogger(DriverDAOImpl.class);
 
     @Override //
-    public Driver findDriverByPersonalNumber(Integer driverPersonalNumber) throws LogiwebDAOException {
+    public Driver findDriverByPersonalNumber(Integer driverPersonalNumber)
+            throws LogiwebDAOException {
         try {
             Driver queryResult = null;
-            Query query = getEntityManager().createQuery("SELECT dr FROM Driver dr " +
-                    "WHERE dr.personalNumber = :driverPersonalNumber", Driver.class);
+            Query query = getEntityManager().createQuery("SELECT dr FROM Driver dr "
+                    + "WHERE dr.personalNumber = :driverPersonalNumber", Driver.class);
             query.setParameter("driverPersonalNumber", driverPersonalNumber);
             @SuppressWarnings("unchecked")
             List<Driver> resultList = query.getResultList();

@@ -285,12 +285,12 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public void endShiftForDriver(Integer driverNumber) throws LogiwebValidationException, LogiwebServiceException {
+    public void endShiftForDriver(Integer driverNumber) throws LogiwebServiceException {
         try {
             Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
 
             if (driver == null) {
-                throw new LogiwebValidationException("Provide valid driver employee id.");
+                throw new LogiwebValidationException("Provide valid driver personal number.");
             }
 
             DriverShift unfinishedShift = driverShiftDAO.findUnfinishedShiftForDriver(driver);
@@ -330,7 +330,26 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
-    @Override //
+    @Override
+    @Transactional
+    public void setStatusRestingForDriver(Integer driverNumber) throws LogiwebServiceException {
+        try {
+            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
+
+            if (driver == null) {
+                throw new LogiwebServiceException();
+            }
+
+            driver.setDriverStatus(DriverStatus.REST_IN_SHIFT);
+            driverDAO.update(driver);
+
+        } catch (LogiwebDAOException e) {
+            LOGGER.warn(e);
+            throw new LogiwebServiceException(e);
+        }
+    }
+
+    @Override
     @Transactional
     public DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException {
         try {
