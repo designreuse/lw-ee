@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 
 import java.util.Collection;
@@ -35,10 +34,9 @@ public class LoginController {
 
     /**
      * @return redirect:/manager or redirect:/driver
-     * @throws LogiwebServiceException kk
      */
     @RequestMapping("/")
-    public String dispatch() throws LogiwebServiceException {
+    public String dispatch() {
         Collection<SimpleGrantedAuthority> authorities =
                 (Collection<SimpleGrantedAuthority>) SecurityContextHolder.
                         getContext().getAuthentication().getAuthorities();

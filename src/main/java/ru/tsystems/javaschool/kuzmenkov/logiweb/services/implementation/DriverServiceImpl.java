@@ -6,18 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.RecordNotFoundException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -53,78 +54,61 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
-    public Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebServiceException {
-        try {
-            return driverDAO.findDriverByPersonalNumber(personalNumber);
-
-        } catch (LogiwebDAOException e) {
-           throw new LogiwebServiceException(e);
-        }
+    public Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebDAOException {
+        return driverDAO.findDriverByPersonalNumber(personalNumber);
     }
 
     @Override
     @Transactional
-    public Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebServiceException {
-        try {
-            Driver driverWithSamePersonalNumber = driverDAO.findDriverByPersonalNumber(newDriverDTO.getPersonalNumber());
+    public Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebDAOException, LogiwebValidationException, NoSuchAlgorithmException {
+        Driver driverWithSamePersonalNumber = driverDAO.findDriverByPersonalNumber(newDriverDTO.getPersonalNumber());
 
-            if (driverWithSamePersonalNumber != null) {
-                throw new LogiwebValidationException("Driver with this personal number #" + newDriverDTO.getPersonalNumber()
-                        + " is already exist.");
-            }
+        if (driverWithSamePersonalNumber != null) {
+            throw new LogiwebValidationException("Driver with this personal number #" + newDriverDTO.getPersonalNumber()
+                    + " is already exist.");
+        }
 
-            String personalNumberAsString = String.valueOf(newDriverDTO.getPersonalNumber());
-            String driverAccountEmail = "driver" + personalNumberAsString + "@logiweb.com";
-            String driverAccountPassword = "12345";
+        String personalNumberAsString = String.valueOf(newDriverDTO.getPersonalNumber());
+        String driverAccountEmail = "driver" + personalNumberAsString + "@logiweb.com";
+        String driverAccountPassword = "12345";
 
-            Integer newDriverUserId = userService.createNewUser(driverAccountEmail, driverAccountPassword, Role.ROLE_DRIVER);
-            User accountForDriver = userDAO.findById(newDriverUserId);
+        Integer newDriverUserId = userService.createNewUser(driverAccountEmail, driverAccountPassword, Role.ROLE_DRIVER);
+        User accountForDriver = userDAO.findById(newDriverUserId);
 
-            Driver newDriverEntity = converter.convertDriverDTOToEntity(newDriverDTO);
-            newDriverEntity.setLogiwebDriverAccount(accountForDriver);
-            newDriverEntity.setDriverStatus(DriverStatus.FREE);
+        Driver newDriverEntity = converter.convertDriverDTOToEntity(newDriverDTO);
+        newDriverEntity.setLogiwebDriverAccount(accountForDriver);
+        newDriverEntity.setDriverStatus(DriverStatus.FREE);
 
-            driverDAO.create(newDriverEntity);
+        driverDAO.create(newDriverEntity);
 
-            LOGGER.info("Driver created: " + newDriverEntity.getFirstName() + " " + newDriverEntity.getLastName()
+        LOGGER.info("Driver created: " + newDriverEntity.getFirstName() + " " + newDriverEntity.getLastName()
                     + " personal number #" + newDriverEntity.getPersonalNumber() + " , ID: " + newDriverEntity.getDriverId());
 
-            return newDriverEntity.getDriverId();
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Exception in DriverServiceImpl - addNewDriver().", e);
-            throw new LogiwebServiceException(e);
-        }
+        return newDriverEntity.getDriverId();
     }
 
-    @Override //
+    @Override
     @Transactional
-    public void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebServiceException, LogiwebValidationException {
-        try {
-            Driver driver = driverDAO.findById(driverId);
-            Truck truck = truckDAO.findById(truckId);
+    public void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebDAOException, LogiwebValidationException {
+        Driver driver = driverDAO.findById(driverId);
+        Truck truck = truckDAO.findById(truckId);
 
-            if(driver == null || truck == null) {
-                throw new LogiwebValidationException("Driver and truck must exist.");
-            }
+        if(driver == null || truck == null) {
+            throw new LogiwebValidationException("Driver and truck must exist.");
+        }
 
-            Set<Driver> driverCountInTruck = truck.getDriversInTruck();
+        Set<Driver> driverCountInTruck = truck.getDriversInTruck();
 
-            if(driverCountInTruck == null) {
-                driverCountInTruck = new HashSet<>();
-                truck.setDriversInTruck(driverCountInTruck);
-            }
+        if(driverCountInTruck == null) {
+            driverCountInTruck = new HashSet<>();
+            truck.setDriversInTruck(driverCountInTruck);
+        }
 
-            if(driverCountInTruck.size() < truck.getDriverCount()) {
-                driverCountInTruck.add(driver);
-                driver.setCurrentTruckFK(truck);
-            } else {
-                throw new LogiwebValidationException("All crew positions are occupied. Can't add Driver to crew.");
-            }
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn(e);
-            throw new LogiwebServiceException(e);
+        if(driverCountInTruck.size() < truck.getDriverCount()) {
+            driverCountInTruck.add(driver);
+            driver.setCurrentTruckFK(truck);
+        } else {
+            throw new LogiwebValidationException("All crew positions are occupied. Can't add Driver to crew.");
         }
     }
 
@@ -138,278 +122,233 @@ public class DriverServiceImpl implements DriverService {
      * are also counted. End time for them is current time.
      *
      * @param driverId
-     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
+     * @throws LogiwebDAOException if unexpected exception on lower level occurred (not user fault).
      */
     @Override
     @Transactional
-    public Float calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException { //
-        try {
-            Driver driver = driverDAO.findById(driverId);
-            List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDriver(driver);
-            Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
+    public Float calculateWorkingHoursForDriver(Integer driverId) throws LogiwebDAOException {
+        Driver driver = driverDAO.findById(driverId);
+        List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDriver(driver);
+        Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
 
-            //if driver don't have any records yet
-            if (workingHours.get(driver) == null) {
-                workingHours.put(driver, 0f);
-            }
-
-            return workingHours.get(driver);
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Exception in DriverServiceImpl - calculateWorkingHoursForDriver();", e);
-            throw new LogiwebServiceException(e);
+        //if driver don't have any records yet
+        if (workingHours.get(driver) == null) {
+            workingHours.put(driver, 0f);
         }
+
+        return workingHours.get(driver);
     }
 
-    //***
     @Override
-    public void editDriver(DriverDTO editedDriver) throws LogiwebServiceException {
-        // Do later.
+    @Transactional
+    public void editDriver(DriverDTO editedDriverDTO) throws LogiwebDAOException, LogiwebValidationException {
+        Driver driverWithSameNumber = driverDAO.findDriverByPersonalNumber(editedDriverDTO.getPersonalNumber());
+
+        if (driverWithSameNumber != null && driverWithSameNumber.getDriverId() != editedDriverDTO.getDriverId()) {
+            throw new LogiwebValidationException("Driver number  #"
+                    + editedDriverDTO.getPersonalNumber() + " is already in use.");
+        }
+
+        Driver driverEntityToEdit = driverDAO.findById(editedDriverDTO.getDriverId());
+
+        if(driverEntityToEdit == null) {
+            throw new LogiwebValidationException("Driver record not found.");
+        }
+
+        populateAllowedDriverFieldsFromDTO(driverEntityToEdit, editedDriverDTO);
+
+        driverDAO.update(driverEntityToEdit);
+        User account = driverEntityToEdit.getLogiwebDriverAccount();
+        account.setUserEmail("driver" + driverEntityToEdit.getPersonalNumber() + "@logiweb.com");
+
+        LOGGER.info("Driver edited. " + driverEntityToEdit.getFirstName() + " "
+                + driverEntityToEdit.getLastName() + " ID#" + driverEntityToEdit.getDriverId());
+
     }
 
-    /** //
+    /**
      * Find drivers.
      *
      * @return empty list if nothing found.
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
      */
     @Override
     @Transactional
-    public Set<DriverDTO> findAllDrivers() throws LogiwebServiceException { //
-        try {
-            return converter.convertListDriverEntitiesToDTO(driverDAO.findAll());
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Exception in DriverServiceImpl - findAllDrivers().", e);
-            throw new LogiwebServiceException(e);
-        }
+    public Set<DriverDTO> findAllDrivers() throws LogiwebDAOException {
+        return converter.convertListDriverEntitiesToDTO(driverDAO.findAll());
     }
 
-    @Override //
+    @Override
     @Transactional
-    public DriverDTO findDriverById(Integer driverId) throws LogiwebServiceException {
-        try {
-            Driver driver = driverDAO.findById(driverId);
+    public DriverDTO findDriverById(Integer driverId) throws LogiwebDAOException {
+        Driver driver = driverDAO.findById(driverId);
 
-            if (driver != null) {
-                return converter.convertDriverEntityToDTO(driver);
-            } else {
-                return null;
-            }
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Something unexcpected happend.");
-            throw new LogiwebServiceException(e);
-        }
-    }
-
-    @Override //
-    @Transactional
-    public List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebServiceException {
-        try {
-            Driver driver = driverDAO.findById(driverId);
-
-            if (driver == null) {
-                return new ArrayList<>();
-            } else {
-                return driverShiftDAO.findThisMonthRecordsForDriver(driver);
-            }
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Exception in DriverServiceImpl - findDriverShiftRecordsForThisMonth.", e);
-            throw new LogiwebServiceException(e);
+        if (driver != null) {
+            return converter.convertDriverEntityToDTO(driver);
+        } else {
+            return null;
         }
     }
 
     @Override
     @Transactional
-    public void deleteDriver(Integer driverId) throws LogiwebServiceException, LogiwebValidationException { //
-        try {
-            Driver existingDriverToDelete = driverDAO.findById(driverId);
+    public List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebDAOException {
+        Driver driver = driverDAO.findById(driverId);
 
-            if (existingDriverToDelete == null) {
-                throw new LogiwebValidationException("Driver with driver ID#" + driverId + " not found.");
-            }
-
-            if (existingDriverToDelete.getCurrentTruckFK() != null) {
-                throw new LogiwebValidationException("Driver is assigned to truck. Removal is not possible.");
-            }
-
-            User driverAccountToDelete = existingDriverToDelete.getLogiwebDriverAccount();
-            driverDAO.delete(existingDriverToDelete);
-            userDAO.delete(driverAccountToDelete);
-
-            LOGGER.info("Driver with personal number #" + existingDriverToDelete.getPersonalNumber()
-                    + " " + existingDriverToDelete.getFirstName() + " " + existingDriverToDelete.getLastName() + " removed");
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Exception in DriverServiceImpl - deleteDriver().", e);
-            throw new LogiwebServiceException(e);
+        if (driver == null) {
+            return new ArrayList<>();
+        } else {
+            return driverShiftDAO.findThisMonthRecordsForDriver(driver);
         }
     }
 
     @Override
     @Transactional
-    public void startShiftForDriver(Integer driverNumber) throws LogiwebServiceException, LogiwebValidationException {
-        try {
-            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
+    public void deleteDriver(Integer driverId) throws LogiwebDAOException, LogiwebValidationException {
+        Driver existingDriverToDelete = driverDAO.findById(driverId);
 
-            if (driver == null) {
-                throw new LogiwebValidationException("Provide valid driver personal number.");
-            }
-
-            if (driver.getDriverStatus() != DriverStatus.FREE) {
-                throw new LogiwebValidationException("Driver must be free to start new shift.");
-            }
-
-            DriverShift unfinishedShift = driverShiftDAO.findUnfinishedShiftForDriver(driver);
-
-            if (unfinishedShift != null) {
-                throw new LogiwebValidationException("Finish existing shift before creating new one.");
-            }
-
-            DriverShift newShift = new DriverShift();
-            newShift.setDriverForThisShiftFK(driver);
-            newShift.setDriverShiftBegin(new Date()); // now
-
-            driverShiftDAO.create(newShift);
-
-            driver.setDriverStatus(DriverStatus.REST_IN_SHIFT);
-            driverDAO.update(driver);
-
-        } catch(LogiwebDAOException e) {
-            LOGGER.warn(e);
-            throw new LogiwebServiceException(e);
+        if (existingDriverToDelete == null) {
+            throw new LogiwebValidationException("Driver with driver ID#" + driverId + " not found.");
         }
+
+        if (existingDriverToDelete.getCurrentTruckFK() != null) {
+            throw new LogiwebValidationException("Driver is assigned to truck. Removal is not possible.");
+        }
+
+        User driverAccountToDelete = existingDriverToDelete.getLogiwebDriverAccount();
+        driverDAO.delete(existingDriverToDelete);
+        userDAO.delete(driverAccountToDelete);
+
+        LOGGER.info("Driver with personal number #" + existingDriverToDelete.getPersonalNumber()
+                + " " + existingDriverToDelete.getFirstName() + " " + existingDriverToDelete.getLastName() + " removed");
     }
 
     @Override
     @Transactional
-    public void endShiftForDriver(Integer driverNumber) throws LogiwebServiceException {
-        try {
-            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
+    public void startShiftForDriver(Integer driverNumber) throws LogiwebDAOException, LogiwebValidationException {
+        Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
 
-            if (driver == null) {
-                throw new LogiwebValidationException("Provide valid driver personal number.");
-            }
-
-            DriverShift unfinishedShift = driverShiftDAO.findUnfinishedShiftForDriver(driver);
-
-            if (unfinishedShift == null) {
-                throw new LogiwebValidationException("There is no active shift for this driver.");
-            }
-
-            unfinishedShift.setDriverShiftEnd(new Date());
-            driverShiftDAO.update(unfinishedShift);
-
-            driver.setDriverStatus(DriverStatus.FREE);
-            driverDAO.update(driver);
-
-        } catch(LogiwebDAOException e) {
-            LOGGER.warn(e);
-            throw new LogiwebServiceException(e);
+        if (driver == null) {
+            throw new LogiwebValidationException("Provide valid driver personal number.");
         }
+
+        if (driver.getDriverStatus() != DriverStatus.FREE) {
+            throw new LogiwebValidationException("Driver must be free to start new shift.");
+        }
+
+        DriverShift unfinishedShift = driverShiftDAO.findUnfinishedShiftForDriver(driver);
+
+        if (unfinishedShift != null) {
+            throw new LogiwebValidationException("Finish existing shift before creating new one.");
+        }
+
+        DriverShift newShift = new DriverShift();
+        newShift.setDriverForThisShiftFK(driver);
+        newShift.setDriverShiftBegin(new Date()); // now
+
+        driverShiftDAO.create(newShift);
+
+        driver.setDriverStatus(DriverStatus.REST_IN_SHIFT);
+        driverDAO.update(driver);
     }
 
     @Override
     @Transactional
-    public void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebServiceException {
-        try {
-            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
+    public void endShiftForDriver(Integer driverNumber) throws LogiwebDAOException, LogiwebValidationException {
+        Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
 
-            if (driver == null) {
-                throw new LogiwebServiceException();
-            }
-
-            driver.setDriverStatus(DriverStatus.DRIVING);
-            driverDAO.update(driver);
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn(e);
-            throw new LogiwebServiceException(e);
+        if (driver == null) {
+            throw new LogiwebValidationException("Provide valid driver personal number.");
         }
+
+        DriverShift unfinishedShift = driverShiftDAO.findUnfinishedShiftForDriver(driver);
+
+        if (unfinishedShift == null) {
+            throw new LogiwebValidationException("There is no active shift for this driver.");
+        }
+
+        unfinishedShift.setDriverShiftEnd(new Date());
+        driverShiftDAO.update(unfinishedShift);
+
+        driver.setDriverStatus(DriverStatus.FREE);
+        driverDAO.update(driver);
     }
 
     @Override
     @Transactional
-    public void setStatusRestingForDriver(Integer driverNumber) throws LogiwebServiceException {
-        try {
-            Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
+    public void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebDAOException {
+        Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
 
-            if (driver == null) {
-                throw new LogiwebServiceException();
-            }
-
-            driver.setDriverStatus(DriverStatus.REST_IN_SHIFT);
-            driverDAO.update(driver);
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn(e);
-            throw new LogiwebServiceException(e);
+        if (driver == null) {
+            throw new RecordNotFoundException();
         }
+
+        driver.setDriverStatus(DriverStatus.DRIVING);
+        driverDAO.update(driver);
     }
 
     @Override
     @Transactional
-    public DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException {
-        try {
-            DriverDTO driverDTO = findDriverById(driverId);
-            if (driverDTO == null) {
-                return null;
-            }
+    public void setStatusRestingForDriver(Integer driverNumber) throws LogiwebDAOException {
+        Driver driver = driverDAO.findDriverByPersonalNumber(driverNumber);
 
-            driverDTO.setWorkingHoursThisMonth(calculateWorkingHoursForDriver(driverDTO.getDriverId()));
-            driverDTO.setDriverShiftRecordsForThisMonth(findDriverShiftRecordsForThisMonth(driverDTO.getDriverId()));
+        if (driver == null) {
+            throw new RecordNotFoundException();
+        }
 
-            if (driverDTO.getCurrentOrderId() == null) {
-                return driverDTO;
-            }
+        driver.setDriverStatus(DriverStatus.REST_IN_SHIFT);
+        driverDAO.update(driver)     ;
+    }
 
-            Order order = orderDAO.findById(driverDTO.getCurrentOrderId());
-            OrderRoute orderRouteInfo = freightService.getRouteInformationForOrder(order.getOrderId());
-            driverDTO.setOrderRouteInfoForDriver(orderRouteInfo);
+    @Override
+    @Transactional
+    public DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebDAOException {
+        DriverDTO driverDTO = findDriverById(driverId);
+        if (driverDTO == null) {
+            return null;
+        }
 
+        driverDTO.setWorkingHoursThisMonth(calculateWorkingHoursForDriver(driverDTO.getDriverId()));
+        driverDTO.setDriverShiftRecordsForThisMonth(findDriverShiftRecordsForThisMonth(driverDTO.getDriverId()));
+
+        if (driverDTO.getCurrentOrderId() == null) {
             return driverDTO;
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Exception in DriverServiceImpl - getDriverWithFullInfo().", e);
-            throw new LogiwebServiceException(e);
         }
+
+        Order order = orderDAO.findById(driverDTO.getCurrentOrderId());
+        OrderRoute orderRouteInfo = freightService.getRouteInformationForOrder(order.getOrderId());
+        driverDTO.setOrderRouteInfoForDriver(orderRouteInfo);
+
+        return driverDTO;
     }
 
     @Override
-    @Transactional //
+    @Transactional
     public Set<DriverDTO> findUnassignedDriversByWorkingHoursAndCity(Integer cityId, Float maxWorkingHours)
-            throws LogiwebServiceException {
-        try {
-            City city = cityDAO.findById(cityId);
+            throws LogiwebDAOException {
+        City city = cityDAO.findById(cityId);
 
-            if (city == null) {
-                throw new LogiwebServiceException();
-            }
-
-            List<Driver> freeDriversInCity = driverDAO.findByCityWhereNotAssignedToTruck(city);
-            List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDrivers(freeDriversInCity);
-
-            Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
-
-            for (Driver driver : freeDriversInCity) {   //add drivers that don't yet have journals
-                if(workingHours.get(driver) == null) {
-                    workingHours.put(driver, 0f);
-                }
-            }
-
-            filterDriversByMaxWorkingHours(workingHours, maxWorkingHours);
-
-            return converter.convertListDriverEntitiesToDTO(workingHours.keySet());
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn(e);
-            throw new LogiwebServiceException(e);
+        if (city == null) {
+            throw new RecordNotFoundException();
         }
+
+        List<Driver> freeDriversInCity = driverDAO.findByCityWhereNotAssignedToTruck(city);
+        List<DriverShift> shiftRecords = driverShiftDAO.findThisMonthRecordsForDrivers(freeDriversInCity);
+
+        Map<Driver, Float> workingHours = sumWorkingHoursForThisMonth(shiftRecords);
+
+        for (Driver driver : freeDriversInCity) {   //add drivers that don't yet have journals
+            if(workingHours.get(driver) == null) {
+                workingHours.put(driver, 0f);
+            }
+        }
+
+        filterDriversByMaxWorkingHours(workingHours, maxWorkingHours);
+
+        return converter.convertListDriverEntitiesToDTO(workingHours.keySet());
     }
 
-    /** //
+    /**
      *
      * Calculate total working hours for drivers that are listed in shift records.
      *
@@ -473,5 +412,24 @@ public class DriverServiceImpl implements DriverService {
                 it.remove();
             }
         }
+    }
+
+    /**
+     * Populate fields that are used to edit or create new driver.
+     * (city, name, surname, employee id, status)
+     * @param driverToPopulate
+     * @param source DriverModel
+     * @return
+     */
+    private Driver populateAllowedDriverFieldsFromDTO(Driver driverToPopulate, DriverDTO source) {
+        City city = new City();
+        city.setCityId(source.getCurrentCityId());
+        driverToPopulate.setCurrentCityFK(city);
+
+        driverToPopulate.setPersonalNumber(source.getPersonalNumber());
+        driverToPopulate.setFirstName(source.getFirstName());
+        driverToPopulate.setLastName(source.getLastName());
+
+        return driverToPopulate;
     }
 }

@@ -3,15 +3,12 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.ws;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.OrderService;
 
 import javax.jws.WebService;
-import javax.ws.rs.ServerErrorException;
 
 /**
  * SOAP webservice implementation to manage driver status changes from the client app.
@@ -30,54 +27,30 @@ public class DriverWebServiceImpl implements DriverWebService {
 
     @Override
     public void startShiftForDriver(Integer driverPersonalNumber) throws LogiwebValidationException {
-        try {
-            driverService.startShiftForDriver(driverPersonalNumber);
-
-        } catch (LogiwebServiceException e) {
-            LOGGER.warn("Something unexpected happen", e);
-            throw new ServerErrorException(500);
-        }
+        driverService.startShiftForDriver(driverPersonalNumber);
     }
 
     @Override
-    public void endShiftForDriver(Integer driverPersonalNumber) {
-        try {
-            driverService.endShiftForDriver(driverPersonalNumber);
-
-        } catch (LogiwebServiceException e) {
-            LOGGER.warn("Something unexpected happen", e);
-            throw new ServerErrorException(500);
-        }
+    public void endShiftForDriver(Integer driverPersonalNumber) throws LogiwebValidationException {
+        driverService.endShiftForDriver(driverPersonalNumber);
     }
 
     @Override
     public void setStatusRestingForDriver(Integer driverPersonalNumber) {
-        try {
-            driverService.setStatusRestingForDriver(driverPersonalNumber);
-        } catch (LogiwebServiceException e) {
-            LOGGER.warn("Something unexpected happen", e);
-            throw new ServerErrorException(500);
-        }
+        driverService.setStatusRestingForDriver(driverPersonalNumber);
     }
 
     @Override
     public void setStatusDrivingForDriver(Integer driverPersonalNumber) {
-        try {
-            driverService.setStatusDrivingForDriver(driverPersonalNumber);
-
-        }  catch (LogiwebServiceException e) {
-            LOGGER.warn("Something unexpected happen", e);
-            throw new ServerErrorException(500);
-        }
+        driverService.setStatusDrivingForDriver(driverPersonalNumber);
     }
 
     /**
      * Takes a driver credentials and processes authentication using SOAP webservice.
      */
     @Override
-    public Driver authenticateDriver(Integer driverPersonalNumber, String driverPassword) throws LogiwebServiceException {
+    public Driver authenticateDriver(Integer driverPersonalNumber, String driverPassword) {
         Driver driver = driverService.getDriverByPersonalNumber(driverPersonalNumber);
-
 
         if (driver != null && driverPassword.equals("12345")) {
             return driver;
@@ -88,7 +61,7 @@ public class DriverWebServiceImpl implements DriverWebService {
 
 
     @Override
-    public Driver getDriverInfo(Integer driverPersonalNumber) throws LogiwebServiceException {
+    public Driver getDriverInfo(Integer driverPersonalNumber) {
         Driver driver = driverService.getDriverByPersonalNumber(driverPersonalNumber);
 
         if (driver != null) {
@@ -100,17 +73,12 @@ public class DriverWebServiceImpl implements DriverWebService {
 
     @Override
     public void setStatusPickUpForFreight(Integer freightId) {
-        try {
-            freightService.setPickUpStatus(freightId);
-        } catch (LogiwebServiceException e) {
-            LOGGER.warn("Something unexpected happen", e);
-            throw new ServerErrorException(500);
-        }
+        freightService.setPickUpStatus(freightId);
     }
 
     @Override
-    public void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(Integer freightId) throws LogiwebServiceException {
-        try {
+    public void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(Integer freightId) {
+
             freightService.setDeliverStatus(freightId);
 
             /*Order order = freightService..findOrderById(cargoId).getOrderForThisCargo();
@@ -121,9 +89,5 @@ public class DriverWebServiceImpl implements DriverWebService {
                 truckService
                         .removeAssignedOrderAndDriversFromTruck(assignedToTruck
                                 .getId());*/
-            } catch (LogiwebServiceException e) {
-            LOGGER.warn("Something unexpected happen", e);
-            throw new ServerErrorException(500);
-        }
     }
 }

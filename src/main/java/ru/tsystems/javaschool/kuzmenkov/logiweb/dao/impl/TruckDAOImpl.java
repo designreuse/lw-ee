@@ -7,6 +7,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class TruckDAOImpl extends AbstractDAOImpl<Truck> implements TruckDAO {
 
             return queryResult;
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in TruckDAOImpl - findByMinCapacityWhereStatusOkAndNotAssignedToOrder()", e);
             throw new LogiwebDAOException(e);
         }
@@ -54,7 +55,7 @@ public class TruckDAOImpl extends AbstractDAOImpl<Truck> implements TruckDAO {
                 return resultList.get(0);
             }
 
-        } catch(Exception e) {
+        } catch(PersistenceException e) {
             LOGGER.warn("Exception in TruckDAOImpl - findTruckByTruckNumber().", e);
             throw new LogiwebDAOException(e);
         }

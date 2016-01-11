@@ -1,8 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
 import java.util.List;
@@ -19,11 +18,11 @@ public interface TruckService {
      *
      * @param newTruckDTO newTruckDTO
      * @return same truck.
-     * @throws LogiwebServiceException if unexpected exception occurred on lower
+     * @throws LogiwebDAOException if unexpected exception occurred on lower
      *              level (not user fault).
      * @throws LogiwebValidationException if truck don't have all required fields or not unique truck number.
      */
-    Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebServiceException;
+    Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebDAOException, LogiwebValidationException;
 
     /**
      * Edit truck.
@@ -32,34 +31,34 @@ public interface TruckService {
      * @throws LogiwebValidationException
      *             if truck don't have all required fields or have not unique license
      *             plate
-     * @throws LogiwebServiceException
+     * @throws LogiwebDAOException
      *             if unexpected exception occurred on lower level (not user
      *             fault)
      */
-    void editTruck(TruckDTO editedTruckDTO) throws LogiwebServiceException;
+    void editTruck(TruckDTO editedTruckDTO) throws LogiwebDAOException, LogiwebValidationException;
 
     /**
      * Find all trucks.
      *
      * @return list of trucks or empty list if nothing found.
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
      */
-    List<TruckDTO> findAllTrucks() throws LogiwebServiceException;
+    List<TruckDTO> findAllTrucks() throws LogiwebDAOException;
 
-    List<TruckDTO> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebServiceException;
+    List<TruckDTO> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebDAOException;
 
     /**
      * Find truck by truck ID.
      *
      * @param truckId
      * @return truck by this truck ID or null.
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
      */
-    TruckDTO findTruckById(Integer truckId) throws LogiwebServiceException;
+    TruckDTO findTruckById(Integer truckId) throws LogiwebDAOException;
 
-    void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebServiceException;
+    void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
 
-    void removeTruck(Integer truckId) throws LogiwebServiceException;
+    void removeTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
 
 
 }

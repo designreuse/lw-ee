@@ -1,7 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.controllers;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +14,8 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.OrderDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.RecordNotFoundException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.CitiesUtil;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
@@ -51,18 +50,18 @@ public class OrderController {
     private static final float DRIVER_WORKING_HOURS_LIMIT = 176f;
 
     @RequestMapping(value = {"/order/new"})
-    public String addNewOrder() throws LogiwebServiceException {
+    public String addNewOrder() {
         Integer newOrderId = orderService.addNewOrder();
 
         return "redirect:/order/" + newOrderId + "/edit";
     }
 
     @RequestMapping(value = { "order/{orderId}/edit", "order/{orderId}" }, method = RequestMethod.GET)
-    public String editOrder(@PathVariable("orderId") Integer orderId, Model model) throws LogiwebServiceException {
+    public String editOrder(@PathVariable("orderId") Integer orderId, Model model) {
         OrderDTO orderToShow = orderService.findOrderById(orderId);
 
         if (orderToShow == null) {
-            throw new LogiwebServiceException("Order #" + orderId + " not exist.");
+            throw new RecordNotFoundException("Order #" + orderId + " not exist.");
         }
 
         OrderRoute orderRouteInfo = freightService.getRouteInformationForOrder(orderToShow.getOrderId());
@@ -111,7 +110,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = {"/freight"})
-    public ModelAndView showFreights() throws LogiwebServiceException {
+    public ModelAndView showFreights() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("freight/FreightList");
         mav.addObject("freights", freightService.findAllFreights());
@@ -120,7 +119,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = {"/order"})
-    public String showOrders(Model model) throws LogiwebServiceException {
+    public String showOrders(Model model) {
         model.addAttribute("orders", orderService.findAllOrders());
         citiesUtil.addAllCitiesToModel(model);
 
@@ -132,12 +131,10 @@ public class OrderController {
      *
      * @param request
      * @return
-     * @throws LogiwebServiceException
      */
     @RequestMapping(value = "/order/{orderId}/edit/addFreight", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String addFreightToOrder(HttpServletRequest request, HttpServletResponse response)
-            throws LogiwebServiceException {
+    public String addFreightToOrder(HttpServletRequest request, HttpServletResponse response) {
         try {
             Freight newFreight = createDetachedFreightFromRequestParams(request);
             freightService.addNewFreight(newFreight);
@@ -155,12 +152,11 @@ public class OrderController {
      *
      * @param request
      * @return
-     * @throws LogiwebServiceException
      */
     @RequestMapping(value = "/order/{orderId}/edit/assignTruck", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
     public String assignTruckToOrder(@PathVariable("orderId") Integer orderId, HttpServletRequest request,
-                                     HttpServletResponse response) throws LogiwebServiceException {
+                                     HttpServletResponse response) {
         Integer truckId;
         try {
             truckId = Integer.parseInt(request.getParameter("truckId"));
@@ -186,13 +182,11 @@ public class OrderController {
      *
      * @param orderId
      * @return
-     * @throws LogiwebServiceException
      */
     @RequestMapping(value = "order/{orderId}/edit/removeDriversAndTruck", method = RequestMethod.POST,
             produces = "text/plain")
     @ResponseBody
-    public String removeDriversAndTruckFromOrder(@PathVariable("orderId") Integer orderId, HttpServletResponse response)
-            throws LogiwebServiceException {
+    public String removeDriversAndTruckFromOrder(@PathVariable("orderId") Integer orderId, HttpServletResponse response) {
         try {
             OrderDTO order = orderService.findOrderById(orderId);
             TruckDTO truck = order.getAssignedTruck();
@@ -216,8 +210,7 @@ public class OrderController {
 
     @RequestMapping(value = "order/{orderId}/edit/setStatusReady", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response)
-            throws LogiwebServiceException {
+    public String setStatusReady(@PathVariable("orderId") int orderId, HttpServletResponse response) {
         try {
             orderService.setReadyStatusForOrder(orderId);
 
@@ -233,7 +226,7 @@ public class OrderController {
      * Redirects to the order's map page.
      */
     @RequestMapping(value = "/orders/{orderId}/map", method = RequestMethod.GET)
-    public ModelAndView showOrderOnMap(@PathVariable("orderId") int orderId, ModelAndView model) throws LogiwebServiceException {
+    public ModelAndView showOrderOnMap(@PathVariable("orderId") int orderId, ModelAndView model) {
 
         OrderDTO order = orderService.findOrderById(orderId);
 

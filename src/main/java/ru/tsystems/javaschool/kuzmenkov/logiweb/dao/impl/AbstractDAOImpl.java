@@ -6,6 +6,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
 
             return newEntity;
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in AbstractDAOImpl - create().", e);
             throw new LogiwebDAOException(e);
         }
@@ -70,7 +71,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
         try {
              return entityManager.find(getEntityClass(), entityId);
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in AbstractDAOImpl - findById().", e);
             throw new LogiwebDAOException(e);
         }
@@ -90,7 +91,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
         try {
             entityManager.merge(changeableEntity);
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in AbstractDAOImpl - update().", e);
             throw new LogiwebDAOException(e);
         }
@@ -106,7 +107,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
         try {
             entityManager.remove(deletedEntity);
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in AbstractDAOImpl - delete().", e);
             throw new LogiwebDAOException(e);
         }
@@ -127,7 +128,7 @@ public class AbstractDAOImpl<T> implements AbstractDAO<T> {
 
             return allEntitiesResult;
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in AbstractDAOImpl - findAll().", e);
             throw new LogiwebDAOException(e);
         }

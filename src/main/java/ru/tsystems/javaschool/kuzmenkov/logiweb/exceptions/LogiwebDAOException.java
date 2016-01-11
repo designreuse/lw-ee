@@ -3,7 +3,7 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions;
 /**
  * @author Nikolay Kuzmenkov.
  */
-public class LogiwebDAOException extends Exception {
+public class LogiwebDAOException extends RuntimeException {
 
     public LogiwebDAOException() {
         super();

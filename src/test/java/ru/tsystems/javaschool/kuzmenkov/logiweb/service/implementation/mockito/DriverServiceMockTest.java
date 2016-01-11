@@ -5,25 +5,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.DriverServiceImpl;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import java.security.NoSuchAlgorithmException;
+
 import static org.mockito.Mockito.when;
 
 /**
@@ -72,7 +66,7 @@ public class DriverServiceMockTest {
      * Case: truck not exist
      */
     @Test(expected = LogiwebValidationException.class)
-    public void testAssignDriverToTruckWhenTruckNotExist() throws LogiwebDAOException, LogiwebServiceException, LogiwebValidationException {
+    public void testAssignDriverToTruckWhenTruckNotExist() throws LogiwebValidationException {
         when(driverDAOMock.findById(1)).thenReturn(new Driver());
         when(truckDAOMock.findById(1)).thenReturn(null);
 
@@ -84,7 +78,7 @@ public class DriverServiceMockTest {
      * Case: driver not exist
      */
     @Test(expected = LogiwebValidationException.class)
-    public void testAssignDriverToTruckWhenDriverNotExist() throws LogiwebDAOException, LogiwebServiceException, LogiwebValidationException {
+    public void testAssignDriverToTruckWhenDriverNotExist() throws LogiwebValidationException {
         when(driverDAOMock.findById(1)).thenReturn(null);
         when(truckDAOMock.findById(1)).thenReturn(new Truck());
 
@@ -95,10 +89,10 @@ public class DriverServiceMockTest {
      * Test: assignDriverToTruck
      * Case: check that truck is added to driver as well as
      * driver to truck
-     * @throws LogiwebServiceException
+     * @throws LogiwebValidationException
      */
     @Test
-    public void testAssignDriverToTruckThatTruckIsAddedToDriver() throws LogiwebDAOException, LogiwebServiceException, LogiwebValidationException {
+    public void testAssignDriverToTruckThatTruckIsAddedToDriver() throws LogiwebValidationException {
         Driver d = new Driver();
         Truck t = new Truck();
         t.setDriverCount(1);
@@ -118,7 +112,7 @@ public class DriverServiceMockTest {
      * Case: driver with same employee id already exists
      */
     @Test(expected = LogiwebValidationException.class)
-    public void testAddDriverWhenDriverWithSameEmpIdExists() throws LogiwebServiceException, LogiwebDAOException, LogiwebValidationException {
+    public void testAddDriverWhenDriverWithSameEmpIdExists() throws LogiwebValidationException, NoSuchAlgorithmException {
         DriverDTO driverModel = new DriverDTO();
         driverModel.setPersonalNumber(1);
         when(driverDAOMock.findDriverByPersonalNumber(1)).thenReturn(new Driver());
@@ -145,7 +139,7 @@ public class DriverServiceMockTest {
      * Case: driver not exist
      */
     @Test(expected = LogiwebValidationException.class)
-    public void testRemoveDriverAndAccountWhenDriverNotExist() throws LogiwebServiceException, LogiwebDAOException, LogiwebValidationException {
+    public void testRemoveDriverAndAccountWhenDriverNotExist() throws LogiwebValidationException {
         Driver d = new Driver();
         d.setCurrentTruckFK(new Truck());
         when(driverDAOMock.findById(1)).thenReturn(null);

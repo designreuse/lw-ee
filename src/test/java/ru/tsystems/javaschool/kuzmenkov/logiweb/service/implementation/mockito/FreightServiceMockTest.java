@@ -12,11 +12,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.DriverServiceImpl;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.FreightServiceImpl;
 
 import static org.mockito.Mockito.when;
@@ -59,8 +55,7 @@ public class FreightServiceMockTest {
     }
 
     @Test(expected = LogiwebValidationException.class)
-    public void testAddCargoWhenOrderHaveAssignedTruck() throws
-            LogiwebServiceException, LogiwebDAOException, LogiwebValidationException {
+    public void testAddCargoWhenOrderHaveAssignedTruck() throws LogiwebValidationException {
         Freight testNewFreight = createValidTestFreight();
         //setMocksToPassInnerValidationInAddCargo(newCargo);
 
@@ -73,4 +68,6 @@ public class FreightServiceMockTest {
 
         freightServiceImpl.addNewFreight(testNewFreight);
     }
+
+
 }

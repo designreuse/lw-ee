@@ -12,12 +12,10 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.UserDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.PasswordConverter;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,63 +32,46 @@ public class UserServiceImpl implements UserService {
     private UserDAO userDAO;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        try {
-            User user = userDAO.findUserByEmail(userName);
+    public UserDetails loadUserByUsername(String userName) throws LogiwebDAOException, UsernameNotFoundException {
+        User user = userDAO.findUserByEmail(userName);
 
-            if (user == null) {
-                throw new UsernameNotFoundException(userName);
-            } else {
-                return buildSecurityUserFromUserEntity(user);
-            }
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Something unexpected happend.", e);
+        if (user == null) {
             throw new UsernameNotFoundException(userName);
+        } else {
+            return buildSecurityUserFromUserEntity(user);
         }
     }
 
     @Override
     @Transactional
-    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebServiceException {
+    public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebDAOException,
+            LogiwebValidationException, NoSuchAlgorithmException {
         if (userEmail == null || userEmail.isEmpty()) {
             throw new LogiwebValidationException(
                     "Username can't be empty.");
         }
 
-        try {
-            User userWithSameMail = userDAO.findUserByEmail(userEmail);
-            if (userWithSameMail != null) {
-                throw new LogiwebValidationException(
-                        "User with email: " + userEmail + " already exist.");
-            }
-
-            User newUser = new User();
-            newUser.setUserEmail(userEmail);
-            newUser.setUserPassword(PasswordConverter.getMD5Hash(userPassword));
-            newUser.setUserRole(userRole);
-            userDAO.create(newUser);
-
-            LOGGER.info("User #" + newUser.getUserId() + " " + userEmail + " created");
-
-            return newUser.getUserId();
-
-        } catch (NoSuchAlgorithmException| LogiwebDAOException e) {
-            LOGGER.warn("Something unexpected happend.", e);
-            throw new LogiwebServiceException(e);
+        User userWithSameMail = userDAO.findUserByEmail(userEmail);
+        if (userWithSameMail != null) {
+            throw new LogiwebValidationException(
+                    "User with email: " + userEmail + " already exist.");
         }
+
+        User newUser = new User();
+        newUser.setUserEmail(userEmail);
+        newUser.setUserPassword(PasswordConverter.getMD5Hash(userPassword));
+        newUser.setUserRole(userRole);
+        userDAO.create(newUser);
+
+        LOGGER.info("User #" + newUser.getUserId() + " " + userEmail + " created");
+
+        return newUser.getUserId();
     }
 
     @Override
     @Transactional
-    public User findUserByEmail(String userEmail) throws LogiwebServiceException {
-        try {
-            return userDAO.findUserByEmail(userEmail);
-
-        } catch (LogiwebDAOException e) {
-            LOGGER.warn("Something unexcpected happend.");
-            throw new LogiwebServiceException(e);
-        }
+    public User findUserByEmail(String userEmail) throws LogiwebDAOException {
+        return userDAO.findUserByEmail(userEmail);
     }
 
     private org.springframework.security.core.userdetails.User buildSecurityUserFromUserEntity(User userEntity) {

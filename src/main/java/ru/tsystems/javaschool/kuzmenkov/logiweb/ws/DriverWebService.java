@@ -1,11 +1,8 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.ws;
 
-
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
-import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
@@ -31,8 +28,8 @@ public interface DriverWebService {
      * @param driverPersonalNumber
      *
      */
-    void endShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber)
-            ;
+    void endShiftForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber) throws LogiwebValidationException
+    ;
 
     void setStatusRestingForDriver(@WebParam(name = "DriverPersonalNumber") Integer driverPersonalNumber);
 
@@ -42,12 +39,12 @@ public interface DriverWebService {
      * Takes a driver credentials and processes authentication using SOAP webservice.
      */
     Driver authenticateDriver(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber,
-                              @WebParam(name = "driverPassword") String driverPassword) throws LogiwebServiceException;
+                              @WebParam(name = "driverPassword") String driverPassword);
 
 
-    Driver getDriverInfo(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber) throws LogiwebServiceException;
+    Driver getDriverInfo(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber);
 
     void setStatusPickUpForFreight(@WebParam(name = "freightId") Integer freightId);
 
-    void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(@WebParam(name = "freightId") Integer freightId) throws LogiwebServiceException;
+    void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(@WebParam(name = "freightId") Integer freightId);
 }

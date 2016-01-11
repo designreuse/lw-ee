@@ -3,7 +3,7 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions;
 /**
  * @author Nikolay Kuzmenkov.
  */
-public class LogiwebValidationException extends LogiwebServiceException {
+public class LogiwebValidationException extends Exception {
 
     public LogiwebValidationException() {
         super();

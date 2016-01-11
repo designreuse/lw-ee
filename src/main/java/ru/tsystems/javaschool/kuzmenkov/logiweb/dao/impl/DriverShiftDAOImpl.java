@@ -8,6 +8,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,7 +49,7 @@ public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements 
 
             return queryResult;
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in DriverShiftDAOImpl - findThisMonthRecordsForDrivers().", e);
             throw new LogiwebDAOException(e);
         }
@@ -88,7 +89,7 @@ public class DriverShiftDAOImpl extends AbstractDAOImpl<DriverShift> implements 
                 return queryResult.get(0);
             }
 
-        } catch(Exception e) {
+        } catch(PersistenceException e) {
             LOGGER.warn("Exception in DriverShiftDAOImpl - findUnfinishedShiftForDriver().", e);
             throw new LogiwebDAOException(e);
         }

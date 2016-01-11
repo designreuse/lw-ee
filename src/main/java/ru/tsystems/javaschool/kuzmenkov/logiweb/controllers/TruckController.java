@@ -6,18 +6,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.RecordNotFoundException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.TruckService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.CitiesUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -26,14 +23,12 @@ import java.util.Set;
 public class TruckController {
 
     @Autowired
-    private CityService cityService;
-    @Autowired
     private TruckService truckService;
     @Autowired
     private CitiesUtil citiesUtil;
 
     @RequestMapping(value = {"truck"})
-    public String showTrucks(Model model) throws LogiwebServiceException {
+    public String showTrucks(Model model) {
         List<TruckDTO> trucks = truckService.findAllTrucks();
         model.addAttribute("trucks", trucks);
         citiesUtil.addAllCitiesToModel(model);
@@ -42,7 +37,7 @@ public class TruckController {
     }
 
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.GET)
-    public String showFormForNewTruck(Model model) throws LogiwebServiceException {
+    public String showFormForNewTruck(Model model) {
         model.addAttribute("formAction", "new");
         model.addAttribute("truckFromForm", new TruckDTO());
         citiesUtil.addAllCitiesToModel(model);
@@ -51,13 +46,13 @@ public class TruckController {
     }
 
     @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.GET)
-    public String showFormForEditDriver(@PathVariable("truckId") Integer truckId, Model model) throws LogiwebServiceException {
+    public String showFormForEditDriver(@PathVariable("truckId") Integer truckId, Model model) {
         model.addAttribute("formAction", "edit");
 
         TruckDTO truckToEdit = truckService.findTruckById(truckId);
 
         if (truckToEdit == null) {
-            throw new LogiwebServiceException();
+            throw new RecordNotFoundException();
         }
 
         model.addAttribute("truckFromForm", truckToEdit);
@@ -68,8 +63,7 @@ public class TruckController {
     }
 
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.POST)
-    public String addTruck(@ModelAttribute("truckFromForm") TruckDTO newTruckFromForm, BindingResult result, Model model)
-            throws LogiwebServiceException {
+    public String addTruck(@ModelAttribute("truckFromForm") TruckDTO newTruckFromForm, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("truckFromForm", newTruckFromForm);
             model.addAttribute("formAction", "new");
@@ -93,8 +87,7 @@ public class TruckController {
 
     @RequestMapping(value = {"truck/{truckId}/edit"}, method = RequestMethod.POST)
     public String editTruck(
-            @ModelAttribute("truckFromForm") @Valid TruckDTO editTruckFromForm, BindingResult result, Model model)
-            throws LogiwebServiceException {
+            @ModelAttribute("truckFromForm") @Valid TruckDTO editTruckFromForm, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("truckFromForm", editTruckFromForm);
             citiesUtil.addAllCitiesToModel(model);
@@ -122,12 +115,10 @@ public class TruckController {
      * @param truckId
      * @param response
      * @return
-     * @throws LogiwebServiceException
      */
     @RequestMapping(value = "truck/{truckId}/delete", method = RequestMethod.POST, produces = "text/plain")
     @ResponseBody
-    public String deleteTruck(@PathVariable("truckId") Integer truckId, HttpServletResponse response)
-            throws LogiwebServiceException {
+    public String deleteTruck(@PathVariable("truckId") Integer truckId, HttpServletResponse response) {
         try {
             truckService.removeTruck(truckId);
 

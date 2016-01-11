@@ -7,6 +7,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO 
 
             return queryResult;
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in DriverDAOImpl - findDriverByPersonalNumber().", e);
             throw new LogiwebDAOException(e);
         }
@@ -57,7 +58,7 @@ public class DriverDAOImpl extends AbstractDAOImpl<Driver> implements DriverDAO 
 
             return queryResult;
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn(e);
             throw new LogiwebDAOException(e);
         }

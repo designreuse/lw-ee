@@ -5,9 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.*;
 
 import javax.persistence.EntityManager;

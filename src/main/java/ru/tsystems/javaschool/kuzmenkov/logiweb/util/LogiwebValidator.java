@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
@@ -11,11 +12,8 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
  *
  * @author Nikolay Kuzmenkov.
  */
+@Component
 public class LogiwebValidator {
-
-    private LogiwebValidator() {
-
-    }
 
     /**
      * Check if driver has empty fields that should not be empty. Also check negative and incorrect values.
@@ -92,7 +90,7 @@ public class LogiwebValidator {
      * @param truckNumber
      * @return boolean result.
      */
-    public static boolean validateTruckNumber(String truckNumber) {
+    public boolean validateTruckNumber(String truckNumber) {
         if(!truckNumber.matches("^[A-Z0-9]{7}$")) {             // only letters and numbers (7 times)
             return false;
         }

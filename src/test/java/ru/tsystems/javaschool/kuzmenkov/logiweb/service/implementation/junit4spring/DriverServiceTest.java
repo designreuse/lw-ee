@@ -13,11 +13,11 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
@@ -54,7 +54,7 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
     @Test
     @Transactional
     @Rollback(true)
-    public void testDriverAddNewDriver() throws LogiwebServiceException, LogiwebValidationException {
+    public void testDriverAddNewDriver() throws LogiwebValidationException, NoSuchAlgorithmException {
         int a = driverService.findAllDrivers().size();
         DriverDTO driver = new DriverDTO();
         driver.setFirstName("testFirstName2");
@@ -71,14 +71,14 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
 
     //a test to check the "read" method
     @Test
-    public void testDriverRead() throws LogiwebServiceException {
+    public void testDriverRead() {
         DriverDTO driverToRead = driverService.findDriverById(501);
         assertTrue(driverToRead.getPersonalNumber() == 11111);
     }
 
     //a test to check the "delete" method
     @Test
-    public void testDriverDelete() throws LogiwebServiceException, LogiwebValidationException {
+    public void testDriverDelete() throws LogiwebValidationException {
         DriverDTO driverToDelete = driverService.findDriverById(501);
         driverService.deleteDriver(driverToDelete.getDriverId());
         assertNull(driverService.findDriverById(501));
@@ -86,21 +86,21 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
 
     //a test to check the "getAll" method
     @Test
-    public void testDriverFindAll() throws LogiwebServiceException {
+    public void testDriverFindAll() {
         Set<DriverDTO> driverList = driverService.findAllDrivers();
         assertTrue(driverList.size() > 1);
     }
 
     //a test to check the "getDriverByPersonalNumber" method success
     @Test
-    public void testDriverGetByPersonalNumberSuccess() throws LogiwebServiceException {
+    public void testDriverGetByPersonalNumberSuccess() {
         Driver driver = driverService.getDriverByPersonalNumber(11111);
         assertNotNull(driver);
     }
 
     //a test to check the "getContractByNumber" method for return "null" result
     @Test
-    public void testDriverGetByPersonalNumberWithNullResult() throws LogiwebServiceException {
+    public void testDriverGetByPersonalNumberWithNullResult() {
         Driver driver = driverService.getDriverByPersonalNumber(1111122);
         assertNull(driver);
     }

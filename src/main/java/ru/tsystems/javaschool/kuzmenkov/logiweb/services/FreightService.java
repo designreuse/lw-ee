@@ -2,7 +2,8 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.OrderRoute;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
 import java.util.List;
 
@@ -11,13 +12,13 @@ import java.util.List;
  */
 public interface FreightService {
 
-    void setPickUpStatus(Integer freightId) throws IllegalStateException, LogiwebServiceException;
+    void setPickUpStatus(Integer freightId) throws IllegalStateException, LogiwebDAOException;
 
-    void setDeliverStatus(Integer freightId) throws LogiwebServiceException;
+    void setDeliverStatus(Integer freightId) throws LogiwebDAOException;
 
-    void addNewFreight(Freight newFreight) throws LogiwebServiceException;
+    void addNewFreight(Freight newFreight) throws LogiwebDAOException, LogiwebValidationException;
 
-    List<Freight> findAllFreights() throws LogiwebServiceException;
+    List<Freight> findAllFreights() throws LogiwebDAOException;
 
-    OrderRoute getRouteInformationForOrder(Integer orderId) throws LogiwebServiceException;
+    OrderRoute getRouteInformationForOrder(Integer orderId) throws LogiwebDAOException;
 }

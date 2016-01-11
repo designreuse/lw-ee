@@ -1,7 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.entities;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * @author Nikolay Kuzmenkov.

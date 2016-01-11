@@ -80,9 +80,17 @@
 						<%-- Edit priveleges --%>
 						<sec:authorize access="hasRole('ROLE_MANAGER')">
 							<td class="text-center">
+								<c:choose>
+								<c:when test="${empty driver.currentOrderId}">
 								 <a href="${pageContext.request.contextPath}/driver/${driver.driverId}/edit"><span
 									class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 								 </a>
+								</c:when>
+									<c:otherwise>
+						          <span
+										  class="glyphicon glyphicon-pencil disabled-color" aria-hidden="true"></span>
+									</c:otherwise>
+								</c:choose>
 							</td>
 
 							<td class="text-center"><span onclick="deleteDriver(this, ${driver.driverId})"

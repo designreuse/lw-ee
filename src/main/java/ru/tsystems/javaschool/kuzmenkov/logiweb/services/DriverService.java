@@ -3,9 +3,10 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.services;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.DriverShift;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebServiceException;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Set;
 
@@ -22,9 +23,9 @@ public interface DriverService {
      * @param newDriverDTO newDriverDTO
      * @return same Driver
      * @throws LogiwebValidationException if driver don't have all required fields or have not unique personal number.
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
      */
-    Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebServiceException;
+    Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebDAOException, LogiwebValidationException, NoSuchAlgorithmException;
 
     /**
      * Calculate working hours for driver for this month.
@@ -36,9 +37,9 @@ public interface DriverService {
      * are also counted. End time for them is current time.
      *
      * @param driverId
-     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
+     * @throws LogiwebDAOException if unexpected exception on lower level occurred (not user fault).
      */
-    Float calculateWorkingHoursForDriver(Integer driverId) throws LogiwebServiceException;
+    Float calculateWorkingHoursForDriver(Integer driverId) throws LogiwebDAOException;
 
     /**
      * Assign driver to truck.
@@ -46,31 +47,31 @@ public interface DriverService {
      * @param driverId
      * @param truckId
      * @throws LogiwebValidationException if truck or diver not exist, or if truck already havefull driver count assigned.
-     * @throws LogiwebServiceException if unexpected exception on lower level occurred (not user fault).
+     * @throws LogiwebDAOException if unexpected exception on lower level occurred (not user fault).
      */
-    void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebServiceException;
+    void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
 
     /**
      * @param editedDriver
-     * @throws LogiwebServiceException
+     * @throws LogiwebDAOException
      */
-    void editDriver(DriverDTO editedDriver) throws LogiwebServiceException;
+    void editDriver(DriverDTO editedDriver) throws LogiwebDAOException, LogiwebValidationException;
 
     /** //
      * Find drivers.
      *
      * @return empty list if nothing found.
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
      */
-    Set<DriverDTO> findAllDrivers() throws LogiwebServiceException;
+    Set<DriverDTO> findAllDrivers() throws LogiwebDAOException;
 
     /**
      * Find driver by id.
      *
      * @param driverId
-     * @throws LogiwebServiceException if unexpected exception occurred on lower level (not user fault).
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
      */
-    DriverDTO findDriverById(Integer driverId) throws LogiwebServiceException;
+    DriverDTO findDriverById(Integer driverId) throws LogiwebDAOException;
 
     /**
      * Find shift records that are started or ended in this month. Records are
@@ -79,25 +80,25 @@ public interface DriverService {
      *
      * @param driverId
      * @return shift records or empty set
-     * @throws LogiwebServiceException
+     * @throws LogiwebDAOException
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebServiceException;
+    List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebDAOException;
 
     /**
      * Delete driver.
      *
      * @param driverId
      * @throws LogiwebValidationException if driver is attached to truck.
-     * @throws LogiwebServiceException
+     * @throws LogiwebDAOException
      *             if unexpected exception on lower level occurred (not user
      *             fault).
      */
-    void deleteDriver(Integer driverId) throws LogiwebServiceException;
+    void deleteDriver(Integer driverId) throws LogiwebDAOException, LogiwebValidationException;
 
     Set<DriverDTO> findUnassignedDriversByWorkingHoursAndCity(Integer cityId, Float maxWorkingHours)
-            throws LogiwebServiceException;
+            throws LogiwebDAOException;
 
     /**
      * Start new shift and change driver status to Resting en route.
@@ -106,11 +107,11 @@ public interface DriverService {
      * @throws LogiwebValidationException
      *             if unfinished shift for this driver is exist. Or if driver
      *             does not exist. Or if driver status is not FREE.
-     * @throws LogiwebServiceException
+     * @throws LogiwebDAOException
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    void startShiftForDriver(Integer driverNumber) throws LogiwebServiceException;
+    void startShiftForDriver(Integer driverNumber) throws LogiwebDAOException, LogiwebValidationException;
 
     /**
      * End shift and change driver status to Free.
@@ -119,17 +120,17 @@ public interface DriverService {
      * @throws LogiwebValidationException
      *             if there is no unfinished shift for this driver. Or if driver
      *             does not exist.
-     * @throws LogiwebServiceException
+     * @throws LogiwebDAOException
      *             if unexpected exception on lower level occurred (not user
      *             fault)
      */
-    void endShiftForDriver(Integer driverNumber) throws LogiwebServiceException;
+    void endShiftForDriver(Integer driverNumber) throws LogiwebDAOException, LogiwebValidationException;
 
-    void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebServiceException;
+    void setStatusDrivingForDriver(Integer driverNumber) throws LogiwebDAOException;
 
-    void setStatusRestingForDriver(Integer driverNumber)throws LogiwebServiceException;
+    void setStatusRestingForDriver(Integer driverNumber)throws LogiwebDAOException;
 
-    DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebServiceException;
+    DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebDAOException;
 
-    Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebServiceException;
+    Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebDAOException;
 }

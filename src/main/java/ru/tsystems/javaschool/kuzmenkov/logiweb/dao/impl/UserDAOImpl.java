@@ -6,6 +6,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.UserDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class UserDAOImpl extends AbstractDAOImpl<User> implements UserDAO {
                 return null;
             }
 
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             LOGGER.warn("Exception in UserDAOImpl - findUserByEmail().", e);
             throw new LogiwebDAOException(e);
         }
