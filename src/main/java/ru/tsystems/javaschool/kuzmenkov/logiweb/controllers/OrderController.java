@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.controllers;
 
 import com.google.gson.Gson;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Controller
 public class OrderController {
+
+    private static final Logger LOGGER = Logger.getLogger(OrderController.class);
 
     @Autowired
     private DriverService driverService;
@@ -142,6 +145,7 @@ public class OrderController {
             return "Freight added";
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - addFreightToOrder(..)", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
         }
@@ -162,6 +166,7 @@ public class OrderController {
             truckId = Integer.parseInt(request.getParameter("truckId"));
 
         } catch (NumberFormatException | NullPointerException e) {
+            LOGGER.warn("Validation exception in method - assignTruckToOrder(..)", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Order and truck id must be equal or more than 0.";
         }
@@ -172,6 +177,7 @@ public class OrderController {
             return "Truck assigned";
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - assignTruckToOrder(..)", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
         }
@@ -203,6 +209,7 @@ public class OrderController {
             }
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - removeDriversAndTruckFromOrder(..)", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
         }
@@ -217,6 +224,7 @@ public class OrderController {
             return "Status 'READY' is set";
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - setStatusReady..)", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
         }
@@ -280,14 +288,16 @@ public class OrderController {
         try {
             freightWeight = Float.parseFloat(request.getParameter("freightWeight"));
         } catch (NumberFormatException | NullPointerException e) {
-            throw new LogiwebValidationException("Freight weight (" + request.getParameter("freightWeight")
-                    + ") is in wrong format or null");
+            LOGGER.info("Incorrect format of input data exception in method - addFreightToOrder(..)", e);
+            throw new LogiwebValidationException("Freight weight ("
+                    + request.getParameter("freightWeight") + ") is in wrong format or null");
         }
 
         Integer originCityId;
         try {
             originCityId = Integer.parseInt(request.getParameter("originCityId"));
         } catch (NumberFormatException | NullPointerException e) {
+            LOGGER.info("Incorrect format of input data exception in method - addFreightToOrder(..)", e);
             throw new LogiwebValidationException("Origin city (" + request.getParameter("originCity")
                     + ") is in wrong format or null");
         }
@@ -296,6 +306,7 @@ public class OrderController {
         try {
             destinationCityId = Integer.parseInt(request.getParameter("destinationCityId"));
         } catch (NumberFormatException | NullPointerException e) {
+            LOGGER.info("Incorrect format of input data exception in method - addFreightToOrder(..)", e);
             throw new LogiwebValidationException("Destination city(" + request.getParameter("destinationCity")
                     + ") is in wrong format or null");
         }

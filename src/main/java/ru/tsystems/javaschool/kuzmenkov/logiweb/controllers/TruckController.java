@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.controllers;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,8 @@ import java.util.List;
  */
 @Controller
 public class TruckController {
+
+    private static final Logger LOGGER = Logger.getLogger(OrderController.class);
 
     @Autowired
     private TruckService truckService;
@@ -78,6 +81,7 @@ public class TruckController {
             return "redirect:/truck";
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - addTruck(..)", e);
             model.addAttribute("error", e.getMessage());
             model.addAttribute("formAction", "new");
             citiesUtil.addAllCitiesToModel(model);
@@ -102,6 +106,7 @@ public class TruckController {
             return "redirect:/truck";
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - editTruck(..)", e);
             model.addAttribute("error", e.getMessage());
             citiesUtil.addAllCitiesToModel(model);
             model.addAttribute("formAction", "edit");
@@ -125,6 +130,7 @@ public class TruckController {
             return "Driver deleted";
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - deleteTruck(..)", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return e.getMessage();
         }

@@ -128,6 +128,7 @@ public class DriverController {
             return "redirect:/driver/" + editDriverFromForm.getDriverId();
 
         } catch (LogiwebValidationException e) {
+            LOGGER.warn("Validation exception in method - editDriver(..)", e);
             model.addAttribute("error", e.getMessage());
             citiesUtil.addAllCitiesToModel(model);
             model.addAttribute("formAction", "edit");

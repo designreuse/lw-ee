@@ -1,5 +1,6 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.util;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.authentication.encoding.BasePasswordEncoder;
 
 import java.security.MessageDigest;
@@ -9,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
  * @author Nikolay Kuzmenkov.
  */
 public class PasswordConverter extends BasePasswordEncoder {
+
+    private static final Logger LOGGER = Logger.getLogger(PasswordConverter.class);
 
     public static String getMD5Hash(String userPassword) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
@@ -28,7 +31,8 @@ public class PasswordConverter extends BasePasswordEncoder {
         try {
             return getMD5Hash(s);
         }
-        catch (NoSuchAlgorithmException ex) {
+        catch (NoSuchAlgorithmException e) {
+            LOGGER.info("Exception in PasswordConverter class", e);
             return s;
         }
     }
@@ -36,9 +40,10 @@ public class PasswordConverter extends BasePasswordEncoder {
     @Override
     public boolean isPasswordValid(String s, String s1, Object o) {
         try {
-            return (s.equals(getMD5Hash(s1)));
+            return s.equals(getMD5Hash(s1));
 
         } catch (NoSuchAlgorithmException e) {
+            LOGGER.info("Exception in PasswordConverter class", e);
             return false;
         }
     }

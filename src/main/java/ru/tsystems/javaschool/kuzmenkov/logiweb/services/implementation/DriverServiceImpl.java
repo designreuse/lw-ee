@@ -17,6 +17,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.DateUtil;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.util.PasswordConverter;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -70,7 +71,7 @@ public class DriverServiceImpl implements DriverService {
 
         String personalNumberAsString = String.valueOf(newDriverDTO.getPersonalNumber());
         String driverAccountEmail = "driver" + personalNumberAsString + "@logiweb.com";
-        String driverAccountPassword = "12345";
+        String driverAccountPassword = PasswordConverter.getMD5Hash("12345");
 
         Integer newDriverUserId = userService.createNewUser(driverAccountEmail, driverAccountPassword, Role.ROLE_DRIVER);
         User accountForDriver = userDAO.findById(newDriverUserId);
