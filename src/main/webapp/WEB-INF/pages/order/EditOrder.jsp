@@ -98,14 +98,14 @@
 
 					<!-- Assign driver to tuck -->
 					<button type="button" class="btn btn-default btn-lg <c:if test="${empty order.assignedTruck || (!empty order.assignedTruck.driversIdsAndNames && fn:length(order.assignedTruck.driversIdsAndNames) >= order.assignedTruck.driverCount)}">disabled</c:if>"
-					data-toggle="modal" data-target="#assign-driver">
+					data-toggle="modal" data-target="#assign-driver" <c:if test="${empty order.assignedTruck || (!empty order.assignedTruck.driversIdsAndNames && fn:length(order.assignedTruck.driversIdsAndNames) >= order.assignedTruck.driverCount)}">disabled="disabled"</c:if>>
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-user" aria-hidden="true"></span>
 						Assign drivers to Truck
 					</button>
 					
 					<!-- Status change -->
-					<button type="button" class="btn btn-default btn-lg 
+					<button type="button" class="btn btn-default btn-lg
 					    <c:choose>
 	                       <c:when test="${order.orderStatus == 'CREATED' && !empty order.assignedTruck && (!empty order.assignedTruck.driversIdsAndNames && fn:length(order.assignedTruck.driversIdsAndNames) >= order.assignedTruck.driverCount)}"></c:when>
 	                       

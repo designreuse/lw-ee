@@ -280,6 +280,7 @@ public class OrderController {
         try {
             orderId = Integer.parseInt(request.getParameter("orderId"));
         } catch (NumberFormatException | NullPointerException e) {
+            LOGGER.info("Incorrect format of input data exception in method - addFreightToOrder(..)", e);
             throw new LogiwebValidationException("Order ID ( " + request.getParameter("orderId")
                     + ") is in wrong format or null");
         }

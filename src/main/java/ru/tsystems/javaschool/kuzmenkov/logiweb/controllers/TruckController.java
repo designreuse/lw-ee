@@ -66,7 +66,7 @@ public class TruckController {
     }
 
     @RequestMapping(value = {"truck/new"}, method = RequestMethod.POST)
-    public String addTruck(@ModelAttribute("truckFromForm") TruckDTO newTruckFromForm, BindingResult result, Model model) {
+    public String addTruck(@ModelAttribute("truckFromForm") @Valid TruckDTO newTruckFromForm, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("truckFromForm", newTruckFromForm);
             model.addAttribute("formAction", "new");

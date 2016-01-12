@@ -51,10 +51,6 @@ public class TruckServiceImpl implements TruckService {
     @Override
     @Transactional
     public Integer addNewTruck(TruckDTO newTruckDTO) throws LogiwebDAOException, LogiwebValidationException {
-        if (!validator.validateTruckNumber(newTruckDTO.getTruckNumber())) {
-            throw new LogiwebValidationException("Truck number #" + newTruckDTO.getTruckNumber() + " is not valid.");
-        }
-
         Truck truckWithSameTruckNumber = truckDAO.findTruckByTruckNumber(newTruckDTO.getTruckNumber());
 
         if (truckWithSameTruckNumber != null) {
@@ -63,10 +59,7 @@ public class TruckServiceImpl implements TruckService {
         }
 
         Truck newTruckEntity = converter.convertTruckDTOToEntity(newTruckDTO);
-
         newTruckEntity.setTruckStatus(TruckStatus.WORKING);
-        LogiwebValidator.validateTruckFormValues(newTruckEntity);
-
         truckDAO.create(newTruckEntity);
 
         LOGGER.info("Truck created: truck number #" + newTruckEntity.getTruckNumber() + " ID: " + newTruckEntity.getTruckId());
@@ -77,41 +70,16 @@ public class TruckServiceImpl implements TruckService {
     @Override
     @Transactional
     public void editTruck(TruckDTO editedTruckDTO) throws LogiwebDAOException, LogiwebValidationException {
-        if(editedTruckDTO.getTruckId() == null || editedTruckDTO.getTruckId() <= 0) {
-            throw new LogiwebValidationException("Truck ID is not provided or incorrect.");
-        }
-
-        if (!validator.validateTruckNumber(editedTruckDTO.getTruckNumber())) {
-            throw new LogiwebValidationException("Truck number " + editedTruckDTO.getTruckNumber() + " is not valid.");
-        }
-
         Truck truckWithSameNumber = truckDAO.findTruckByTruckNumber(editedTruckDTO.getTruckNumber());
 
-        if (truckWithSameNumber != null && truckWithSameNumber.getTruckId() != editedTruckDTO.getTruckId()) {
+        if (truckWithSameNumber != null && !(truckWithSameNumber.getTruckId().equals(editedTruckDTO.getTruckId()))) {
             throw new LogiwebValidationException("Truck number " + editedTruckDTO.getTruckNumber() + " is already in use.");
         }
 
         Truck truckEntityToEdit = truckDAO.findById(editedTruckDTO.getTruckId());
-
-        if (truckEntityToEdit == null) {
-            throw new LogiwebValidationException("Truck with ID " + editedTruckDTO.getTruckId() + " not found.");
-        }
-
-        if (truckEntityToEdit.getOrderForThisTruck() != null) {
-            throw new LogiwebValidationException("Can't edit truck while order is assigned.");
-        }
-
-        truckEntityToEdit.setTruckNumber(editedTruckDTO.getTruckNumber());
-        truckEntityToEdit.setDriverCount(editedTruckDTO.getDriverCount());
-        truckEntityToEdit.setCapacity(editedTruckDTO.getCapacity());
-        truckEntityToEdit.setTruckStatus(editedTruckDTO.getTruckStatus());
-        City city = new City();
-        city.setCityId(editedTruckDTO.getCurrentCityId());
-        truckEntityToEdit.setCurrentCityFK(city);
-        LogiwebValidator.validateTruckFormValues(truckEntityToEdit);
+        populateAllowedTruckFieldsFromDTO(truckEntityToEdit, editedTruckDTO);
 
         truckDAO.update(truckEntityToEdit);
-
         LOGGER.info("Truck edited. Number " + truckEntityToEdit.getTruckNumber() + " ID: " + truckEntityToEdit.getTruckId());
     }
 
@@ -158,10 +126,6 @@ public class TruckServiceImpl implements TruckService {
     public void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException {
         Truck truck = truckDAO.findById(truckId);
 
-        if (truck == null) {
-            throw new LogiwebValidationException("Truck not found.");
-        }
-
         if(truck.getOrderForThisTruck() == null) {
             throw new LogiwebValidationException("Order is not assigned.");
         }
@@ -193,19 +157,19 @@ public class TruckServiceImpl implements TruckService {
     @Transactional
     public void removeTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException {
         Truck truckToRemove = truckDAO.findById(truckId);
-
-        if (truckToRemove == null) {
-            throw new LogiwebValidationException("Truck " + truckId + " not exist. Deletion forbiden.");
-        }
-        else if (truckToRemove.getOrderForThisTruck() != null) {
-            throw new LogiwebValidationException("Truck is assigned to order. Deletion forbiden.");
-        }
-        else if (!truckToRemove.getDriversInTruck().isEmpty()) {
-            throw new LogiwebValidationException("Truck is assigned to one or more drivers. Deletion forbiden.");
-        }
-
         truckDAO.delete(truckToRemove);
-
         LOGGER.info("Truck removed. Plate " + truckToRemove.getTruckNumber() + " ID: " + truckToRemove.getTruckId());
+    }
+
+    private Truck populateAllowedTruckFieldsFromDTO(Truck entityToEdit, TruckDTO source) {
+        City city = new City();
+        city.setCityId(source.getCurrentCityId());
+        entityToEdit.setCurrentCityFK(city);
+        entityToEdit.setCapacity(source.getCapacity());
+        entityToEdit.setDriverCount(source.getDriverCount());
+        entityToEdit.setTruckStatus(source.getTruckStatus());
+        entityToEdit.setTruckNumber(source.getTruckNumber());
+
+        return entityToEdit;
     }
 }

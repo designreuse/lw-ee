@@ -5,6 +5,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Map;
 
 /**
@@ -14,7 +15,8 @@ public class TruckDTO {
 
     private Integer truckId;
 
-    @NotBlank(message = "empty field")
+    @NotBlank(message = "Truck number not set")
+    @Pattern(regexp = "^[A-Z]{2}\\d{5}$", message = "Truck number is not valid.")
     private String truckNumber;
 
     @NotNull
@@ -24,7 +26,8 @@ public class TruckDTO {
     @NotNull
     private Integer currentCityId;
 
-    @NotNull(message = "Empty field")
+    @NotNull
+    @Min(value = 1, message = "Freight capacity can't be 0 or negative")
     private Float capacity;
 
     private Integer assignedOrderId;

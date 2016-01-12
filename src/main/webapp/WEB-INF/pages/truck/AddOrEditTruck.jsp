@@ -77,7 +77,7 @@
             <label class="col-md-4 control-label">Freight Capacity</label>
             <div class="col-md-4">
                 <form:input path="capacity" type="text" class="form-control input-md"
-                                id="capacity" placeholder="Freight capacity" />
+                                id="capacity" placeholder="Freight capacity" required="" />
                 <form:errors path="capacity" class="control-label has-error" />
             </div>
           </div>

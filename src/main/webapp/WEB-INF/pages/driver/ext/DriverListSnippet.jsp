@@ -93,8 +93,16 @@
 								</c:choose>
 							</td>
 
-							<td class="text-center"><span onclick="deleteDriver(this, ${driver.driverId})"
-								class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
+							<td class="text-center">
+								<c:choose>
+								<c:when test="${empty driver.currentOrderId}">
+									<span onclick="deleteDriver(this, ${driver.driverId})"
+									class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
+								</c:when>
+								<c:otherwise>
+									<span class="glyphicon glyphicon-remove red-on-hover disabled-color" aria-hidden="true"></span>
+								</c:otherwise>
+								</c:choose>
 							</td>
 						</sec:authorize>
 

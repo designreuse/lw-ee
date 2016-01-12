@@ -111,7 +111,6 @@ public class FreightServiceImpl implements FreightService {
 
         freight.setFreightStatus(FreightStatus.PICKED_UP);
         freightDAO.update(freight);
-
     }
 
     @Override

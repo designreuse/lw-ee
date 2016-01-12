@@ -133,17 +133,4 @@ public class DriverServiceMockTest {
 
         Mockito.verify(driverDAOMock, times(1)).create(any(Driver.class));
     }*/
-
-    /**
-     * Test: removeDriverAndAccount
-     * Case: driver not exist
-     */
-    @Test(expected = LogiwebValidationException.class)
-    public void testRemoveDriverAndAccountWhenDriverNotExist() throws LogiwebValidationException {
-        Driver d = new Driver();
-        d.setCurrentTruckFK(new Truck());
-        when(driverDAOMock.findById(1)).thenReturn(null);
-
-        driverServiceImpl.deleteDriver(1);
-    }
 }

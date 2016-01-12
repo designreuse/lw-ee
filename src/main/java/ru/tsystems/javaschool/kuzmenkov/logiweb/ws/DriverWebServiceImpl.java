@@ -1,14 +1,15 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.ws;
 
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.OrderRoute;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.services.OrderService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.util.PasswordConverter;
 
 import javax.jws.WebService;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * SOAP webservice implementation to manage driver status changes from the client app.
@@ -16,14 +17,10 @@ import javax.jws.WebService;
 @WebService(endpointInterface="ru.tsystems.javaschool.kuzmenkov.logiweb.ws.DriverWebService")
 public class DriverWebServiceImpl implements DriverWebService {
 
-    private static final Logger LOGGER = Logger.getLogger(DriverWebServiceImpl.class);
-
     @Autowired
     private DriverService driverService;
     @Autowired
     private FreightService freightService;
-    @Autowired
-    private OrderService orderService;
 
     @Override
     public void startShiftForDriver(Integer driverPersonalNumber) throws LogiwebValidationException {
@@ -49,10 +46,11 @@ public class DriverWebServiceImpl implements DriverWebService {
      * Takes a driver credentials and processes authentication using SOAP webservice.
      */
     @Override
-    public Driver authenticateDriver(Integer driverPersonalNumber, String driverPassword) {
+    public Driver authenticateDriver(Integer driverPersonalNumber, String driverPassword) throws NoSuchAlgorithmException {
         Driver driver = driverService.getDriverByPersonalNumber(driverPersonalNumber);
 
-        if (driver != null && driverPassword.equals("12345")) {
+        if (driver != null && driver.getLogiwebDriverAccount().getUserPassword().
+                equals(PasswordConverter.getMD5Hash(driverPassword))) {
             return driver;
         }
 
@@ -61,14 +59,28 @@ public class DriverWebServiceImpl implements DriverWebService {
 
 
     @Override
-    public Driver getDriverInfo(Integer driverPersonalNumber) {
+    public DriverInfo getDriverInfo(Integer driverPersonalNumber) {
         Driver driver = driverService.getDriverByPersonalNumber(driverPersonalNumber);
 
-        if (driver != null) {
-            return driver;
+        DriverInfo infoForDriver = new DriverInfo();
+
+        infoForDriver.setPersonalNumber(driver.getPersonalNumber());
+        infoForDriver.setCurrentDriverStatus(driver.getDriverStatus());
+        infoForDriver.setFirstName(driver.getFirstName());
+        infoForDriver.setLastName(driver.getLastName());
+        infoForDriver.setWorkingHoursInThisMonth(driverService
+                .calculateWorkingHoursForDriver(driver.getDriverId()));
+
+        if (driver.getCurrentTruckFK() != null
+                && driver.getCurrentTruckFK().getOrderForThisTruck() != null) {
+            OrderRoute routeInfo = freightService.getRouteInformationForOrder(driver.getCurrentTruckFK()
+                    .getOrderForThisTruck().getOrderId());
+            infoForDriver.setOrderWayPoints(routeInfo.getBestOrderOfDelivery());
+
+            infoForDriver.setOrderStatus(driver.getCurrentTruckFK().getOrderForThisTruck().getOrderStatus());
         }
 
-        return null;
+        return infoForDriver;
     }
 
     @Override

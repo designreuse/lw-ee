@@ -46,20 +46,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebDAOException,
             LogiwebValidationException, NoSuchAlgorithmException {
-        if (userEmail == null || userEmail.isEmpty()) {
-            throw new LogiwebValidationException(
-                    "Username can't be empty.");
-        }
-
-        User userWithSameMail = userDAO.findUserByEmail(userEmail);
-        if (userWithSameMail != null) {
-            throw new LogiwebValidationException(
-                    "User with email: " + userEmail + " already exist.");
-        }
-
         User newUser = new User();
         newUser.setUserEmail(userEmail);
-        newUser.setUserPassword(PasswordConverter.getMD5Hash(userPassword));
+        newUser.setUserPassword(userPassword);
         newUser.setUserRole(userRole);
         userDAO.create(newUser);
 

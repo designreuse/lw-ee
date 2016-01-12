@@ -3,10 +3,16 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.entities;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.FreightStatus;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * @author Nikolay Kuzmenkov.
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "freights")
 public class Freight {
@@ -34,6 +40,7 @@ public class Freight {
     @JoinColumn(name = "city_to", nullable = false)
     private City cityToFK;
 
+    @XmlTransient
     @ManyToOne
     @JoinColumn(name = "order_FK", nullable = false)
     private Order orderForThisFreightFK;

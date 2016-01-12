@@ -145,7 +145,7 @@ public class DriverServiceImpl implements DriverService {
     public void editDriver(DriverDTO editedDriverDTO) throws LogiwebDAOException, LogiwebValidationException {
         Driver driverWithSameNumber = driverDAO.findDriverByPersonalNumber(editedDriverDTO.getPersonalNumber());
 
-        if (driverWithSameNumber != null && driverWithSameNumber.getDriverId() != editedDriverDTO.getDriverId()) {
+        if (driverWithSameNumber != null && driverWithSameNumber.getDriverId() == editedDriverDTO.getDriverId()) {
             throw new LogiwebValidationException("Driver number  #"
                     + editedDriverDTO.getPersonalNumber() + " is already in use.");
         }
@@ -207,15 +207,6 @@ public class DriverServiceImpl implements DriverService {
     @Transactional
     public void deleteDriver(Integer driverId) throws LogiwebDAOException, LogiwebValidationException {
         Driver existingDriverToDelete = driverDAO.findById(driverId);
-
-        if (existingDriverToDelete == null) {
-            throw new LogiwebValidationException("Driver with driver ID#" + driverId + " not found.");
-        }
-
-        if (existingDriverToDelete.getCurrentTruckFK() != null) {
-            throw new LogiwebValidationException("Driver is assigned to truck. Removal is not possible.");
-        }
-
         User driverAccountToDelete = existingDriverToDelete.getLogiwebDriverAccount();
         driverDAO.delete(existingDriverToDelete);
         userDAO.delete(driverAccountToDelete);
@@ -418,19 +409,19 @@ public class DriverServiceImpl implements DriverService {
     /**
      * Populate fields that are used to edit or create new driver.
      * (city, name, surname, employee id, status)
-     * @param driverToPopulate
+     * @param driverToEdit
      * @param source DriverModel
      * @return
      */
-    private Driver populateAllowedDriverFieldsFromDTO(Driver driverToPopulate, DriverDTO source) {
+    private Driver populateAllowedDriverFieldsFromDTO(Driver driverToEdit, DriverDTO source) {
         City city = new City();
         city.setCityId(source.getCurrentCityId());
-        driverToPopulate.setCurrentCityFK(city);
+        driverToEdit.setCurrentCityFK(city);
 
-        driverToPopulate.setPersonalNumber(source.getPersonalNumber());
-        driverToPopulate.setFirstName(source.getFirstName());
-        driverToPopulate.setLastName(source.getLastName());
+        driverToEdit.setPersonalNumber(source.getPersonalNumber());
+        driverToEdit.setFirstName(source.getFirstName());
+        driverToEdit.setLastName(source.getLastName());
 
-        return driverToPopulate;
+        return driverToEdit;
     }
 }

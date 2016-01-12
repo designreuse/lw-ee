@@ -62,11 +62,11 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
         driver.setPersonalNumber(22222);
         driver.setCurrentCityId(500);
 
-        driverService.addNewDriver(driver);
+        Integer idOfDriver = driverService.addNewDriver(driver);
         int b = driverService.findAllDrivers().size();
 
         assertTrue(b == a + 1);
-        driverService.deleteDriver(driverService.getDriverByPersonalNumber(22222).getDriverId());
+        driverService.deleteDriver(idOfDriver);
     }
 
     //a test to check the "read" method

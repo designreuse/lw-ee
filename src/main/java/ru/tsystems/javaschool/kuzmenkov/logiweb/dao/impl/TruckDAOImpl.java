@@ -21,7 +21,7 @@ public class TruckDAOImpl extends AbstractDAOImpl<Truck> implements TruckDAO {
 
     private static final Logger LOGGER = Logger.getLogger(TruckDAOImpl.class);
 
-    @Override //
+    @Override
     public List<Truck> findByMinCapacityWhereStatusOkAndNotAssignedToOrder(Float minCargoCapacity) throws LogiwebDAOException {
         try {
             Query query = getEntityManager().createQuery("SELECT tr FROM Truck tr WHERE tr.truckStatus = :status  " +

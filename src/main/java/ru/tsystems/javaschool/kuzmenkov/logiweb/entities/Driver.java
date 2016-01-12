@@ -32,6 +32,7 @@ public class Driver {
     @Column(name = "personal_number", nullable = false, unique = true)
     private Integer personalNumber;
 
+    @XmlTransient
     @Column(name = "driver_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private DriverStatus driverStatus;
@@ -40,6 +41,7 @@ public class Driver {
     @OneToMany(fetch = FetchType.EAGER ,mappedBy = "driverForThisShiftFK")
     private List<DriverShift> driverShiftRecords;
 
+    @XmlTransient
     @ManyToOne
     @JoinColumn(name = "current_driver_location_FK", nullable = false)
     private City currentCityFK;
@@ -53,13 +55,6 @@ public class Driver {
     @OneToOne
     @JoinColumn(name = "driver_logiweb_account_id")
     private User logiwebDriverAccount;
-
-    @XmlTransient
-    @Transient
-    private OrderRoute orderRouteInfoForThisDriver;
-    @XmlTransient
-    @Transient
-    private Float workingHoursThisMonth;
 
     public Driver() {
         // Default constructor without parameters.
@@ -105,14 +100,6 @@ public class Driver {
         this.driverStatus = driverStatus;
     }
 
-    public Float getWorkingHoursThisMonth() {
-        return workingHoursThisMonth;
-    }
-
-    public void setWorkingHoursThisMonth(Float workingHoursThisMonth) {
-        this.workingHoursThisMonth = workingHoursThisMonth;
-    }
-
     public List<DriverShift> getDriverShiftRecords() {
         return driverShiftRecords;
     }
@@ -143,13 +130,5 @@ public class Driver {
 
     public void setLogiwebDriverAccount(User logiwebDriverAccount) {
         this.logiwebDriverAccount = logiwebDriverAccount;
-    }
-
-    public OrderRoute getOrderRouteInfoForThisDriver() {
-        return orderRouteInfoForThisDriver;
-    }
-
-    public void setOrderRouteInfoForThisDriver(OrderRoute orderRouteInfoForThisDriver) {
-        this.orderRouteInfoForThisDriver = orderRouteInfoForThisDriver;
     }
 }

@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Freight;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 
 /**
@@ -43,29 +42,6 @@ public class LogiwebValidator {
         }
     }
 
-
-    /**
-     * Check if truck has empty fields that should not be empty. Also check negative values.
-     * Doesn't return anything - throws exception if failed.
-     *
-     * @param truck
-     * @throws LogiwebValidationException with message that describes why validation failed.
-     */
-    public static void validateTruckFormValues(Truck truck) throws LogiwebValidationException {
-        if (truck.getTruckNumber() == null || truck.getTruckNumber().isEmpty()) {
-            throw new LogiwebValidationException("Truck number is not set.");
-        }
-        else if (truck.getDriverCount() <= 0) {
-            throw new LogiwebValidationException("Driver count can not be 0 or negative.");
-        }
-        else if (truck.getCapacity() <= 0) {
-            throw new LogiwebValidationException("Truck capacity can not be 0 or negative.");
-        }
-        else if (truck.getCurrentCityFK() == null || truck.getCurrentCityFK().getCityId() == 0) {
-            throw new LogiwebValidationException("Truck current city is not set.");
-        }
-    }
-
     public static void validateFreightFormValues(Freight freight) throws LogiwebValidationException {
         if(StringUtils.isBlank(freight.getDescription())) {
             throw new LogiwebValidationException("Freight description can't be blank.");
@@ -81,24 +57,6 @@ public class LogiwebValidator {
         }
         else if(freight.getOrderForThisFreightFK() == null) {
             throw new LogiwebValidationException("Order must be specified.");
-        }
-    }
-
-    /**
-     * String test if it has 7 chars and contains 5 digits and 2 letters.
-     *
-     * @param truckNumber
-     * @return boolean result.
-     */
-    public boolean validateTruckNumber(String truckNumber) {
-        if(!truckNumber.matches("^[A-Z0-9]{7}$")) {             // only letters and numbers (7 times)
-            return false;
-        }
-        else if(!truckNumber.matches("^[A-Z]{2}\\d{5}$")) {
-            return false;
-        }
-        else {
-            return true;
         }
     }
 }

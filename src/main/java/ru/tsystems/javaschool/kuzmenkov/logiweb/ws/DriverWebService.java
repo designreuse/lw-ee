@@ -5,6 +5,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationExce
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Service Endpoint Interface (SEI).
@@ -39,10 +40,10 @@ public interface DriverWebService {
      * Takes a driver credentials and processes authentication using SOAP webservice.
      */
     Driver authenticateDriver(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber,
-                              @WebParam(name = "driverPassword") String driverPassword);
+                              @WebParam(name = "driverPassword") String driverPassword) throws NoSuchAlgorithmException;
 
 
-    Driver getDriverInfo(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber);
+    DriverInfo getDriverInfo(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber);
 
     void setStatusPickUpForFreight(@WebParam(name = "freightId") Integer freightId);
 

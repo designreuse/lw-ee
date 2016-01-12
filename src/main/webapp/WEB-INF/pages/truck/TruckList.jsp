@@ -14,16 +14,18 @@
 
 <div class="panel panel-default">
     <div class="panel-heading"><h1>List of trucks</h1></div>
-	<%-- Edit priveleges --%>
-	<sec:authorize access="hasRole('ROLE_MANAGER')">
-		<div class="panel-footer">
-			<a href="${pageContext.request.contextPath}/truck/new" role="button"
-			   class="btn btn-default btn-large btn-block"><span
-					class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new truck</a>
-		</div>
-	</sec:authorize>
 
     <div class="panel-body">
+
+		<%-- Edit priveleges --%>
+		<sec:authorize access="hasRole('ROLE_MANAGER')">
+			<div class="panel-footer">
+				<a href="${pageContext.request.contextPath}/truck/new" role="button"
+				   class="btn btn-default btn-large btn-block"><span
+						class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new truck</a>
+			</div>
+		</sec:authorize>
+
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -79,7 +81,14 @@
 						</td>
 		                
 		                <td class="text-center">
-		                    <span onclick="deleteTruck(this, ${truck.truckId})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
+							<c:choose>
+							<c:when test="${empty truck.assignedOrderId}">
+		                    	<span onclick="deleteTruck(this, ${truck.truckId})" class="glyphicon glyphicon-remove red-on-hover" aria-hidden="true"></span>
+							</c:when>
+								<c:otherwise>
+						          <span class="glyphicon glyphicon-remove red-on-hover disabled-color" aria-hidden="true"></span>
+							</c:otherwise>
+							</c:choose>
 		                </td>
 		
 					</tr>
