@@ -10,14 +10,12 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.TruckStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.TruckService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +33,6 @@ public class TruckServiceImpl implements TruckService {
 
     @Autowired
     private EntityDTODataConverter converter;
-    @Autowired
-    private LogiwebValidator validator;
     @Autowired
     private TruckDAO truckDAO;
 
@@ -113,14 +109,16 @@ public class TruckServiceImpl implements TruckService {
     @Transactional
     public TruckDTO findTruckById(Integer truckId) throws LogiwebDAOException {
         Truck truck = truckDAO.findById(truckId);
+        return converter.convertTruckEntityToDTO(truck);
 
-        if (truck == null) {
-            return null;
-        } else {
-            return converter.convertTruckEntityToDTO(truck);
-        }
     }
 
+    /**
+     * Remove assignment to order and drivers for this truck.
+     *
+     * @param truckId
+     *
+     */
     @Override
     @Transactional
     public void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException {
@@ -142,7 +140,6 @@ public class TruckServiceImpl implements TruckService {
 
         for (Driver driver : driversInTruck) {
             driver.setCurrentTruckFK(null);
-            driver.setDriverStatus(DriverStatus.FREE);
         }
 
         if(orderForTruck != null) {

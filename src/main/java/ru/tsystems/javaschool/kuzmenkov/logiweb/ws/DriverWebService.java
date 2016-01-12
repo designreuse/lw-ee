@@ -38,6 +38,7 @@ public interface DriverWebService {
 
     /**
      * Takes a driver credentials and processes authentication using SOAP webservice.
+     *
      */
     Driver authenticateDriver(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber,
                               @WebParam(name = "driverPassword") String driverPassword) throws NoSuchAlgorithmException;
@@ -45,7 +46,15 @@ public interface DriverWebService {
 
     DriverInfo getDriverInfo(@WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber);
 
+    /**
+     * Set 'Picked up' status for freight.
+     *
+     * @param freightId
+     *
+     */
     void setStatusPickUpForFreight(@WebParam(name = "freightId") Integer freightId);
 
-    void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(@WebParam(name = "freightId") Integer freightId);
+    void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(
+            @WebParam(name = "freightId") Integer freightId,
+            @WebParam(name = "driverPersonalNumber") Integer driverPersonalNumber) throws LogiwebValidationException;
 }

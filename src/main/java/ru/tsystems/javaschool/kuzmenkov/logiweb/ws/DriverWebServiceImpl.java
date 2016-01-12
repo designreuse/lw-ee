@@ -2,10 +2,14 @@ package ru.tsystems.javaschool.kuzmenkov.logiweb.ws;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.OrderRoute;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.services.OrderService;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.services.TruckService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.PasswordConverter;
 
 import javax.jws.WebService;
@@ -21,12 +25,29 @@ public class DriverWebServiceImpl implements DriverWebService {
     private DriverService driverService;
     @Autowired
     private FreightService freightService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private TruckService truckService;
 
+    /**
+     * Start new shift for driver.
+     *
+     * @param driverPersonalNumber
+     * @throws LogiwebValidationException if unfinished shift for this driver is exist. Or if driver
+     *             does not exist. Or if driver status is not FREE.
+     */
     @Override
     public void startShiftForDriver(Integer driverPersonalNumber) throws LogiwebValidationException {
         driverService.startShiftForDriver(driverPersonalNumber);
     }
 
+    /**
+     * End shift for driver.
+     *
+     * @param driverPersonalNumber
+     *
+     */
     @Override
     public void endShiftForDriver(Integer driverPersonalNumber) throws LogiwebValidationException {
         driverService.endShiftForDriver(driverPersonalNumber);
@@ -83,23 +104,29 @@ public class DriverWebServiceImpl implements DriverWebService {
         return infoForDriver;
     }
 
+    /**
+     * Set 'Picked up' status for freight.
+     *
+     * @param freightId
+     *
+     */
     @Override
     public void setStatusPickUpForFreight(Integer freightId) {
         freightService.setPickUpStatus(freightId);
     }
 
     @Override
-    public void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(Integer freightId) {
+    public void setStatusDeliverForFreightAndEndCurrentOrderIfPossible(Integer freightId,
+                                                                       Integer driverPersonalNumber) throws LogiwebValidationException {
 
-            freightService.setDeliverStatus(freightId);
+            freightService.setDeliverStatus(freightId, driverPersonalNumber);
 
-            /*Order order = freightService..findOrderById(cargoId).getOrderForThisCargo();
-            Truck assignedToTruck = order.getAssignedTruck();
-            int orderId = order.getId();
-            if (ordersAndCargoService.isAllCargoesInOrderDelivered(orderId)) {
-                ordersAndCargoService.setStatusDeliveredForOrder(orderId);
-                truckService
-                        .removeAssignedOrderAndDriversFromTruck(assignedToTruck
-                                .getId());*/
+            Order order = freightService.findFreightById(freightId).getOrderForThisFreightFK();
+            Truck assignedToTruck = order.getAssignedTruckFK();
+            Integer orderId = order.getOrderId();
+            if (orderService.isAllFreightsInOrderDelivered(orderId)) {
+                orderService.setStatusDeliveredForOrder(orderId);
+                truckService.removeAssignedOrderAndDriversFromTruck(assignedToTruck.getTruckId());
+            }
     }
 }

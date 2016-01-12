@@ -1,0 +1,1 @@
+DELETE FROM logiwebdb.orders WHERE order_id = 900;

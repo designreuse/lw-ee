@@ -6,21 +6,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.TruckDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.TruckDTO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Order;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.TruckServiceImpl;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.util.EntityDTODataConverter;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -38,8 +31,6 @@ public class TruckServiceMockTest {
     private TruckServiceImpl truckServiceImpl;
     @Mock
     private TruckDAO truckDAOMock;
-    @Mock
-    private LogiwebValidator validatorMock;
     @Mock
     private EntityDTODataConverter converter;
 

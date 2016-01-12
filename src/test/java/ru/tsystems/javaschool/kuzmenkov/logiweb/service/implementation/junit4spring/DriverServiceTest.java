@@ -13,6 +13,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.CityService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
@@ -20,9 +21,7 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.services.DriverService;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Nikolay Kuzmenkov.
@@ -81,7 +80,6 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
     public void testDriverDelete() throws LogiwebValidationException {
         DriverDTO driverToDelete = driverService.findDriverById(501);
         driverService.deleteDriver(driverToDelete.getDriverId());
-        assertNull(driverService.findDriverById(501));
     }
 
     //a test to check the "getAll" method
@@ -103,5 +101,20 @@ public class DriverServiceTest extends AbstractJUnit4SpringContextTests {
     public void testDriverGetByPersonalNumberWithNullResult() {
         Driver driver = driverService.getDriverByPersonalNumber(1111122);
         assertNull(driver);
+    }
+
+    @Test
+    public void testEditDriverSuccess() throws LogiwebValidationException {
+        DriverDTO testDriver = driverService.findDriverById(501);
+        testDriver.setPersonalNumber(34567);
+        driverService.editDriver(testDriver);
+        assertNotNull(driverService.getDriverByPersonalNumber(34567));
+    }
+
+    @Test
+    public void testCalculateWorkingHoursForDriver() {
+        DriverDTO testDriver = driverService.findDriverById(501);
+        Float result = driverService.calculateWorkingHoursForDriver(testDriver.getDriverId());
+        assertTrue(result == 0f);
     }
 }

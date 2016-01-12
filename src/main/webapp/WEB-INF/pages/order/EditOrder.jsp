@@ -20,7 +20,7 @@
 </jsp:include>
 
 <!-- Edit Order -->
-<div class="panel panel-primary">
+<div class="panel panel-default">
 	<div class="panel-heading">
 		<h1>
 			Edit order #<c:out value="${orderId}"/>
@@ -76,12 +76,12 @@
 
         <!-- Buttons -->
 		<div class="row margin-bottom">
-			<div class="col-md-2 col-md-offset-5">
+			<div class="col-md-2">
 
 				<div class="btn-group-vertical" role="group" aria-label="...">
 
 					<!-- Add freight -->
-					<button type="button" class="btn btn-default btn-lg <c:if test="${order.orderStatus != orderCreated || !empty order.assignedTruck}">disabled</c:if>" data-toggle="modal" data-target="#add-freight">
+					<button type="button" class="btn btn-default btn-lg <c:if test="${order.orderStatus != orderCreated || !empty order.assignedTruck}">disabled</c:if>" data-toggle="modal" <c:if test="${order.orderStatus != orderCreated}">disabled="disabled"</c:if> data-target="#add-freight">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-oil" aria-hidden="true"></span> Add
 						freight
@@ -90,7 +90,7 @@
 					<!-- Assign truck -->
 					<button type="button"
 						class="btn btn-default btn-lg <c:if test="${!empty order.assignedTruck || order.orderStatus != orderCreated}">disabled</c:if>"
-						data-toggle="modal" data-target="#assign-truck">
+						data-toggle="modal" data-target="#assign-truck" <c:if test="${empty order.freightsOrderLines || order.orderStatus != orderCreated}">disabled="disabled"</c:if>>
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span
 							class="glyphicon glyphicon-bed" aria-hidden="true"></span> Assign
 						truck
@@ -108,9 +108,9 @@
 					<button type="button" class="btn btn-default btn-lg
 					    <c:choose>
 	                       <c:when test="${order.orderStatus == 'CREATED' && !empty order.assignedTruck && (!empty order.assignedTruck.driversIdsAndNames && fn:length(order.assignedTruck.driversIdsAndNames) >= order.assignedTruck.driverCount)}"></c:when>
-	                       
+
 	                       <c:otherwise>disabled</c:otherwise>
-                        </c:choose>"
+                        </c:choose>" <c:if test="${order.orderStatus == 'CREATED' && empty order.assignedTruck && empty order.assignedTruck.driversIdsAndNames}">disabled="disabled"</c:if>
 
 						data-toggle="modal" data-target="#change-status-modal"  onclick="changeOrderStatusToReady(${order.orderId}) "><span
 							class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>

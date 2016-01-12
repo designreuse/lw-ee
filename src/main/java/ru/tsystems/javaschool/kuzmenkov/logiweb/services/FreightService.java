@@ -14,11 +14,13 @@ public interface FreightService {
 
     void setPickUpStatus(Integer freightId) throws IllegalStateException, LogiwebDAOException;
 
-    void setDeliverStatus(Integer freightId) throws LogiwebDAOException;
+    void setDeliverStatus(Integer freightId, Integer driverPersonalNumber) throws LogiwebDAOException;
 
     void addNewFreight(Freight newFreight) throws LogiwebDAOException, LogiwebValidationException;
 
     List<Freight> findAllFreights() throws LogiwebDAOException;
 
     OrderRoute getRouteInformationForOrder(Integer orderId) throws LogiwebDAOException;
+
+    Freight findFreightById(Integer freightId);
 }

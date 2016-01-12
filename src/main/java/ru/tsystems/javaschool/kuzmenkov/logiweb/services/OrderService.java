@@ -21,4 +21,23 @@ public interface OrderService {
     void assignTruck(Integer assignedTruckId, Integer orderId) throws LogiwebDAOException, LogiwebValidationException;
 
     void setReadyStatusForOrder(Integer orderId) throws LogiwebDAOException, LogiwebValidationException;
+
+    /**
+     * Check if all freights were delivered and order can be set to Delivered.
+     *
+     * @param orderId
+     * @return true if order complete and false if there are undelivered freights
+     *         inside order.
+     */
+    boolean isAllFreightsInOrderDelivered(Integer orderId);
+
+    /**
+     * Sets 'DELIVERED' status for order if all freights for this order were
+     * delivered.
+     * Unassign truck and drivers from order.
+     *
+     * @param orderId
+     *
+     */
+    void setStatusDeliveredForOrder(Integer orderId) throws LogiwebValidationException;
 }

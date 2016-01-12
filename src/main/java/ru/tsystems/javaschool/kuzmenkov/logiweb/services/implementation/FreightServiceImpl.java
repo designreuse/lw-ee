@@ -4,9 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.CityDAO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.FreightDAO;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.OrderDAO;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.FreightStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;
@@ -14,7 +12,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.WayPointStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.FreightService;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.util.LogiwebValidator;
 
 import java.util.*;
 
@@ -41,16 +38,19 @@ public class FreightServiceImpl implements FreightService {
     private static final float MAX_DELIVERY_TIME = 20;
 
     @Autowired
+    private DriverDAO driverDAO;
+    @Autowired
     private FreightDAO freightDAO;
     @Autowired
     private CityDAO cityDAO;
     @Autowired
     private OrderDAO orderDAO;
+    @Autowired
+    private TruckDAO truckDAO;
 
     @Override
     @Transactional
     public void addNewFreight(Freight newFreight) throws LogiwebDAOException, LogiwebValidationException {
-        LogiwebValidator.validateFreightFormValues(newFreight);
         //get managed entities
         City cityFrom = cityDAO.findById(newFreight.getCityFromFK().getCityId());
         City cityTo = cityDAO.findById(newFreight.getCityToFK().getCityId());
@@ -58,7 +58,7 @@ public class FreightServiceImpl implements FreightService {
         Order orderForFreight = orderDAO.findById(newFreight.getOrderForThisFreightFK().getOrderId());
 
         if(orderForFreight.getAssignedTruckFK() != null) {
-            throw new LogiwebValidationException("This order has assigned truck already. Freights can not be add");
+            throw new LogiwebValidationException("Can't add freight to Order which already have assigned Truck.");
         }
 
         //switch detached entities in cargo to managed ones
@@ -69,7 +69,7 @@ public class FreightServiceImpl implements FreightService {
         newFreight.setFreightStatus(FreightStatus.WAITING_FOR_PICK_UP);
 
         freightDAO.create(newFreight);
-        LOGGER.info("New cargo with id #" + newFreight.getFreightId() + "created for irder id #"
+        LOGGER.info("New freight with ID# " + newFreight.getFreightId() + "created for order ID#"
                 + orderForFreight.getOrderId());
     }
 
@@ -77,6 +77,12 @@ public class FreightServiceImpl implements FreightService {
     @Transactional
     public List<Freight> findAllFreights() throws LogiwebDAOException {
             return freightDAO.findAll();
+    }
+
+    @Override
+    @Transactional
+    public Freight findFreightById(Integer freightId) {
+        return freightDAO.findById(freightId);
     }
 
     @Override
@@ -115,12 +121,9 @@ public class FreightServiceImpl implements FreightService {
 
     @Override
     @Transactional
-    public void setDeliverStatus(Integer freightId) throws LogiwebDAOException {
+    public void setDeliverStatus(Integer freightId, Integer driverPersonalNumber) throws LogiwebDAOException {
         Freight freight = freightDAO.findById(freightId);
 
-        if (freight == null) {
-            throw new IllegalStateException();
-        }
 
         if (freight.getOrderForThisFreightFK().getOrderStatus() != OrderStatus.READY_TO_GO) {
             throw new IllegalStateException(
@@ -133,7 +136,15 @@ public class FreightServiceImpl implements FreightService {
         }
 
         freight.setFreightStatus(FreightStatus.DELIVERED);
+        Order order = freight.getOrderForThisFreightFK();
+        Truck truck = truckDAO.findById(order.getAssignedTruckFK().getTruckId());
+        truck.setCurrentCityFK(freight.getCityToFK());
+        Driver driver = driverDAO.findDriverByPersonalNumber(driverPersonalNumber);
+        driver.setCurrentCityFK(freight.getCityToFK());
+
         freightDAO.update(freight);
+        truckDAO.update(truck);
+        driverDAO.update(driver);
     }
 
     private float getPseudoRandomFloatBasedOnFreightsInOrder(Order order) {

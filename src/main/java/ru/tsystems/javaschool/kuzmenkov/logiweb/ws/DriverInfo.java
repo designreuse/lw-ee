@@ -1,6 +1,5 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.ws;
 
-import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.OrderRoute;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.WayPoint;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.DriverStatus;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.OrderStatus;

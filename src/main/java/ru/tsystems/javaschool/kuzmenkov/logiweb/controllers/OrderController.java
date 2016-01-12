@@ -1,6 +1,7 @@
 package ru.tsystems.javaschool.kuzmenkov.logiweb.controllers;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -230,50 +231,6 @@ public class OrderController {
         }
     }
 
-    /**
-     * Redirects to the order's map page.
-     */
-    @RequestMapping(value = "/orders/{orderId}/map", method = RequestMethod.GET)
-    public ModelAndView showOrderOnMap(@PathVariable("orderId") int orderId, ModelAndView model) {
-
-        OrderDTO order = orderService.findOrderById(orderId);
-
-        if (order.getAssignedTruck().getCurrentCityId() != null) {
-
-            String mainCity = cityService.findCityById(order.getAssignedTruck().getCurrentCityId()).getName();
-
-            Set<Freight> waypointSet = order.getFreightsOrderLines();
-
-            Set<Freight> waypointConcurrentSet = Collections.newSetFromMap(new ConcurrentHashMap<Freight, Boolean>());
-
-            waypointConcurrentSet.addAll(waypointSet);
-
-            Set<String> citySet = new HashSet<>();
-
-            // remove main (start/end) waypoint
-            for (Freight waypoint : waypointConcurrentSet) {
-                if (mainCity.equals(waypoint.getCityFromFK().getName())) {
-                    waypointSet.remove(waypoint);
-                    continue;
-                }
-
-                citySet.add(waypoint.getCityToFK().getName());
-            }
-
-            Gson gson = new Gson();
-
-            String waypoints = gson.toJson("Moscow");
-
-            model.addObject("mainCity", mainCity);
-
-            model.addObject("waypoints", waypoints);
-        }
-
-        model.setViewName("order/gmaps");
-
-        return model;
-    }
-
     private Freight createDetachedFreightFromRequestParams(HttpServletRequest request)
             throws LogiwebValidationException {
         Integer orderId;
@@ -290,8 +247,11 @@ public class OrderController {
             freightWeight = Float.parseFloat(request.getParameter("freightWeight"));
         } catch (NumberFormatException | NullPointerException e) {
             LOGGER.info("Incorrect format of input data exception in method - addFreightToOrder(..)", e);
-            throw new LogiwebValidationException("Freight weight ("
-                    + request.getParameter("freightWeight") + ") is in wrong format or null");
+            throw new LogiwebValidationException("Freight weight is in wrong format or null");
+        }
+
+        if(freightWeight <= 0f) {
+            throw new LogiwebValidationException("Freight weight must be greater than 0.");
         }
 
         Integer originCityId;
@@ -313,11 +273,16 @@ public class OrderController {
         }
 
         if(originCityId.equals(destinationCityId)) {
-            throw new LogiwebValidationException("Origin city dont be equal destination city");
+            throw new LogiwebValidationException("Cities must be different.");
+        }
+
+        String description = request.getParameter("freightTitle");
+        if(StringUtils.isBlank(description)) {
+            throw new LogiwebValidationException("Freight description can't be blank.");
         }
 
         Freight newFreight = new Freight();
-        newFreight.setDescription(request.getParameter("freightTitle"));
+        newFreight.setDescription(description);
 
         City originCity = new City();
         City destinationCity = new City();

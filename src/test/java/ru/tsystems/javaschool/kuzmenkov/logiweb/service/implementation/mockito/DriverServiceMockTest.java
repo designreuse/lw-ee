@@ -10,7 +10,6 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.*;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dto.DriverDTO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Driver;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
-import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebDAOException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.exceptions.LogiwebValidationException;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.implementation.DriverServiceImpl;
@@ -42,19 +41,6 @@ public class DriverServiceMockTest {
     private OrderDAO orderDAOMock;
     @Mock
     private UserDAO userDAOMock;
-
-    /**
-     * Populate mocks.
-     * @throws LogiwebDAOException
-     */
-    /*@Before
-    public void setupMocks() throws LogiwebDAOException {
-        cityDAOMock = mock(CityDAO.class);
-        driverDAOMock = mock(DriverDAO.class);
-        truckDAOMock = mock(TruckDAO.class);
-
-        driverService = new DriverServiceImpl(driverDAOMock, truckDAOMock);
-    }*/
 
     @Before
     public void initMocks(){
@@ -118,19 +104,4 @@ public class DriverServiceMockTest {
         when(driverDAOMock.findDriverByPersonalNumber(1)).thenReturn(new Driver());
         driverServiceImpl.addNewDriver(driverModel);
     }
-
-    /**
-     * Test: addDriverWithAccount
-     * Case: driver successfully added
-     */
-    /*
-    @Test
-    public void testAddDriverWhenDriverWhenEverythingOk() throws LogiwebServiceException, LogiwebDAOException, LogiwebValidationException {
-        DriverDTO driverModel = new DriverDTO();
-        driverModel.setPersonalNumber(1);
-
-        driverServiceImpl.addNewDriver(driverModel);
-
-        Mockito.verify(driverDAOMock, times(1)).create(any(Driver.class));
-    }*/
 }

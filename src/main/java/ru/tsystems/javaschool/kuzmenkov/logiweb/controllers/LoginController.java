@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.User;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.status.Role;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.services.UserService;
@@ -30,6 +31,15 @@ public class LoginController {
     @RequestMapping(value = "/login")
     public String login() {
         return "main/Login";
+    }
+
+    /**
+     * This method returns an error403 page when a restricted access page is called.
+     * @return denied.jsp
+     */
+    @RequestMapping(value = "/denied", method = RequestMethod.GET)
+    public String deniedPage() {
+        return "error/Denied";
     }
 
     /**

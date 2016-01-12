@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.CityDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.FreightDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.dao.OrderDAO;
 import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.City;
@@ -24,7 +25,8 @@ public class FreightServiceMockTest {
 
     @InjectMocks
     private FreightServiceImpl freightServiceImpl;
-
+    @Mock
+    private CityDAO cityDAOMock;
     @Mock
     private FreightDAO freightDAOMock;
     @Mock
@@ -48,14 +50,14 @@ public class FreightServiceMockTest {
         testFreight.setDescription("testFreight");
         testFreight.setWeight(1f);
         testFreight.setCityFromFK(city1);
-        testFreight.setCityFromFK(city2);
+        testFreight.setCityToFK(city2);
         testFreight.setOrderForThisFreightFK(order);
 
         return testFreight;
     }
 
     @Test(expected = LogiwebValidationException.class)
-    public void testAddCargoWhenOrderHaveAssignedTruck() throws LogiwebValidationException {
+    public void testAddFreightWhenOrderHaveAssignedTruck() throws LogiwebValidationException {
         Freight testNewFreight = createValidTestFreight();
         //setMocksToPassInnerValidationInAddCargo(newCargo);
 

@@ -56,6 +56,12 @@ public interface TruckService {
      */
     TruckDTO findTruckById(Integer truckId) throws LogiwebDAOException;
 
+    /**
+     * Remove assignment to order and drivers for this truck.
+     *
+     * @param truckId
+     *
+     */
     void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
 
     void removeTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
