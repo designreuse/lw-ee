@@ -52,12 +52,14 @@ public interface DriverService {
     void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
 
     /**
-     * @param editedDriver
+     * Edit driver.
+     *
+     * @param editedDriverDTO
      * @throws LogiwebDAOException
      */
-    void editDriver(DriverDTO editedDriver) throws LogiwebDAOException, LogiwebValidationException;
+    void editDriver(DriverDTO editedDriverDTO) throws LogiwebDAOException, LogiwebValidationException;
 
-    /** //
+    /**
      * Find drivers.
      *
      * @return empty list if nothing found.
@@ -132,5 +134,14 @@ public interface DriverService {
 
     DriverDTO getDriverWithFullInfo(Integer driverId) throws LogiwebDAOException;
 
+    /**
+     * Find driver by personal number.
+     *
+     * @param personalNumber
+     * @return driver or null
+     * @throws LogiwebDAOException
+     *             if unexpected exception occurred on lower level (not user
+     *             fault)
+     */
     Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebDAOException;
 }

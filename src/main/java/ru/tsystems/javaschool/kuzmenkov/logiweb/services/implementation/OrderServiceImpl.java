@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Data manipulation and business logic related to Freights and Orders.
+ *
  * @author Nikolay Kuzmenkov.
  */
 @Service("orderService")
@@ -36,12 +38,26 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private TruckDAO truckDAO;
 
+    /**
+     * Find all orders.
+     *
+     * @return orders set.
+     * @throws LogiwebDAOException
+     *             if something unexpected happens
+     */
     @Override
     @Transactional
     public List<Order> findAllOrders() throws LogiwebDAOException {
         return orderDAO.findAll();
     }
 
+    /**
+     * Create new empty order with Not Ready status.
+     *
+     * @return ID of created order
+     * @throws LogiwebDAOException
+     *             if something unexpected happens
+     */
     @Override
     @Transactional
     public Integer addNewOrder() throws LogiwebDAOException {
@@ -54,6 +70,14 @@ public class OrderServiceImpl implements OrderService {
         return newOrder.getOrderId();
     }
 
+    /**
+     * Find order by id.
+     *
+     * @param orderId
+     * @return order DTO or null if not found.
+     * @throws LogiwebDAOException
+     *             if something unexpected happens
+     */
     @Override
     @Transactional
     public OrderDTO findOrderById(Integer orderId) throws LogiwebDAOException {
@@ -108,13 +132,15 @@ public class OrderServiceImpl implements OrderService {
                     "Order have undelivered freight.");
         }
     }
-
     /**
-     * Check if all cargoes were delivered and order can be set to Delivered.
+     * Assign truck to order.
      *
+     * @param assignedTruckId
      * @param orderId
-     * @return true if order complete and false if there are undelivered cargoes
-     *         inside order.
+     * @throws LogiwebValidationException
+     *             if truck is not Free or broken.
+     * @throws LogiwebDAOException
+     *             if unexpected happened
      */
     @Override
     @Transactional
@@ -142,6 +168,16 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("Truck with ID" + assignedTruck.getTruckId() + " assign to order " + orderForTruck.getOrderId());
     }
 
+    /**
+     * Sets 'READY' status for order if order have at least one freight and assign
+     * truck with full drivers.
+     *
+     * @param orderId
+     * @throws LogiwebDAOException
+     *             if unexpected happened
+     * @throws LogiwebValidationException
+     *             if validation failed. Description in message.
+     */
     @Override
     @Transactional
     public void setReadyStatusForOrder(Integer orderId) throws LogiwebDAOException, LogiwebValidationException {

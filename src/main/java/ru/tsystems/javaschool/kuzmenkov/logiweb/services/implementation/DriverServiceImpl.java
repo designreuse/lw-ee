@@ -53,12 +53,29 @@ public class DriverServiceImpl implements DriverService {
     @Autowired
     private UserDAO userDAO;
 
+    /**
+     * Find driver by personal number.
+     *
+     * @param personalNumber
+     * @return driver or null
+     * @throws LogiwebDAOException
+     *             if unexpected exception occurred on lower level (not user
+     *             fault)
+     */
     @Override
     @Transactional
     public Driver getDriverByPersonalNumber(Integer personalNumber) throws LogiwebDAOException {
         return driverDAO.findDriverByPersonalNumber(personalNumber);
     }
 
+    /**
+     * Add new driver.
+     *
+     * @param newDriverDTO newDriverDTO
+     * @return same Driver
+     * @throws LogiwebValidationException if driver don't have all required fields or have not unique personal number.
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
+     */
     @Override
     @Transactional
     public Integer addNewDriver(DriverDTO newDriverDTO) throws LogiwebDAOException, LogiwebValidationException, NoSuchAlgorithmException {
@@ -88,6 +105,14 @@ public class DriverServiceImpl implements DriverService {
         return newDriverEntity.getDriverId();
     }
 
+    /**
+     * Assign driver to truck.
+     *
+     * @param driverId
+     * @param truckId
+     * @throws LogiwebValidationException if truck or diver not exist, or if truck already havefull driver count assigned.
+     * @throws LogiwebDAOException if unexpected exception on lower level occurred (not user fault).
+     */
     @Override
     @Transactional
     public void assignDriverToTruck(Integer driverId, Integer truckId) throws LogiwebDAOException, LogiwebValidationException {
@@ -140,6 +165,12 @@ public class DriverServiceImpl implements DriverService {
         return workingHours.get(driver);
     }
 
+    /**
+     * Edit driver.
+     *
+     * @param editedDriverDTO
+     * @throws LogiwebDAOException
+     */
     @Override
     @Transactional
     public void editDriver(DriverDTO editedDriverDTO) throws LogiwebDAOException, LogiwebValidationException {
@@ -173,6 +204,12 @@ public class DriverServiceImpl implements DriverService {
         return converter.convertListDriverEntitiesToDTO(driverDAO.findAll());
     }
 
+    /**
+     * Find driver by id.
+     *
+     * @param driverId
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault).
+     */
     @Override
     @Transactional
     public DriverDTO findDriverById(Integer driverId) throws LogiwebDAOException {
@@ -181,6 +218,17 @@ public class DriverServiceImpl implements DriverService {
 
     }
 
+    /**
+     * Find shift records that are started or ended in this month. Records are
+     * not trimmed. (Meaning that if record is started in previous month then it
+     * will be show 'as is').
+     *
+     * @param driverId
+     * @return shift records or empty set
+     * @throws LogiwebDAOException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
     @Override
     @Transactional
     public List<DriverShift> findDriverShiftRecordsForThisMonth(Integer driverId) throws LogiwebDAOException {
@@ -189,6 +237,15 @@ public class DriverServiceImpl implements DriverService {
 
     }
 
+    /**
+     * Delete driver.
+     *
+     * @param driverId
+     * @throws LogiwebValidationException if driver is attached to truck.
+     * @throws LogiwebDAOException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault).
+     */
     @Override
     @Transactional
     public void deleteDriver(Integer driverId) throws LogiwebDAOException, LogiwebValidationException {
@@ -201,6 +258,17 @@ public class DriverServiceImpl implements DriverService {
                 + " " + existingDriverToDelete.getFirstName() + " " + existingDriverToDelete.getLastName() + " removed");
     }
 
+    /**
+     * Start new shift and change driver status to Resting en route.
+     *
+     * @param driverNumber
+     * @throws LogiwebValidationException
+     *             if unfinished shift for this driver is exist. Or if driver
+     *             does not exist. Or if driver status is not FREE.
+     * @throws LogiwebDAOException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
     @Override
     @Transactional
     public void startShiftForDriver(Integer driverNumber) throws LogiwebDAOException, LogiwebValidationException {
@@ -226,6 +294,17 @@ public class DriverServiceImpl implements DriverService {
         driverDAO.update(driver);
     }
 
+    /**
+     * End shift and change driver status to Free.
+     *
+     * @param driverNumber
+     * @throws LogiwebValidationException
+     *             if there is no unfinished shift for this driver. Or if driver
+     *             does not exist.
+     * @throws LogiwebDAOException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
     @Override
     @Transactional
     public void endShiftForDriver(Integer driverNumber) throws LogiwebDAOException, LogiwebValidationException {

@@ -31,6 +31,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDAO userDAO;
 
+
+    /**
+     * Load user by name.
+     *
+     */
     @Override
     public UserDetails loadUserByUsername(String userName) throws LogiwebDAOException, UsernameNotFoundException {
         User user = userDAO.findUserByEmail(userName);
@@ -42,6 +47,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Create new logiweb user.
+     *
+     * @param userEmail
+     * @param userPassword
+     * @param userRole
+     * @return
+     * @throws LogiwebValidationException if user with this name already exist
+     * @throws LogiwebDAOException if something unexpected happened
+     */
     @Override
     @Transactional
     public Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebDAOException,
@@ -57,12 +72,25 @@ public class UserServiceImpl implements UserService {
         return newUser.getUserId();
     }
 
+    /**
+     * Find user by email.
+     *
+     * @param userEmail
+     * @return user
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault)
+     */
     @Override
     @Transactional
     public User findUserByEmail(String userEmail) throws LogiwebDAOException {
         return userDAO.findUserByEmail(userEmail);
     }
 
+
+    /**
+     * Method builds security user.
+     *
+     * @param userEntity
+     */
     private org.springframework.security.core.userdetails.User buildSecurityUserFromUserEntity(User userEntity) {
         String username = userEntity.getUserEmail();
         String password = userEntity.getUserPassword();

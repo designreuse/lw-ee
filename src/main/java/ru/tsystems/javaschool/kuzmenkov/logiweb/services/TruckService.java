@@ -45,6 +45,15 @@ public interface TruckService {
      */
     List<TruckDTO> findAllTrucks() throws LogiwebDAOException;
 
+    /**
+     * Find trucks that have Status 'OK' and not busy by order, and have freight
+     * capacity (in tons) more or equal to minFreightWeightCapacity.
+     *
+     * @param minFreightWeightCapacity
+     * @throws LogiwebDAOException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
     List<TruckDTO> findFreeAndUnbrokenByFreightCapacity(Float minFreightWeightCapacity) throws LogiwebDAOException;
 
     /**
@@ -64,7 +73,15 @@ public interface TruckService {
      */
     void removeAssignedOrderAndDriversFromTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
 
+    /**
+     * Remove truck.
+     *
+     * @param truckId to remove
+     * @throws LogiwebValidationException
+     *             if truck is attached to order or have attached drivers.
+     * @throws LogiwebDAOException
+     *             if unexpected exception on lower level occurred (not user
+     *             fault)
+     */
     void removeTruck(Integer truckId) throws LogiwebDAOException, LogiwebValidationException;
-
-
 }

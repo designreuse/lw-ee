@@ -16,7 +16,7 @@ public class TruckDTO {
     private Integer truckId;
 
     @NotBlank(message = "Truck number not set")
-    @Pattern(regexp = "^[A-Z]{2}\\d{5}$", message = "Truck number is not valid.")
+    @Pattern(regexp = "^[A-Z]{2}\\d{5}$", message = "Truck number is not valid (Example - AB67l96")
     private String truckNumber;
 
     @NotNull

@@ -12,6 +12,8 @@ import ru.tsystems.javaschool.kuzmenkov.logiweb.entities.Truck;
 import java.util.*;
 
 /**
+ * Class for convert DTO and entity objects
+ *
  * @author Nikolay Kuzmenkov.
  */
 @Component

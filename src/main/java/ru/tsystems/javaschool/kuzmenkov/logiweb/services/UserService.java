@@ -13,7 +13,24 @@ import java.security.NoSuchAlgorithmException;
  */
 public interface UserService extends UserDetailsService {
 
+    /**
+     * Create new logiweb user.
+     *
+     * @param userEmail
+     * @param userPassword
+     * @param userRole
+     * @return
+     * @throws LogiwebValidationException if user with this name already exist
+     * @throws LogiwebDAOException if something unexpected happened
+     */
     Integer createNewUser(String userEmail, String userPassword, Role userRole) throws LogiwebDAOException, LogiwebValidationException, NoSuchAlgorithmException;
 
+    /**
+     * Find user by email.
+     *
+     * @param userEmail
+     * @return user
+     * @throws LogiwebDAOException if unexpected exception occurred on lower level (not user fault)
+     */
     User findUserByEmail(String userEmail) throws LogiwebDAOException;
 }

@@ -73,6 +73,13 @@ public class FreightServiceImpl implements FreightService {
                 + orderForFreight.getOrderId());
     }
 
+    /**
+     * Find all freights.
+     *
+     * @return cargoes set or empty set.
+     * @throws LogiwebDAOException
+     *             if something unexpected happens
+     */
     @Override
     @Transactional
     public List<Freight> findAllFreights() throws LogiwebDAOException {

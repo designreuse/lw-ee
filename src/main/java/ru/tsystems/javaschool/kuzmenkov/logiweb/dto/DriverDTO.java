@@ -23,6 +23,7 @@ public class DriverDTO {
     @Size(min = 1, max = 256, message = "Name should be 1-256 chars long.")
     private String firstName;
     @NotBlank(message = "Driver lastst name can not be empty")
+    @Size(min = 1, max = 256, message = "Name should be 1-256 chars long.")
     private String lastName;
 
     private DriverStatus driverStatus;

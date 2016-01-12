@@ -18,6 +18,13 @@ public interface FreightService {
 
     void addNewFreight(Freight newFreight) throws LogiwebDAOException, LogiwebValidationException;
 
+    /**
+     * Find all freights.
+     *
+     * @return cargoes set or empty set.
+     * @throws LogiwebDAOException
+     *             if something unexpected happens
+     */
     List<Freight> findAllFreights() throws LogiwebDAOException;
 
     OrderRoute getRouteInformationForOrder(Integer orderId) throws LogiwebDAOException;
